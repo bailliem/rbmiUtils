@@ -173,3 +173,85 @@ gcomp_binary <- function(
 
   return(out)
 }
+
+
+#' Reduce an imputed dataset to imputed values only
+#'
+#' This function takes a fully imputed dataset and removes rows where the
+#' original data was observed. It is useful for storing only the values that
+#' were generated during imputation.
+#'
+#' @param data A data frame containing all imputed datasets. Must include a
+#'   variable `IMPID` identifying the imputation number.
+#' @param original_data The original dataset before imputation was performed.
+#' @param vars Character vector of variables that were imputed.
+#' @param keys Optional character vector of columns used to match `data` to
+#'   `original_data`. By default the common columns excluding `vars` and `IMPID`.
+#'
+#' @return A data frame containing only rows with imputed values.
+#' @export
+reduce_imputed_data <- function(data, original_data, vars, keys = NULL) {
+  if (is.null(keys)) {
+    keys <- intersect(names(data), names(original_data))
+    keys <- setdiff(keys, c(vars, "IMPID"))
+  }
+
+  orig_subset <- original_data[, c(keys, vars), drop = FALSE]
+  names(orig_subset) <- c(keys, paste0(vars, ".orig"))
+
+  joined <- dplyr::left_join(data, orig_subset, by = keys)
+
+  keep <- apply(
+    as.data.frame(lapply(vars, function(v) {
+      is.na(joined[[paste0(v, ".orig")]])
+    })),
+    1,
+    any
+  )
+
+  out <- joined[keep, , drop = FALSE]
+  out <- dplyr::select(out, -dplyr::any_of(paste0(vars, ".orig")))
+
+  return(out)
+}
+
+
+#' Expand a reduced imputed dataset back to full data
+#'
+#' Given a dataset created by `reduce_imputed_data()`, this function recreates
+#' the full set of imputed datasets by merging the imputed values with the
+#' original data.
+#'
+#' @param reduced A reduced imputed dataset produced by
+#'   `reduce_imputed_data()`.
+#' @param original_data The original dataset before imputation.
+#' @param vars Character vector of variables that were imputed.
+#' @param keys Optional character vector used to match rows. Defaults to the
+#'   common columns excluding `vars` and `IMPID`.
+#'
+#' @return A data frame containing the full imputed datasets.
+#' @export
+expand_imputed_data <- function(reduced, original_data, vars, keys = NULL) {
+  if (is.null(keys)) {
+    keys <- intersect(names(reduced), names(original_data))
+    keys <- setdiff(keys, c(vars, "IMPID"))
+  }
+
+  imps <- sort(unique(reduced$IMPID))
+  out_list <- lapply(imps, function(i) {
+    imp_dat <- reduced[reduced$IMPID == i, , drop = FALSE]
+    base <- original_data
+    base$IMPID <- i
+    base <- dplyr::left_join(base, imp_dat, by = c(keys, "IMPID"),
+                             suffix = c("", ".imp"))
+    for (v in vars) {
+      imp_col <- paste0(v, ".imp")
+      base[[v]] <- ifelse(is.na(base[[v]]), base[[imp_col]], base[[v]])
+      base[[imp_col]] <- NULL
+    }
+    base
+  })
+
+  dplyr::bind_rows(out_list)
+}
+

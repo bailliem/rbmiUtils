@@ -123,8 +123,9 @@ Key exported functions include:
 - `analyse_mi_data()`: Applies an analysis function (e.g., ANCOVA) to
   all imputed datasets.
 - `tidy_pool_obj()`: Tidies and annotates pooled results for reporting.
-- `get_imputed_data()`: Extracts long-format imputed datasets with
-  original subject IDs mapped.
+- `get_imputed_data()`: Extracts long-format imputed datasets with original subject IDs mapped.
+- `reduce_imputed_data()`: Keep only imputed values for compact storage.
+- `expand_imputed_data()`: Recreate full imputed datasets from the reduced form.
 
 These utilities wrap standard `rbmi` workflows for improved
 reproducibility and interpretability.
