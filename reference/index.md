@@ -28,5 +28,14 @@
 - [`get_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/get_imputed_data.md)
   : Get Imputed Data Sets as a data frame
 
+- [`prepare_data_ice()`](https://openpharma.github.io/rbmiUtils/reference/prepare_data_ice.md)
+  : Prepare Intercurrent Event Data
+
+- [`summarise_missingness()`](https://openpharma.github.io/rbmiUtils/reference/summarise_missingness.md)
+  : Summarise Missing Data Patterns
+
 - [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)
   : Tidy and Annotate a Pooled Object for Publication
+
+- [`validate_data()`](https://openpharma.github.io/rbmiUtils/reference/validate_data.md)
+  : Validate Data Before Imputation
