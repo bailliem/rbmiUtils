@@ -59,8 +59,8 @@ draws_obj <- draws(data = ADEFF, vars = vars, method = method)
 #> 
 #> SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000429 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.29 seconds.
+#> Chain 1: Gradient evaluation took 0.000389 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 3.89 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -77,9 +77,9 @@ draws_obj <- draws(data = ADEFF, vars = vars, method = method)
 #> Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 400 / 400 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.635 seconds (Warm-up)
-#> Chain 1:                0.521 seconds (Sampling)
-#> Chain 1:                1.156 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.638 seconds (Warm-up)
+#> Chain 1:                0.524 seconds (Sampling)
+#> Chain 1:                1.162 seconds (Total)
 #> Chain 1: 
 impute_obj <- impute(draws_obj,
   references = c("Placebo" = "Placebo", "Drug A" = "Placebo"))
