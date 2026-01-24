@@ -1,6 +1,13 @@
 # Changelog
 
-## rbmiUtils (development version)
+## rbmiUtils 0.1.7
+
+- Moved `tidyr` from Suggests to Imports (used in
+  [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)).
+- Added examples to
+  [`gcomp_responder()`](https://openpharma.github.io/rbmiUtils/reference/gcomp_responder.md)
+  documentation.
+- Standardized examples to use native pipe operator `|>`.
 
 ## rbmiUtils 0.1.6
 

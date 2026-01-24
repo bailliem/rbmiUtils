@@ -73,7 +73,7 @@ library(dplyr)
 # Load example data
 data("ADMI")
 # Ensure correct factor levels
-ADMI <- ADMI %>%
+ADMI <- ADMI |>
   mutate(
     TRT = factor(TRT, levels = c("Placebo", "Drug A")),
     STRATA = factor(STRATA),
