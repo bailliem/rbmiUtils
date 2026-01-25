@@ -16,6 +16,9 @@
 
   Construct an rbmi `analysis` object
 
+- [`expand_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/expand_imputed_data.md)
+  : Expand Reduced Imputed Data to Full Dataset
+
 - [`gcomp_binary()`](https://openpharma.github.io/rbmiUtils/reference/gcomp_binary.md)
   : Utility function for Generalized G-computation for Binary Outcomes
 
@@ -30,6 +33,9 @@
 
 - [`prepare_data_ice()`](https://openpharma.github.io/rbmiUtils/reference/prepare_data_ice.md)
   : Prepare Intercurrent Event Data
+
+- [`reduce_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/reduce_imputed_data.md)
+  : Reduce Imputed Data for Efficient Storage
 
 - [`summarise_missingness()`](https://openpharma.github.io/rbmiUtils/reference/summarise_missingness.md)
   : Summarise Missing Data Patterns

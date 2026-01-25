@@ -9,6 +9,11 @@ CRAN release: 2026-01-24
 ## rbmiUtils 0.1.7
 
 - Added
+  [`reduce_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/reduce_imputed_data.md)
+  and
+  [`expand_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/expand_imputed_data.md)
+  for efficient storage of imputed datasets when using many imputations.
+- Added
   [`validate_data()`](https://openpharma.github.io/rbmiUtils/reference/validate_data.md)
   for pre-flight validation before
   [`rbmi::draws()`](https://openpharma.github.io/rbmi/latest-tag/reference/draws.html).
