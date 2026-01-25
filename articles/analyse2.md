@@ -5,13 +5,10 @@
 This vignette demonstrates how to:
 
 - Perform multiple imputation using the
-  [rbmi](https://openpharma.github.io/rbmi/) package.
-
+  [rbmi](https://openpharma.github.io/rbmi/) package
 - Store and modify the imputed data using
-  [rbmiUtils](https://github.com/openpharma/rbmiUtils).
-
+  [rbmiUtils](https://github.com/openpharma/rbmiUtils)
 - Analyze the imputed data using:
-
   - A standard ANCOVA on a continuous endpoint (`CHG`)
   - A binary responder analysis on `CRIT1FLN` using
     [beeca](https://openpharma.github.io/beeca/)
@@ -19,12 +16,21 @@ This vignette demonstrates how to:
 This pattern enables reproducible workflows where imputation and
 analysis can be separated and revisited independently.
 
+**Related vignettes:**
+
+- [Data Preparation and
+  Validation](https://openpharma.github.io/rbmiUtils/articles/data-preparation.md) -
+  Validate data before imputation
+- [Efficient Storage of Imputed
+  Data](https://openpharma.github.io/rbmiUtils/articles/efficient-storage.md) -
+  Reduce storage for large imputations
+
 ## Statistical Context
 
 This approach applies **Rubin’s Rules** for inference after multiple
 imputation:
 
-> We fit a model to each imputed dataset, dervive a response variable on
+> We fit a model to each imputed dataset, derive a response variable on
 > the CHG score, extract marginal effects or other statistics of
 > interest, and combine the results into a single inference using
 > Rubin’s combining rules.
@@ -98,8 +104,8 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> 
 #> SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000416 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.16 seconds.
+#> Chain 1: Gradient evaluation took 0.000429 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.29 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -116,9 +122,9 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 400 / 400 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.642 seconds (Warm-up)
-#> Chain 1:                0.528 seconds (Sampling)
-#> Chain 1:                1.17 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.646 seconds (Warm-up)
+#> Chain 1:                0.539 seconds (Sampling)
+#> Chain 1:                1.185 seconds (Total)
 #> Chain 1:
 
 impute_obj <- impute(draws_obj, references = c("Placebo" = "Placebo", "Drug A" = "Placebo"))
@@ -258,8 +264,26 @@ print(pool_obj_prop)
 
 ## Final Notes
 
-- The `ADMI` object can be saved for later reuse.
-- Analyses can be modularly applied using custom functions.
+- The `ADMI` object can be saved for later reuse
+- Analyses can be modularly applied using custom functions
 - The tidy output from
   [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)
-  is helpful for reporting and review.
+  is helpful for reporting and review
+
+### Efficient Storage
+
+When working with many imputations, consider using
+[`reduce_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/reduce_imputed_data.md)
+to store only the imputed values:
+
+``` r
+# Reduce for efficient storage
+reduced <- reduce_imputed_data(ADMI, ADEFF, vars)
+
+# Later, expand back for analysis
+ADMI_restored <- expand_imputed_data(reduced, ADEFF, vars)
+```
+
+See the [Efficient Storage
+vignette](https://openpharma.github.io/rbmiUtils/articles/efficient-storage.md)
+for details.

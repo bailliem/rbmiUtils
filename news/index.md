@@ -2,12 +2,6 @@
 
 ## rbmiUtils (development version)
 
-## rbmiUtils 0.1.8
-
-CRAN release: 2026-01-24
-
-## rbmiUtils 0.1.7
-
 - Added
   [`reduce_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/reduce_imputed_data.md)
   and
@@ -23,6 +17,13 @@ CRAN release: 2026-01-24
 - Added
   [`summarise_missingness()`](https://openpharma.github.io/rbmiUtils/reference/summarise_missingness.md)
   to tabulate missing data patterns.
+
+## rbmiUtils 0.1.8
+
+CRAN release: 2026-01-24
+
+## rbmiUtils 0.1.7
+
 - Moved `tidyr` from Suggests to Imports (used in
   [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)).
 - Added examples to
