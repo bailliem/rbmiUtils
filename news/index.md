@@ -1,5 +1,11 @@
 # Changelog
 
+## rbmiUtils (development version)
+
+## rbmiUtils 0.1.8
+
+CRAN release: 2026-01-24
+
 ## rbmiUtils 0.1.7
 
 - Added
