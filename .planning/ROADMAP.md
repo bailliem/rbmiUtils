@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Add cli/lifecycle deps and fix tidy_pool_obj parameter parsing (HRD-01)
+- [x] 01-01-PLAN.md — Add cli/lifecycle deps and fix tidy_pool_obj parameter parsing (HRD-01)
 - [ ] 01-02-PLAN.md — Refactor analyse_mi_data to use inherits() and deprecate internal helpers (HRD-02)
 - [ ] 01-03-PLAN.md — Harden gcomp input validation and storage round-trip digest (HRD-03, HRD-04)
 
@@ -89,7 +89,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation Hardening | 0/3 | Planned | - |
+| 1. Foundation Hardening | 1/3 | In progress | - |
 | 2. Print/Summary & ARD Conversion | 0/3 | Not started | - |
 | 3. Efficacy Tables | 0/2 | Not started | - |
 | 4. Visualization | 0/1 | Not started | - |
