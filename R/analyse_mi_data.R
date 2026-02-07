@@ -254,12 +254,15 @@ analyse_mi_data <- function(
     fun_name <- "<NULL>"
   }
 
-  ret <- as_analysis2(
-    results = results,
-    fun_name = fun_name,
-    delta = delta,
-    fun = fun,
-    method = method
+  ret <- suppressWarnings(
+    as_analysis2(
+      results = results,
+      fun_name = fun_name,
+      delta = delta,
+      fun = fun,
+      method = method
+    ),
+    classes = "lifecycle_warning_deprecated"
   )
 
   return(ret)

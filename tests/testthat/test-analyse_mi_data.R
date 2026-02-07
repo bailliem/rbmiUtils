@@ -35,7 +35,7 @@ dummy_analysis_fun <- function(data, vars, ...) {
 test_that("Error when data is NULL", {
   expect_error(
     analyse_mi_data(data = NULL, vars = vars),
-    "`data` cannot be NULL."
+    class = "rbmiUtils_error_validation"
   )
 })
 
@@ -43,28 +43,28 @@ test_that("Error when IMPID is missing from data", {
   ADMI_no_impid <- ADMI %>% select(-IMPID)
   expect_error(
     analyse_mi_data(data = ADMI_no_impid, vars = vars),
-    "`data` must contain a variable `IMPID` to identify distinct imputation iterations."
+    class = "rbmiUtils_error_validation"
   )
 })
 
 test_that("Error when vars is NULL", {
   expect_error(
     analyse_mi_data(data = ADMI, vars = NULL),
-    "`vars` cannot be NULL. Specify key variables."
+    class = "rbmiUtils_error_validation"
   )
 })
 
 test_that("Error when fun is not a function", {
   expect_error(
     analyse_mi_data(data = ADMI, vars = vars, fun = "not_a_function"),
-    "`fun` must be a function"
+    class = "rbmiUtils_error_type"
   )
 })
 
 test_that("Error when delta is not NULL or a data.frame", {
   expect_error(
     analyse_mi_data(data = ADMI, vars = vars, delta = list()),
-    "`delta` must be NULL or a data.frame"
+    class = "rbmiUtils_error_type"
   )
 })
 
@@ -72,7 +72,7 @@ test_that("Error when delta does not contain required variables", {
   delta_invalid <- data.frame(subjid = ADMI$USUBJID, delta = rnorm(nrow(ADMI)))
   expect_error(
     analyse_mi_data(data = ADMI, vars = vars, method = method, delta = delta_invalid),
-    "The following variables must exist within `delta`: `USUBJID`, `AVISIT`, `delta`"
+    class = "rbmiUtils_error_validation"
   )
 })
 
@@ -99,7 +99,7 @@ test_that("analyse_mi_data throws error when fun is not a function", {
   # Expect an error when 'fun' is not a function
   expect_error(
     analyse_mi_data(data = data, vars = vars, fun = "not_a_function"),
-    "`fun` must be a function"
+    class = "rbmiUtils_error_type"
   )
 })
 
@@ -400,6 +400,133 @@ test_that("analyse_mi_data with delta requires correct variable names", {
       fun = dummy_analysis_fun,
       delta = delta_wrong
     ),
-    "must exist within `delta`"
+    class = "rbmiUtils_error_validation"
   )
+})
+
+
+# =============================================================================
+# Tests for inherits()-based method detection and cli error classes (01-02)
+# =============================================================================
+
+test_that("analyse_mi_data handles all rbmi method types via inherits", {
+  data("ADMI")
+  set.seed(888)
+
+  ADMI_test <- ADMI[ADMI$IMPID %in% 1:3, ]
+
+  vars <- rbmi::set_vars(
+    subjid = "USUBJID",
+    visit = "AVISIT",
+    group = "TRT",
+    outcome = "CHG",
+    covariates = c("BASE", "STRATA", "REGION")
+  )
+
+  # Test with method_bayes
+
+  method_b <- rbmi::method_bayes(
+    n_samples = 3,
+    control = rbmi::control_bayes(warmup = 10, thin = 2)
+  )
+  result_b <- analyse_mi_data(
+    data = ADMI_test, vars = vars, method = method_b,
+    fun = dummy_analysis_fun
+  )
+  expect_s3_class(result_b, "analysis")
+  expect_true("rubin" %in% class(result_b$results))
+
+  # Test with method_approxbayes
+  method_ab <- rbmi::method_approxbayes(n_samples = 3)
+  result_ab <- analyse_mi_data(
+    data = ADMI_test, vars = vars, method = method_ab,
+    fun = dummy_analysis_fun
+  )
+  expect_s3_class(result_ab, "analysis")
+  expect_true("rubin" %in% class(result_ab$results))
+})
+
+
+test_that("as_analysis2 emits deprecation warning", {
+  method <- rbmi::method_bayes(
+    n_samples = 1,
+    control = rbmi::control_bayes(warmup = 10, thin = 2)
+  )
+
+  expect_warning(
+    as_analysis2(
+      results = list(list(est = 1, se = 0.1, df = NA)),
+      method = method,
+      fun_name = "test"
+    ),
+    class = "lifecycle_warning_deprecated"
+  )
+})
+
+
+test_that("analyse_mi_data warns when too many imputations", {
+  data("ADMI")
+  set.seed(999)
+
+  # Data has 20 IMPIDs but method expects only 2
+  ADMI_test <- ADMI[ADMI$IMPID %in% 1:5, ]
+
+  vars <- rbmi::set_vars(
+    subjid = "USUBJID",
+    visit = "AVISIT",
+    group = "TRT",
+    outcome = "CHG",
+    covariates = c("BASE", "STRATA", "REGION")
+  )
+
+  method <- rbmi::method_bayes(
+    n_samples = 2,
+    control = rbmi::control_bayes(warmup = 10, thin = 2)
+  )
+
+  expect_warning(
+    result <- analyse_mi_data(
+      data = ADMI_test, vars = vars, method = method,
+      fun = dummy_analysis_fun
+    ),
+    "method expects"
+  )
+
+  # Should only have 2 results (filtered down)
+  expect_equal(length(result$results), 2)
+})
+
+
+test_that("analyse_mi_data output is compatible with rbmi::pool", {
+  data("ADMI")
+  set.seed(1010)
+
+  ADMI_test <- ADMI[ADMI$IMPID %in% 1:3, ]
+  ADMI_test$TRT <- factor(ADMI_test$TRT, levels = c("Placebo", "Drug A"))
+  ADMI_test$USUBJID <- factor(ADMI_test$USUBJID)
+  ADMI_test$AVISIT <- factor(ADMI_test$AVISIT)
+
+  vars <- rbmi::set_vars(
+    subjid = "USUBJID",
+    visit = "AVISIT",
+    group = "TRT",
+    outcome = "CHG",
+    covariates = c("BASE", "STRATA", "REGION")
+  )
+
+  method <- rbmi::method_bayes(
+    n_samples = 3,
+    control = rbmi::control_bayes(warmup = 10, thin = 2)
+  )
+
+  ana_obj <- analyse_mi_data(
+    data = ADMI_test,
+    vars = vars,
+    method = method,
+    fun = rbmi::ancova
+  )
+
+  # Pool should succeed without error
+  pool_obj <- rbmi::pool(ana_obj)
+  expect_false(is.null(pool_obj))
 })
