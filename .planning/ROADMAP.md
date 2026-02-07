@@ -12,7 +12,7 @@ This roadmap delivers a reporting layer for rbmiUtils that bridges rbmi pooled r
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation Hardening** - Fix fragile parameter parsing, wrap rbmi::analyse(), harden gcomp and storage functions
+- [x] **Phase 1: Foundation Hardening** - Fix fragile parameter parsing, wrap rbmi::analyse(), harden gcomp and storage functions
 - [ ] **Phase 2: Print/Summary & ARD Conversion** - Improve console output for key objects and build ARD interchange layer
 - [ ] **Phase 3: Efficacy Tables** - Generate regulatory-style efficacy summary tables via gtsummary + gt
 - [ ] **Phase 4: Visualization** - Forest plot function for treatment effects across visits
@@ -33,8 +33,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Add cli/lifecycle deps and fix tidy_pool_obj parameter parsing (HRD-01)
-- [ ] 01-02-PLAN.md — Refactor analyse_mi_data to use inherits() and deprecate internal helpers (HRD-02)
-- [ ] 01-03-PLAN.md — Harden gcomp input validation and storage round-trip digest (HRD-03, HRD-04)
+- [x] 01-02-PLAN.md — Refactor analyse_mi_data to use inherits() and deprecate internal helpers (HRD-02)
+- [x] 01-03-PLAN.md — Harden gcomp input validation and storage round-trip digest (HRD-03, HRD-04)
 
 ### Phase 2: Print/Summary & ARD Conversion
 **Goal**: Users get informative console output from key rbmi objects, and tidy pool results convert cleanly to the pharmaverse ARD standard for downstream table generation
@@ -89,7 +89,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation Hardening | 1/3 | In progress | - |
+| 1. Foundation Hardening | 3/3 | Complete | 2026-02-07 |
 | 2. Print/Summary & ARD Conversion | 0/3 | Not started | - |
 | 3. Efficacy Tables | 0/2 | Not started | - |
 | 4. Visualization | 0/1 | Not started | - |
