@@ -32,10 +32,12 @@ Config/testthat/edition: 3
 Language: en-US
 Imports:
     assertthat,
+    beeca,
+    cli (>= 3.6.0),
     dplyr,
+    lifecycle (>= 1.0.4),
     purrr,
     rbmi (>= 1.4),
-    beeca,
     rlang,
     tidyr
 VignetteBuilder: knitr
