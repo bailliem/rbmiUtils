@@ -78,30 +78,30 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ARD-01 | — | Pending |
-| ARD-02 | — | Pending |
-| ARD-03 | — | Pending |
-| TBL-01 | — | Pending |
-| TBL-02 | — | Pending |
-| TBL-03 | — | Pending |
-| TBL-04 | — | Pending |
-| VIZ-01 | — | Pending |
-| VIZ-02 | — | Pending |
-| VIZ-03 | — | Pending |
-| PRT-01 | — | Pending |
-| PRT-02 | — | Pending |
-| PRT-03 | — | Pending |
-| PRT-04 | — | Pending |
-| HRD-01 | — | Pending |
-| HRD-02 | — | Pending |
-| HRD-03 | — | Pending |
-| HRD-04 | — | Pending |
+| ARD-01 | Phase 2 | Pending |
+| ARD-02 | Phase 2 | Pending |
+| ARD-03 | Phase 2 | Pending |
+| TBL-01 | Phase 3 | Pending |
+| TBL-02 | Phase 3 | Pending |
+| TBL-03 | Phase 3 | Pending |
+| TBL-04 | Phase 3 | Pending |
+| VIZ-01 | Phase 4 | Pending |
+| VIZ-02 | Phase 4 | Pending |
+| VIZ-03 | Phase 4 | Pending |
+| PRT-01 | Phase 2 | Pending |
+| PRT-02 | Phase 2 | Pending |
+| PRT-03 | Phase 2 | Pending |
+| PRT-04 | Phase 2 | Pending |
+| HRD-01 | Phase 1 | Pending |
+| HRD-02 | Phase 1 | Pending |
+| HRD-03 | Phase 1 | Pending |
+| HRD-04 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-07*
-*Last updated: 2026-02-07 after initial definition*
+*Last updated: 2026-02-07 after roadmap creation*
