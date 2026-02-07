@@ -364,9 +364,14 @@ expand_imputed_data <- function(reduced_data, original_data, vars) {
   stored_col_metadata <- attr(reduced_data, "rbmiUtils_col_metadata")
 
   if (!is.null(stored_col_names)) {
-    # Verify column names match (excluding IMPID which is added during expansion)
+    # Verify that all original_data columns appear in the expanded result.
+    # Note: imputed_data may have had extra columns not in original_data
+    # (e.g., derived columns added during imputation). These won't appear in
+    # the expanded result since expansion is built from original_data, so we
+    # only check columns that exist in both stored metadata AND original_data.
+    orig_cols <- names(original_data)
+    expected_cols <- intersect(setdiff(stored_col_names, "IMPID"), orig_cols)
     expanded_cols <- setdiff(names(result), "IMPID")
-    expected_cols <- setdiff(stored_col_names, "IMPID")
     col_name_diff <- setdiff(expected_cols, expanded_cols)
     if (length(col_name_diff) > 0) {
       cli::cli_abort(
@@ -398,8 +403,8 @@ expand_imputed_data <- function(reduced_data, original_data, vars) {
     if (length(type_mismatches) > 0) {
       cli::cli_abort(
         c(
-          "Round-trip integrity check failed: column type mismatch{?es}.",
-          "x" = "{type_mismatches}"
+          "Round-trip integrity check failed: column type mismatch.",
+          stats::setNames(type_mismatches, rep("x", length(type_mismatches)))
         ),
         class = "rbmiUtils_error_integrity"
       )

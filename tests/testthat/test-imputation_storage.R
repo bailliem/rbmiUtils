@@ -153,11 +153,11 @@ test_that("reduce_imputed_data errors on non-dataframe inputs", {
 
   expect_error(
     reduce_imputed_data("not a df", make_original_data(), vars),
-    "must be a data.frame"
+    class = "rbmiUtils_error_type"
   )
   expect_error(
     reduce_imputed_data(make_imputed_data(), "not a df", vars),
-    "must be a data.frame"
+    class = "rbmiUtils_error_type"
   )
 })
 
@@ -299,11 +299,11 @@ test_that("expand_imputed_data errors on non-dataframe inputs", {
 
   expect_error(
     expand_imputed_data("not a df", make_original_data(), vars),
-    "must be a data.frame"
+    class = "rbmiUtils_error_type"
   )
   expect_error(
     expand_imputed_data(reduced, "not a df", vars),
-    "must be a data.frame"
+    class = "rbmiUtils_error_type"
   )
 })
 
@@ -458,22 +458,22 @@ test_that("round-trip preserves factor levels and attributes", {
   expect_equal(attr(expanded$AVISIT, "my_custom_attr"), "test_value")
 })
 
-test_that("expand detects column name mismatch via digest metadata", {
+test_that("expand integrity check tolerates extra columns in imputed_data", {
+  # When imputed_data had columns not in original_data (e.g., derived columns),
+
+  # the integrity check should NOT error — only columns shared with original_data
+  # are verified.
   original <- make_original_data()
   imputed <- make_imputed_data()
+  imputed$EXTRA_DERIVED <- 999
   vars <- make_test_vars()
 
   reduced <- reduce_imputed_data(imputed, original, vars)
 
-  # Tamper with col_names to simulate a mismatch
-  attr(reduced, "rbmiUtils_col_names") <- c(
-    names(imputed), "EXTRA_COL_NOT_IN_DATA"
-  )
-
-  expect_error(
-    expand_imputed_data(reduced, original, vars),
-    class = "rbmiUtils_error_integrity"
-  )
+  # Stored col_names includes EXTRA_DERIVED, but original_data doesn't have it.
+  # The expand should succeed without integrity errors.
+  expanded <- expand_imputed_data(reduced, original, vars)
+  expect_equal(nrow(expanded), nrow(imputed))
 })
 
 test_that("expand detects column type mismatch via digest metadata", {
