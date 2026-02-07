@@ -85,74 +85,103 @@ analyse_mi_data <- function(
   ...
 ) {
   # Check for missing inputs
-  if (is.null(data)) stop("`data` cannot be NULL.", call. = FALSE)
+  if (is.null(data)) {
+    cli::cli_abort(
+      "{.arg data} cannot be NULL.",
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+    )
+  }
 
-  assertthat::assert_that(
-    is.data.frame(data),
-    msg = "`data` must be a data.frame"
-  )
+  if (!is.data.frame(data)) {
+    cli::cli_abort(
+      "{.arg data} must be a {.cls data.frame}, not {.cls {class(data)}}.",
+      class = c("rbmiUtils_error_type", "rbmiUtils_error")
+    )
+  }
 
   # check IMPID is in data
-  if (!"IMPID" %in% names(data))
-    stop(
-      "`data` must contain a variable `IMPID` to identify distinct imputation iterations.",
-      call. = FALSE
+  if (!"IMPID" %in% names(data)) {
+    cli::cli_abort(
+      "{.arg data} must contain an {.field IMPID} column to identify distinct imputation iterations.",
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
     )
+  }
 
-  if (is.null(vars)) stop("`vars` cannot be NULL. Specify key variables using `rbmi::set_vars()`.", call. = FALSE)
+  if (is.null(vars)) {
+    cli::cli_abort(
+      "{.arg vars} cannot be NULL. Specify key variables using {.fn rbmi::set_vars}.",
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+    )
+  }
 
-  assertthat::assert_that(
-    is.list(vars),
-    msg = "`vars` must be a list as returned by `rbmi::set_vars()`"
-  )
+  if (!is.list(vars)) {
+    cli::cli_abort(
+      "{.arg vars} must be a list as returned by {.fn rbmi::set_vars}, not {.cls {class(vars)}}.",
+      class = c("rbmiUtils_error_type", "rbmiUtils_error")
+    )
+  }
 
-  ## asset function
-  assertthat::assert_that(
-    is.function(fun),
-    msg = "`fun` must be a function"
-  )
+  ## check function
+  if (!is.function(fun)) {
+    cli::cli_abort(
+      "{.arg fun} must be a function, not {.cls {class(fun)}}.",
+      class = c("rbmiUtils_error_type", "rbmiUtils_error")
+    )
+  }
 
   ## check on delta
-  assertthat::assert_that(
-    is.null(delta) | is.data.frame(delta),
-    msg = "`delta` must be NULL or a data.frame"
-  )
+  if (!is.null(delta) && !is.data.frame(delta)) {
+    cli::cli_abort(
+      "{.arg delta} must be NULL or a {.cls data.frame}, not {.cls {class(delta)}}.",
+      class = c("rbmiUtils_error_type", "rbmiUtils_error")
+    )
+  }
 
   # Validate required vars fields
   required_vars <- c("subjid", "visit", "group", "outcome")
   missing_vars <- required_vars[!required_vars %in% names(vars) | sapply(vars[required_vars], is.null)]
   if (length(missing_vars) > 0) {
-    stop(sprintf(
-      "`vars` must specify: %s. Use `rbmi::set_vars()` to create a valid vars object.",
-      paste0("`", missing_vars, "`", collapse = ", ")
-    ), call. = FALSE)
+    cli::cli_abort(
+      "{.arg vars} must specify: {.field {missing_vars}}. Use {.fn rbmi::set_vars} to create a valid vars object.",
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+    )
   }
 
   # Check method is provided
   if (is.null(method)) {
-    stop("`method` cannot be NULL. Specify a method using `rbmi::method_bayes()` or similar.", call. = FALSE)
+    cli::cli_abort(
+      "{.arg method} cannot be NULL. Specify a method using {.fn rbmi::method_bayes} or similar.",
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+    )
   }
 
   # Check for empty data
   if (nrow(data) == 0) {
-    stop("`data` has no rows.", call. = FALSE)
+    cli::cli_abort(
+      "{.arg data} has no rows.",
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+    )
   }
 
   # Check for empty IMPID groups
   n_imps <- length(unique(data$IMPID))
   if (n_imps == 0) {
-    stop("`data` has no valid IMPID values.", call. = FALSE)
+    cli::cli_abort(
+      "{.arg data} has no valid IMPID values.",
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+    )
   }
 
-  # Extract expected number of samples from method
-  n_expected <- switch(
-    class(method)[[2]],
-    bayes = method$n_samples,
-    approxbayes = method$n_samples,
-    condmean = method$n_samples,
-    bmlmi = method$n_samples,
+  # Extract expected number of samples from method using inherits()
+  n_expected <- if (inherits(method, "bayes") || inherits(method, "approxbayes")) {
+    method$n_samples
+  } else if (inherits(method, "condmean")) {
+    method$n_samples
+  } else if (inherits(method, "bmlmi")) {
+    method$n_samples
+  } else {
     NULL
-  )
+  }
 
   # Check and filter IMPID values to match expected sample size
   unique_impids <- sort(unique(data$IMPID))
@@ -161,12 +190,8 @@ analyse_mi_data <- function(
   if (!is.null(n_expected) && n_impids != n_expected) {
     if (n_impids > n_expected) {
       # Filter to first n_expected imputations
-      warning(
-        sprintf(
-          "Data contains %d imputations but method expects %d. Using first %d imputations.",
-          n_impids, n_expected, n_expected
-        ),
-        call. = FALSE
+      cli::cli_warn(
+        "Data contains {n_impids} imputation{?s} but method expects {n_expected}. Using first {n_expected} imputation{?s}."
       )
       # Filter data to only include the first n_expected IMPID values
       keep_impids <- unique_impids[seq_len(n_expected)]
@@ -175,18 +200,15 @@ analyse_mi_data <- function(
       # Verify filtering worked
       n_after <- length(unique(data$IMPID))
       if (n_after != n_expected) {
-        stop(
-          sprintf("Internal error: filtering failed. Expected %d imputations, got %d", n_expected, n_after),
-          call. = FALSE
+        cli::cli_abort(
+          "Internal error: filtering failed. Expected {n_expected} imputations, got {n_after}.",
+          class = c("rbmiUtils_error_internal", "rbmiUtils_error")
         )
       }
     } else {
-      stop(
-        sprintf(
-          "Data contains %d imputations but method expects %d. Need more imputations.",
-          n_impids, n_expected
-        ),
-        call. = FALSE
+      cli::cli_abort(
+        "Data contains {n_impids} imputation{?s} but method expects {n_expected}. Need more imputations.",
+        class = c("rbmiUtils_error_validation", "rbmiUtils_error")
       )
     }
   }
@@ -198,13 +220,12 @@ analyse_mi_data <- function(
       vars$visit,
       "delta"
     )
-    assertthat::assert_that(
-      all(expected_vars %in% names(delta)),
-      msg = sprintf(
-        "The following variables must exist within `delta`: `%s`",
-        paste0(expected_vars, collapse = "`, `")
+    if (!all(expected_vars %in% names(delta))) {
+      cli::cli_abort(
+        "The following variables must exist within {.arg delta}: {.field {expected_vars}}.",
+        class = c("rbmiUtils_error_validation", "rbmiUtils_error")
       )
-    )
+    }
 
     ## apply delta to data set adding to outcome
     data <- data |>
@@ -248,11 +269,14 @@ analyse_mi_data <- function(
 #' Construct an rbmi `analysis` object
 #'
 #' @description
+#' `r lifecycle::badge("deprecated")`
+#'
 #' This is a helper function to create an analysis object that stores the
 #' results from multiple imputation analyses. It validates the results and
 #' ensures proper class assignment.
 #'
 #' This is a modification of the rbmi::as_analysis function.
+#' This function is deprecated and will be removed in a future version.
 #'
 #' @param results A list containing the analysis results for each imputation.
 #' @param method The method object used for the imputation.
@@ -261,6 +285,7 @@ analyse_mi_data <- function(
 #' @param fun_name The name of the analysis function (used for printing).
 #'
 #' @return An object of class `analysis` with the results and associated metadata.
+#' @keywords internal
 as_analysis2 <- function(
   results,
   method,
@@ -268,24 +293,38 @@ as_analysis2 <- function(
   fun = NULL,
   fun_name = NULL
 ) {
-  next_class <- switch(
-    class(method)[[2]],
-    bayes = "rubin",
-    approxbayes = "rubin",
-    condmean = ifelse(
-      method$type == "jackknife",
-      "jackknife",
-      "bootstrap"
-    ),
-    bmlmi = "bmlmi"
+  lifecycle::deprecate_warn(
+    "0.2.0",
+    "as_analysis2()",
+    details = "Internal helper will be removed. Use inherits()-based class detection directly."
   )
 
-  assertthat::assert_that(
-    is.list(results),
-    length(next_class) == 1,
-    is.character(next_class),
-    next_class %in% c("jackknife", "bootstrap", "rubin", "bmlmi")
-  )
+  next_class <- if (inherits(method, "bayes") || inherits(method, "approxbayes")) {
+    "rubin"
+  } else if (inherits(method, "condmean")) {
+    if (method$type == "jackknife") "jackknife" else "bootstrap"
+  } else if (inherits(method, "bmlmi")) {
+    "bmlmi"
+  } else {
+    cli::cli_abort(
+      "Unrecognized method class: {.cls {class(method)}}. Expected one of: bayes, approxbayes, condmean, bmlmi.",
+      class = c("rbmiUtils_error_dependency", "rbmiUtils_error")
+    )
+  }
+
+  if (!is.list(results)) {
+    cli::cli_abort(
+      "{.arg results} must be a list.",
+      class = c("rbmiUtils_error_type", "rbmiUtils_error")
+    )
+  }
+  if (length(next_class) != 1 || !is.character(next_class) ||
+      !next_class %in% c("jackknife", "bootstrap", "rubin", "bmlmi")) {
+    cli::cli_abort(
+      "Internal error: invalid pooling class {.val {next_class}}.",
+      class = c("rbmiUtils_error_internal", "rbmiUtils_error")
+    )
+  }
 
   x <- list(
     results = rbmi::as_class(results, c(next_class, "list")),
@@ -339,7 +378,17 @@ print.analysis <- function(x, ...) {
     cat("Delta adjustment: No\n")
   }
 
-  method_class <- class(x$method)[2]
+  method_class <- if (inherits(x$method, "bayes")) {
+    "bayes"
+  } else if (inherits(x$method, "approxbayes")) {
+    "approxbayes"
+  } else if (inherits(x$method, "condmean")) {
+    "condmean"
+  } else if (inherits(x$method, "bmlmi")) {
+    "bmlmi"
+  } else {
+    "unknown"
+  }
   cat("Method type:", method_class, "\n")
 
   # Show pooling class
@@ -397,7 +446,17 @@ summary.analysis <- function(object, ...) {
   }
 
   cat("\nMethod:\n")
-  method_class <- class(object$method)[2]
+  method_class <- if (inherits(object$method, "bayes")) {
+    "bayes"
+  } else if (inherits(object$method, "approxbayes")) {
+    "approxbayes"
+  } else if (inherits(object$method, "condmean")) {
+    "condmean"
+  } else if (inherits(object$method, "bmlmi")) {
+    "bmlmi"
+  } else {
+    "unknown"
+  }
   cat("  Type:", method_class, "\n")
 
   if (method_class %in% c("bayes", "approxbayes")) {
