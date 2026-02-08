@@ -37,16 +37,25 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 
 ### Active
 
-- [ ] Responder bar chart function (proportion responding by arm and visit)
-- [ ] Forest plot with sensitivity analysis overlay
-- [ ] Responder chart with treatment difference annotations
-- [ ] Column formatting controls for gt theming
-- [ ] Sensitivity analysis comparison table
-- [ ] MI-specific metadata in ARD (FMI, pooling method)
-- [ ] as_gt() / as_gtsummary() S3 methods for pool objects
-- [ ] describe_draws() helper for draws objects
-- [ ] describe_imputation() helper for impute objects
-- [ ] Harden data preparation functions (validation gaps, factor handling)
+- [ ] Harden data preparation functions (validation gaps, factor handling, edge cases)
+- [ ] End-to-end clinical trial analysis vignette (rbmi → rbmiUtils → table + forest plot)
+- [ ] README enhancement with visual teaser and pipeline overview
+- [ ] Full pkgdown site polish (navbar, grouped references, hex logo, social cards, footer)
+- [ ] Rendered examples for plot_forest() and efficacy_table()
+- [ ] NEWS.md version history
+- [ ] Inline cross-references to rbmi and beeca in vignettes
+
+### Deferred (v3+)
+
+- Responder bar chart function (proportion responding by arm and visit)
+- Forest plot with sensitivity analysis overlay
+- Responder chart with treatment difference annotations
+- Column formatting controls for gt theming
+- Sensitivity analysis comparison table
+- MI-specific metadata in ARD (FMI, pooling method)
+- as_gt() / as_gtsummary() S3 methods for pool objects
+- describe_draws() helper for draws objects
+- describe_imputation() helper for impute objects
 
 ### Out of Scope
 
@@ -66,6 +75,8 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 - **Dependencies:** cli, lifecycle as Imports; cards, gt, ggplot2, patchwork as Suggests with dependency guards
 - **cards/cardx ecosystem:** pool_to_ard() produces valid ARD passing cards::check_ard_structure()
 - **Known gaps:** No validation of delta data subject-visit uniqueness; silent defaults for vars$strategy; no vignettes for efficacy_table/plot_forest
+- **Documentation:** 3 vignettes (analysis, data prep, storage); README with basic example; minimal pkgdown config; no hex logo; no NEWS.md
+- **Site:** pkgdown deployed at openpharma.github.io/rbmiUtils but no function grouping, navbar, or visual polish
 
 ## Constraints
 
@@ -88,5 +99,16 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 | Okabe-Ito palette for LSM colors | Maximally distinguishable for color vision deficiency | ✓ Good — accessible default |
 | Filled vs open circles for significance | Clear visual distinction without relying on color alone | ✓ Good — accessible |
 
+## Current Milestone: v2 Documentation & Hardening
+
+**Goal:** Make rbmiUtils discoverable and trustworthy — polished site, end-to-end examples, and hardened data prep functions that give clear errors on bad input.
+
+**Target features:**
+- Harden data preparation functions (interaction term validation, factor handling, edge cases, batched warnings)
+- End-to-end clinical trial vignette showing full pipeline with rbmi/beeca integration
+- README visual teaser with table and forest plot output
+- Full pkgdown site polish (hex logo, custom navbar, grouped references, social cards)
+- NEWS.md, rendered function examples, inline cross-references to rbmi/beeca
+
 ---
-*Last updated: 2026-02-08 after v1 milestone*
+*Last updated: 2026-02-08 after v2 milestone start*
