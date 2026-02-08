@@ -1,8 +1,8 @@
-# rbmiUtils — Reporting & Robustness Milestone
+# rbmiUtils — Reporting & Robustness
 
 ## What This Is
 
-An R package extending rbmi (reference-based multiple imputation) for clinical trial analysis workflows. rbmiUtils provides utilities for data preparation, analysis execution across imputations, results tidying, and formatting. This milestone adds a reporting layer that bridges rbmi results into the cards/ARD ecosystem for clinical trial table and figure generation, improves print/summary methods for key objects, refactors the analyse_mi_data() wrapper, and hardens all recent additions for production use.
+An R package extending rbmi (reference-based multiple imputation) for clinical trial analysis workflows. rbmiUtils provides utilities for data preparation, analysis execution across imputations, results tidying, formatting, and a reporting layer that bridges rbmi results into publication-ready regulatory tables and forest plots via the pharmaverse ARD ecosystem.
 
 ## Core Value
 
@@ -25,43 +25,52 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 - ✓ Result combination and extraction (combine_results, extract_trt_effects, extract_lsm) — existing
 - ✓ Imputation storage optimization (reduce_imputed_data, expand_imputed_data) — existing
 - ✓ IMPID creation for non-rbmi imputations (create_impid) — existing
+- ✓ Convert tidy pool results to ARD format (pool_to_ard) — v1
+- ✓ Generate efficacy summary tables using gt (efficacy_table) — v1
+- ✓ Create forest plot function (plot_forest) — v1
+- ✓ Improve print/summary methods for pool objects — v1
+- ✓ Improve print/summary methods for analysis class — v1
+- ✓ Refactor analyse_mi_data() to use inherits() and deprecate internal helpers — v1
+- ✓ Harden gcomp functions (input validation, beeca output pinning) — v1
+- ✓ Harden storage functions (round-trip digest verification) — v1
+- ✓ Harden tidier functions (regex-based parameter parsing) — v1
 
 ### Active
 
-- [ ] Convert tidy pool results to ARD format (cards package)
-- [ ] Generate efficacy summary tables using gtsummary + gt (regulatory style)
-- [ ] Create forest plot function (treatment effects across visits/subgroups with CIs)
-- [ ] Create responder bar chart function (proportion responding by arm and visit)
-- [ ] Improve print/summary methods for rbmi pool objects
-- [ ] Improve print/summary methods for rbmi draws/impute objects
-- [ ] Improve print/summary methods for the analysis class
-- [ ] Refactor analyse_mi_data() to wrap rbmi::analyse() instead of reimplementing internals
-- [ ] Harden gcomp functions (edge cases, input validation, error messages)
-- [ ] Harden storage functions (reduce/expand — type coercion, attribute preservation)
+- [ ] Responder bar chart function (proportion responding by arm and visit)
+- [ ] Forest plot with sensitivity analysis overlay
+- [ ] Responder chart with treatment difference annotations
+- [ ] Column formatting controls for gt theming
+- [ ] Sensitivity analysis comparison table
+- [ ] MI-specific metadata in ARD (FMI, pooling method)
+- [ ] as_gt() / as_gtsummary() S3 methods for pool objects
+- [ ] describe_draws() helper for draws objects
+- [ ] describe_imputation() helper for impute objects
 - [ ] Harden data preparation functions (validation gaps, factor handling)
-- [ ] Harden tidier/formatter functions (parameter parsing fragility, edge cases)
 
 ### Out of Scope
 
 - Interactive/Shiny dashboards — focus is on static report generation
-- Word/PowerPoint output via flextable — gt + HTML/PDF is sufficient for this milestone
+- Word/PowerPoint output via flextable — gt + HTML/PDF is sufficient
 - Custom pooling methods — use rbmi's built-in pooling
-- Spaghetti/trajectory plots — not requested for this milestone
+- Spaghetti/trajectory plots — not requested
 - Safety tables (AE listings) — outside rbmi efficacy workflow
+- rtables/tern integration — different ecosystem, incompatible with ARD paradigm
 
 ## Context
 
-- **Existing codebase:** 23 exported functions across 6 layers (data prep, analysis, utilities, tidying, formatting, storage)
-- **Test coverage:** 9 test files with ~159 test blocks, good coverage of core functions
-- **Known fragility:** tidy_pool_obj() parameter parsing relies on "_" separator; beeca output format coupling; rbmi class hierarchy dependency not version-pinned
-- **Known gaps:** No validation of delta data subject-visit uniqueness; silent defaults for vars$strategy; formula construction without input sanitization
-- **cards/cardx ecosystem:** Analysis Results Datasets (ARD) are the pharmaverse standard for representing analysis results as structured data frames. cardx provides extensions for common statistical analyses. gtsummary consumes ARDs to produce tables.
-- **rbmi analyse() wrapper:** Current analyse_mi_data() contains internal helper functions (extract_covariates2, as_simple_formula2, as_analysis2) copied from rbmi. Wrapping rbmi::analyse() directly would reduce maintenance burden and drift risk.
+- **Shipped:** v1 Reporting & Robustness (2026-02-08)
+- **Codebase:** 28 exported functions across 7 layers (data prep, analysis, utilities, tidying, formatting, storage, reporting)
+- **Source code:** 3,976 lines R, 4,916 lines tests
+- **Test coverage:** 14 test files, comprehensive coverage of all functions
+- **Dependencies:** cli, lifecycle as Imports; cards, gt, ggplot2, patchwork as Suggests with dependency guards
+- **cards/cardx ecosystem:** pool_to_ard() produces valid ARD passing cards::check_ard_structure()
+- **Known gaps:** No validation of delta data subject-visit uniqueness; silent defaults for vars$strategy; no vignettes for efficacy_table/plot_forest
 
 ## Constraints
 
 - **Tech stack**: R package (CRAN-compatible), must pass R CMD check on macOS/Windows/Ubuntu
-- **Dependencies**: cards, cardx, gtsummary, gt as Suggests vs Imports — to be decided during planning
+- **Dependencies**: cards, gt, ggplot2, patchwork as Suggests (guarded with requireNamespace)
 - **Compatibility**: rbmi >= 1.4, R >= 4.1
 - **Testing**: testthat edition 3, must maintain existing test coverage and add new tests for all additions
 - **CI/CD**: GitHub Actions (R-CMD-check, test-coverage, pkgdown)
@@ -70,11 +79,14 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| ARD via cards (not custom format) | Pharmaverse standard, flows into gtsummary ecosystem | — Pending |
-| gtsummary + gt for tables (not flextable) | Natural fit with ARD pipeline, HTML/PDF output sufficient | — Pending |
-| ggplot2 for figures | Already suggested dependency, standard for R publication figures | — Pending |
-| Wrap rbmi::analyse() (not reimplement) | Reduces drift risk, maintenance burden | — Pending |
-| Dependency classification (Suggests vs Imports) | Affects installation footprint — defer to planning phase | — Pending |
+| ARD via cards (not custom format) | Pharmaverse standard, flows into gtsummary ecosystem | ✓ Good — passes check_ard_structure() |
+| gt direct for tables (not gtsummary layer) | Custom table layout needs gt directly; gtsummary is for regression tables | ✓ Good — cleaner API |
+| ggplot2 + patchwork for figures | Three-panel composition needs patchwork; ggplot2 standard for R publication figures | ✓ Good — customizable via & theme() |
+| inherits() + deprecation (not full rbmi::analyse wrapper) | Achieves stability without reimplementation risk | ✓ Good — reduced maintenance burden |
+| All reporting deps as Suggests | Keeps core package lightweight; dependency guards prevent installation failures | ✓ Good — clean install path |
+| Two-pass regex parsing for parameters | Single regex can't handle both ANCOVA and gcomp formats cleanly | ✓ Good — handles underscores correctly |
+| Okabe-Ito palette for LSM colors | Maximally distinguishable for color vision deficiency | ✓ Good — accessible default |
+| Filled vs open circles for significance | Clear visual distinction without relying on color alone | ✓ Good — accessible |
 
 ---
-*Last updated: 2026-02-07 after initialization*
+*Last updated: 2026-02-08 after v1 milestone*
