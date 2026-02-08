@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation Hardening** - Fix fragile parameter parsing, wrap rbmi::analyse(), harden gcomp and storage functions
 - [x] **Phase 2: Print/Summary & ARD Conversion** - Improve console output for key objects and build ARD interchange layer
-- [ ] **Phase 3: Efficacy Tables** - Generate regulatory-style efficacy summary tables via gtsummary + gt
+- [x] **Phase 3: Efficacy Tables** - Generate regulatory-style efficacy summary tables via gtsummary + gt
 - [ ] **Phase 4: Visualization** - Forest plot function for treatment effects across visits
 
 ## Phase Details
@@ -65,8 +65,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Create efficacy_table() function with gt rendering and tests (TBL-01, TBL-02, TBL-03, TBL-04)
-- [ ] 03-02-PLAN.md — Add edge case handling, visit ordering, and integration tests
+- [x] 03-01-PLAN.md — Create efficacy_table() function with gt rendering and tests (TBL-01, TBL-02, TBL-03, TBL-04)
+- [x] 03-02-PLAN.md — Add edge case handling, visit ordering, and integration tests
 
 ### Phase 4: Visualization
 **Goal**: Users produce publication-quality forest plots of treatment effects across visits from rbmi pool objects
@@ -91,5 +91,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Foundation Hardening | 3/3 | Complete | 2026-02-07 |
 | 2. Print/Summary & ARD Conversion | 3/3 | Complete | 2026-02-08 |
-| 3. Efficacy Tables | 0/2 | Not started | - |
+| 3. Efficacy Tables | 2/2 | Complete | 2026-02-08 |
 | 4. Visualization | 0/1 | Not started | - |

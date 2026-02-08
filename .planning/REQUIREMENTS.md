@@ -13,10 +13,10 @@
 
 ### Efficacy Tables
 
-- [ ] **TBL-01**: Generate regulatory-style efficacy summary table (LS means by arm, treatment difference, CIs, p-values by visit)
-- [ ] **TBL-02**: Table renders via gtsummary + gt with HTML/PDF output
-- [ ] **TBL-03**: One-call `efficacy_table(pool_obj)` from pool object directly to gt table with opinionated defaults
-- [ ] **TBL-04**: Table includes footnotes (number of imputations, pooling method, model description)
+- [x] **TBL-01**: Generate regulatory-style efficacy summary table (LS means by arm, treatment difference, CIs, p-values by visit)
+- [x] **TBL-02**: Table renders via gtsummary + gt with HTML/PDF output
+- [x] **TBL-03**: One-call `efficacy_table(pool_obj)` from pool object directly to gt table with opinionated defaults
+- [x] **TBL-04**: Table includes footnotes (number of imputations, pooling method, model description)
 
 ### Visualization
 
@@ -81,10 +81,10 @@
 | ARD-01 | Phase 2 | Complete |
 | ARD-02 | Phase 2 | Complete |
 | ARD-03 | Phase 2 | Complete |
-| TBL-01 | Phase 3 | Pending |
-| TBL-02 | Phase 3 | Pending |
-| TBL-03 | Phase 3 | Pending |
-| TBL-04 | Phase 3 | Pending |
+| TBL-01 | Phase 3 | Complete |
+| TBL-02 | Phase 3 | Complete |
+| TBL-03 | Phase 3 | Complete |
+| TBL-04 | Phase 3 | Complete |
 | VIZ-01 | Phase 4 | Pending |
 | VIZ-02 | Phase 4 | Pending |
 | VIZ-03 | Phase 4 | Pending |
@@ -104,4 +104,4 @@
 
 ---
 *Requirements defined: 2026-02-07*
-*Last updated: 2026-02-08 after Phase 2 completion*
+*Last updated: 2026-02-08 after Phase 3 completion*
