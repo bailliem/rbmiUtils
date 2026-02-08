@@ -24,6 +24,7 @@ Suggests:
     ggplot2,
     gt,
     knitr,
+    patchwork,
     readr,
     rmarkdown,
     rstan,
