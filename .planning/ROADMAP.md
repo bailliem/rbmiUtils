@@ -46,12 +46,12 @@ Plans:
   3. Printing an analysis object shows parameter count, visits covered, and analysis function name
   4. `pool_to_ard()` converts a pool object to a valid cards ARD data frame containing estimate, SE, CI bounds, and p-value per parameter
   5. ARD output preserves visit, parameter type (trt/lsm), and arm as grouping columns, and passes `cards::check_ard_structure()` validation
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md — Create print.pool and summary.pool S3 methods with cli formatting (PRT-01, PRT-02)
+- [ ] 02-02-PLAN.md — Modernize print.analysis and summary.analysis with cli formatting (PRT-03, PRT-04)
+- [ ] 02-03-PLAN.md — Create pool_to_ard() ARD conversion function (ARD-01, ARD-02, ARD-03)
 
 ### Phase 3: Efficacy Tables
 **Goal**: Users produce regulatory-style efficacy summary tables directly from rbmi pool objects with a single function call
@@ -90,6 +90,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation Hardening | 3/3 | Complete | 2026-02-07 |
-| 2. Print/Summary & ARD Conversion | 0/3 | Not started | - |
+| 2. Print/Summary & ARD Conversion | 0/3 | Planned | - |
 | 3. Efficacy Tables | 0/2 | Not started | - |
 | 4. Visualization | 0/1 | Not started | - |
