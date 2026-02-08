@@ -216,11 +216,11 @@ validate_data <- function(data, vars, data_ice = NULL) {
   }
 
   if (length(all_na_covars) > 0) {
+    n_na_cov <- length(all_na_covars)
     cli::cli_warn(
       c(
-        "{length(all_na_covars)} covariate{?s} {?is/are} entirely NA and will be excluded from validation.",
-        "i" = "Column{?s}: {.field {all_na_covars}}.",
-        "i" = "Consider removing {?this/these} column{?s} from {.arg vars$covariates} or investigating why all values are missing."
+        "{n_na_cov} covariate column{?s} entirely NA -- excluded from validation: {.field {all_na_covars}}.",
+        "i" = "Consider removing from {.arg vars$covariates} or investigating why all values are missing."
       ),
       class = c("rbmiUtils_warning_coercion", "rbmiUtils_warning")
     )
@@ -310,7 +310,7 @@ validate_data <- function(data, vars, data_ice = NULL) {
 
   # --- Report results ---
   if (length(issues) > 0) {
-    bullets <- setNames(issues, rep("x", length(issues)))
+    bullets <- stats::setNames(issues, rep("x", length(issues)))
     cli::cli_abort(
       c("Data validation failed.", bullets),
       class = c("rbmiUtils_error_validation", "rbmiUtils_error")
