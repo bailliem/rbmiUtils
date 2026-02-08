@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-07)
 Phase: 2 of 4 (Print/Summary & ARD Conversion)
 Plan: 1 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-08 -- Completed 02-02-PLAN.md
+Last activity: 2026-02-08 -- Completed 02-01-PLAN.md
 
 Progress: [####......] 44% (4/9 plans)
 
@@ -31,7 +31,7 @@ Progress: [####......] 44% (4/9 plans)
 | 2. Print/Summary & ARD | 1/3 | ~6 min | ~6 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (~9 min), 01-02 (~5 min), 01-03 (~8 min), 02-02 (~6 min)
+- Last 5 plans: 01-01 (~9 min), 01-02 (~5 min), 01-03 (~8 min), 02-01 (~6 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -50,7 +50,7 @@ Recent decisions affecting current work:
 - 01-01-D3: Mock pool objects require rbmi internal $pars list structure
 - 01-02-D1: Suppress lifecycle deprecation warning when as_analysis2() called internally
 - 01-03-D1: Integrity check only verifies columns present in both stored metadata AND original_data
-- 02-02-D1: Use capture.output(type='message') for testing cli output since cli writes to message connection in non-interactive sessions
+- 02-01-D1: cli output captured via withCallingHandlers message handler in tests (cli writes to message connection in non-interactive sessions)
 
 ### Pending Todos
 
@@ -64,5 +64,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-08
-Stopped at: Completed 02-02-PLAN.md
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
