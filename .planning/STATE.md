@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-08)
 
 **Core value:** Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures
-**Current focus:** Phase 6 - Documentation (2 of 3 plans complete)
+**Current focus:** Phase 6 - Documentation -- COMPLETE
 
 ## Current Position
 
-Phase: 6 of 7 (Documentation)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-08 -- Completed 06-01-PLAN.md (documentation images and README)
+Phase: 6 of 7 (Documentation) -- COMPLETE
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-08 -- Completed 06-03-PLAN.md (NEWS.md and cross-references)
 
-Progress: [█████████░] 93% (5/10 v2 plans, 13/14 total)
+Progress: [██████████] 100% (6/10 v2 plans, 14/14 total defined)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13 (9 v1 + 5 v2 -- 06-01 executed out of order after 06-02)
+- Total plans completed: 14 (9 v1 + 6 v2 -- 06-01/02/03 executed in parallel)
 - Average duration: ~25 min (v1), ~5 min (v2 so far)
-- Total execution time: ~4.5 hours (v1) + ~25 min (v2)
+- Total execution time: ~4.5 hours (v1) + ~33 min (v2)
 
 **By Phase:**
 
@@ -32,7 +32,7 @@ Progress: [█████████░] 93% (5/10 v2 plans, 13/14 total)
 | 3 | 2 | ~60 min | ~30 min |
 | 4 | 2 | ~60 min | ~30 min |
 | 5 | 2/2 | ~12 min | ~6 min |
-| 6 | 2/3 | ~13 min | ~5 min |
+| 6 | 3/3 | ~21 min | ~7 min |
 
 *Updated after each plan completion*
 
@@ -55,6 +55,9 @@ All v1 decisions resolved with outcomes documented.
 | D-06-02-01 | Tutorial tone for pipeline vignette | analyse2 is the reference; pipeline.Rmd is the getting-started guide |
 | D-06-02-02 | ADMI for binary appendix (skip second draws()) | Keeps vignette build time under 30s total |
 | D-06-02-03 | Exclude prepare_data_ice from pipeline vignette | ADEFF simple pipeline doesn't use ICE; linked to data-prep vignette |
+| D-06-03-01 | NEWS.md organized by version (0.2.0, 0.1.0) | Tidyverse convention for pkgdown::build_news() rendering |
+| D-06-03-02 | Old 0.1.4-0.1.8 consolidated into 0.1.0 Previous Releases | Pre-release dev versions, not actual releases |
+| D-06-03-03 | Inline hyperlinks in vignette prose, not callout boxes | Natural reading flow, avoids visual clutter |
 
 ### Pending Todos
 
@@ -67,5 +70,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-08
-Stopped at: Completed 06-01-PLAN.md (documentation images and README)
+Stopped at: Completed 06-03-PLAN.md (Phase 6 complete)
 Resume file: None
