@@ -1,0 +1,205 @@
+#' Create Regulatory-Style Efficacy Summary Table
+#'
+#' Takes an rbmi pool object and produces a publication-ready gt table in the
+#' style of CDISC/ICH Table 14.2.x. The table displays least squares means by
+#' treatment arm, treatment differences, confidence intervals, and p-values,
+#' organized by visit row groups.
+#'
+#' @param pool_obj A pooled analysis object of class `"pool"`, typically
+#'   obtained from [rbmi::pool()] after calling [analyse_mi_data()].
+#' @param title Optional character string for the table title.
+#' @param subtitle Optional character string for the table subtitle.
+#' @param digits Integer. Number of decimal places for estimates and standard
+#'   errors. Default is 2.
+#' @param ci_level Numeric. Confidence level for CI column labeling. If `NULL`
+#'   (the default), extracted from `pool_obj$conf.level`. Falls back to 0.95 if
+#'   neither is available.
+#' @param arm_labels Named character vector with elements `"ref"` and `"alt"`
+#'   providing custom labels for the reference and treatment arms. If `NULL`
+#'   (the default), uses `"Reference"` and `"Treatment"`.
+#' @param pval_digits Integer. Number of decimal places for p-values. Default
+#'   is 3.
+#' @param pval_threshold Numeric. P-values below this threshold are displayed
+#'   as "< threshold". Default is 0.001.
+#' @param ... Additional arguments passed to [gt::gt()].
+#'
+#' @return A gt table object of class `gt_tbl`.
+#'
+#' @details
+#' This function assumes a single-parameter-per-visit pool object (the standard
+#' output from an rbmi ANCOVA or MMRM pipeline). It internally calls
+#' [tidy_pool_obj()] to parse the pool object, then constructs the gt table.
+#'
+#' **Arm labels:** Use the `arm_labels` parameter to customize arm names in the
+#' table. For example, `arm_labels = c(ref = "Placebo", alt = "Drug A")` will
+#' display "LS Mean (Placebo)" and "LS Mean (Drug A)" instead of the defaults.
+#'
+#' **Customization:** The returned gt object can be further customized using
+#' standard gt piping, e.g., `efficacy_table(pool_obj) |> gt::tab_options(...)`.
+#'
+#' @seealso
+#' * [tidy_pool_obj()] for the underlying data transformation
+#' * [format_pvalue()] for p-value formatting rules
+#' * [rbmi::pool()] to create pool objects
+#'
+#' @examples
+#' \donttest{
+#' if (requireNamespace("gt", quietly = TRUE)) {
+#'   # After running an rbmi analysis pipeline:
+#'   # pool_obj <- rbmi::pool(analysis_obj)
+#'   # tbl <- efficacy_table(pool_obj)
+#'   # tbl  # renders in viewer
+#'   #
+#'   # With custom labels:
+#'   # efficacy_table(pool_obj,
+#'   #   title = "Table 14.2.1",
+#'   #   subtitle = "ANCOVA of Change from Baseline",
+#'   #   arm_labels = c(ref = "Placebo", alt = "Drug A")
+#'   # )
+#' }
+#' }
+#'
+#' @export
+efficacy_table <- function(
+    pool_obj,
+    title = NULL,
+    subtitle = NULL,
+    digits = 2,
+    ci_level = NULL,
+    arm_labels = NULL,
+    pval_digits = 3,
+    pval_threshold = 0.001,
+    ...
+) {
+
+  # --- Dependency check ---
+  if (!is_gt_available()) {
+    cli::cli_abort(
+      c(
+        "Package {.pkg gt} is required for efficacy tables.",
+        "i" = "Install with {.code install.packages(\"gt\")}."
+      ),
+      class = c("rbmiUtils_error_dependency", "rbmiUtils_error")
+    )
+  }
+
+  # --- Input validation ---
+  if (!inherits(pool_obj, "pool")) {
+    cli::cli_abort(
+      "Input {.arg pool_obj} must be of class {.cls pool}, not {.cls {class(pool_obj)}}.",
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+    )
+  }
+
+  # --- Step A: Metadata extraction ---
+  if (is.null(ci_level)) {
+    ci_level <- pool_obj$conf.level %||% 0.95
+  }
+
+  method <- pool_obj$method %||% "unknown"
+  n_imputations <- pool_obj$N
+
+  # --- Step B: Data preparation ---
+  tidy_df <- tidy_pool_obj(pool_obj)
+
+  # Clean visit labels: underscore -> space, title case
+  tidy_df$visit_label <- tools::toTitleCase(gsub("_", " ", tidy_df$visit))
+
+  # Preserve visit ordering from pool object
+  visit_levels <- unique(tidy_df$visit_label)
+  tidy_df$visit_label <- factor(tidy_df$visit_label, levels = visit_levels)
+
+  # Arm labels
+  ref_label <- if (!is.null(arm_labels) && "ref" %in% names(arm_labels)) {
+    arm_labels[["ref"]]
+  } else {
+    "Reference"
+  }
+  alt_label <- if (!is.null(arm_labels) && "alt" %in% names(arm_labels)) {
+    arm_labels[["alt"]]
+  } else {
+    "Treatment"
+  }
+
+  # Row labels and ordering
+  tidy_df$row_label <- dplyr::case_when(
+    tidy_df$parameter_type == "lsm" & tidy_df$lsm_type == "ref" ~
+      paste0("LS Mean (", ref_label, ")"),
+    tidy_df$parameter_type == "lsm" & tidy_df$lsm_type == "alt" ~
+      paste0("LS Mean (", alt_label, ")"),
+    tidy_df$parameter_type == "trt" ~ "Treatment Difference",
+    TRUE ~ tidy_df$parameter
+  )
+
+  tidy_df$row_order <- dplyr::case_when(
+    tidy_df$parameter_type == "lsm" & tidy_df$lsm_type == "ref" ~ 1L,
+    tidy_df$parameter_type == "lsm" & tidy_df$lsm_type == "alt" ~ 2L,
+    tidy_df$parameter_type == "trt" ~ 3L,
+    TRUE ~ 4L
+  )
+
+  # CI text column
+  tidy_df$ci_text <- sprintf(
+    "(%s, %s)",
+    formatC(tidy_df$lci, format = "f", digits = digits),
+    formatC(tidy_df$uci, format = "f", digits = digits)
+  )
+
+  # P-value text column: em dash for LSM rows, formatted for treatment rows
+  tidy_df$pval_text <- ifelse(
+    is.na(tidy_df$pval),
+    "\u2014",
+    format_pvalue(tidy_df$pval, digits = pval_digits, threshold = pval_threshold)
+  )
+
+  # Sort and select
+  tidy_df <- tidy_df[order(tidy_df$visit_label, tidy_df$row_order), ]
+
+  table_df <- tidy_df[, c("visit_label", "row_label", "est", "se",
+                           "ci_text", "pval_text")]
+
+  # --- Step C: gt table construction ---
+  ci_label <- paste0(ci_level * 100, "% CI")
+
+  tbl <- gt::gt(table_df, rowname_col = "row_label",
+                groupname_col = "visit_label", ...)
+
+  tbl <- gt::fmt_number(tbl, columns = c("est", "se"), decimals = digits)
+
+  tbl <- gt::cols_label(
+    tbl,
+    est = "Estimate",
+    se = "Std. Error",
+    ci_text = ci_label,
+    pval_text = "P-value"
+  )
+
+  tbl <- gt::cols_align(tbl, align = "center", columns = dplyr::everything())
+
+  tbl <- gt::opt_align_table_header(tbl, align = "left")
+
+  # Title and subtitle
+  if (!is.null(title) || !is.null(subtitle)) {
+    tbl <- gt::tab_header(tbl, title = title, subtitle = subtitle)
+  }
+
+  # Footnotes (source notes)
+  tbl <- gt::tab_source_note(tbl, paste("Pooling method:", method))
+  tbl <- gt::tab_source_note(tbl, paste("Number of imputations:", n_imputations))
+  tbl <- gt::tab_source_note(tbl, paste0("Confidence level: ", ci_level * 100, "%"))
+
+  tbl
+}
+
+
+#' Check if gt package is available
+#'
+#' Internal helper extracted for testability. Wraps
+#' `requireNamespace("gt", quietly = TRUE)`.
+#'
+#' @return Logical scalar.
+#' @keywords internal
+#' @noRd
+is_gt_available <- function() {
+  requireNamespace("gt", quietly = TRUE)
+}
