@@ -13,7 +13,7 @@ This roadmap delivers a reporting layer for rbmiUtils that bridges rbmi pooled r
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation Hardening** - Fix fragile parameter parsing, wrap rbmi::analyse(), harden gcomp and storage functions
-- [ ] **Phase 2: Print/Summary & ARD Conversion** - Improve console output for key objects and build ARD interchange layer
+- [x] **Phase 2: Print/Summary & ARD Conversion** - Improve console output for key objects and build ARD interchange layer
 - [ ] **Phase 3: Efficacy Tables** - Generate regulatory-style efficacy summary tables via gtsummary + gt
 - [ ] **Phase 4: Visualization** - Forest plot function for treatment effects across visits
 
@@ -49,9 +49,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Create print.pool and summary.pool S3 methods with cli formatting (PRT-01, PRT-02)
-- [ ] 02-02-PLAN.md — Modernize print.analysis and summary.analysis with cli formatting (PRT-03, PRT-04)
-- [ ] 02-03-PLAN.md — Create pool_to_ard() ARD conversion function (ARD-01, ARD-02, ARD-03)
+- [x] 02-01-PLAN.md — Create print.pool and summary.pool S3 methods with cli formatting (PRT-01, PRT-02)
+- [x] 02-02-PLAN.md — Modernize print.analysis and summary.analysis with cli formatting (PRT-03, PRT-04)
+- [x] 02-03-PLAN.md — Create pool_to_ard() ARD conversion function (ARD-01, ARD-02, ARD-03)
 
 ### Phase 3: Efficacy Tables
 **Goal**: Users produce regulatory-style efficacy summary tables directly from rbmi pool objects with a single function call
@@ -90,6 +90,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation Hardening | 3/3 | Complete | 2026-02-07 |
-| 2. Print/Summary & ARD Conversion | 0/3 | Planned | - |
+| 2. Print/Summary & ARD Conversion | 3/3 | Complete | 2026-02-08 |
 | 3. Efficacy Tables | 0/2 | Not started | - |
 | 4. Visualization | 0/1 | Not started | - |
