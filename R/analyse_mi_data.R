@@ -370,17 +370,15 @@ as_analysis2 <- function(
 #'
 #' @export
 print.analysis <- function(x, ...) {
-  cat("Analysis object from rbmiUtils\n")
-  cat("-------------------------------\n")
-  cat("Number of imputations:", length(x$results), "\n")
-  cat("Analysis function:", x$fun_name, "\n")
+  cli::cli_h1("Analysis Object")
 
-  if (!is.null(x$delta)) {
-    cat("Delta adjustment: Yes\n")
-  } else {
-    cat("Delta adjustment: No\n")
-  }
+  n_imp <- length(x$results)
+  fun_name <- x$fun_name %||% "<unknown>"
+  cli::cli_text("{n_imp} imputation{?s} analysed with {.fn {fun_name}}")
 
+  cli::cli_rule()
+
+  # Method detection (inherits-based, hardened in 01-02)
   method_class <- if (inherits(x$method, "bayes")) {
     "bayes"
   } else if (inherits(x$method, "approxbayes")) {
@@ -392,13 +390,30 @@ print.analysis <- function(x, ...) {
   } else {
     "unknown"
   }
-  cat("Method type:", method_class, "\n")
 
-  # Show pooling class
   result_class <- class(x$results)[1]
-  cat("Pooling method:", result_class, "\n")
+  delta_text <- if (!is.null(x$delta)) "Applied" else "None"
 
-  cat("\nUse `rbmi::pool()` to obtain pooled estimates.\n")
+  cli::cli_text("{.field Method}: {method_class}")
+  cli::cli_text("{.field Pooling}: {result_class}")
+  cli::cli_text("{.field Delta}: {delta_text}")
+
+
+  # Parameter count and visit info (PRT-03)
+  if (length(x$results) > 0 && is.list(x$results[[1]]) &&
+      !is.null(names(x$results[[1]]))) {
+    param_names <- names(x$results[[1]])
+    n_params <- length(param_names)
+    cli::cli_text("{.field Parameters}: {n_params}")
+
+    # Extract visit names from parameter names
+    visits <- unique(sub("^(trt|lsm_ref|lsm_alt)_", "", param_names))
+    visits_text <- paste(visits, collapse = ", ")
+    cli::cli_text("{.field Visits}: {visits_text}")
+  }
+
+  cli::cli_text("")
+  cli::cli_text("Next: {.code pool_obj <- rbmi::pool(analysis_obj)}")
 
   invisible(x)
 }
@@ -409,6 +424,8 @@ print.analysis <- function(x, ...) {
 #' Provides a detailed summary of an analysis object from [analyse_mi_data()].
 #'
 #' @param object An object of class `analysis`.
+#' @param n_preview Maximum number of parameters to show in the preview table.
+#'   Defaults to 5.
 #' @param ... Additional arguments (currently unused).
 #'
 #' @return A list containing summary information (invisibly).
@@ -431,24 +448,26 @@ print.analysis <- function(x, ...) {
 #' }
 #'
 #' @export
-summary.analysis <- function(object, ...) {
-  cat("Analysis Object Summary\n")
-  cat("=======================\n\n")
+summary.analysis <- function(object, n_preview = 5, ...) {
+  cli::cli_h1("Analysis Object Summary")
 
-  cat("Imputations:\n")
-  cat("  Number of imputations:", length(object$results), "\n")
+  # Imputations section
+  cli::cli_h2("Imputations")
+  n_imp <- length(object$results)
+  cli::cli_text("{.field Count}: {n_imp}")
 
-  cat("\nAnalysis:\n")
-  cat("  Function:", object$fun_name, "\n")
-
+  # Analysis section
+  cli::cli_h2("Analysis")
+  fun_name <- object$fun_name %||% "<unknown>"
+  cli::cli_text("{.field Function}: {.fn {fun_name}}")
+  delta_text <- if (!is.null(object$delta)) "Applied" else "None"
+  cli::cli_text("{.field Delta}: {delta_text}")
   if (!is.null(object$delta)) {
-    cat("  Delta adjustment: Applied\n")
-    cat("  Delta rows:", nrow(object$delta), "\n")
-  } else {
-    cat("  Delta adjustment: None\n")
+    cli::cli_text("{.field Delta rows}: {nrow(object$delta)}")
   }
 
-  cat("\nMethod:\n")
+  # Method section (inherits-based, hardened in 01-02)
+  cli::cli_h2("Method")
   method_class <- if (inherits(object$method, "bayes")) {
     "bayes"
   } else if (inherits(object$method, "approxbayes")) {
@@ -460,37 +479,54 @@ summary.analysis <- function(object, ...) {
   } else {
     "unknown"
   }
-  cat("  Type:", method_class, "\n")
+  cli::cli_text("{.field Type}: {method_class}")
 
   if (method_class %in% c("bayes", "approxbayes")) {
     if (!is.null(object$method$n_samples)) {
-      cat("  Samples:", object$method$n_samples, "\n")
+      n_samples <- object$method$n_samples
+      cli::cli_text("{.field Samples}: {n_samples}")
     }
   }
 
-  cat("\nPooling:\n")
+  # Pooling section
+  cli::cli_h2("Pooling")
   result_class <- class(object$results)[1]
-  cat("  Method:", result_class, "\n")
+  cli::cli_text("{.field Method}: {result_class}")
 
-  # Check first result structure
+  n_params <- NULL
   if (length(object$results) > 0) {
     first_result <- object$results[[1]]
     if (is.list(first_result)) {
-      cat("  Parameters per imputation:", length(first_result), "\n")
-      if (length(first_result) > 0 && !is.null(names(first_result))) {
-        param_names <- names(first_result)
-        if (length(param_names) > 5) {
-          cat("  Parameter names:", paste(param_names[1:5], collapse = ", "), "...\n")
-        } else {
-          cat("  Parameter names:", paste(param_names, collapse = ", "), "\n")
-        }
-      }
+      n_params <- length(first_result)
+      cli::cli_text("{.field Parameters}: {n_params}")
     }
   }
 
-  cat("\nNext steps:\n")
-  cat("  1. Pool results: pool_obj <- rbmi::pool(analysis_obj)\n")
-  cat("  2. Tidy results: tidy_df <- tidy_pool_obj(pool_obj)\n")
+  # Parameter Preview Table (PRT-04)
+  if (length(object$results) > 0 && is.list(object$results[[1]]) &&
+      !is.null(names(object$results[[1]]))) {
+    params <- object$results[[1]]
+    param_names <- names(params)
+    preview_names <- utils::head(param_names, n_preview)
+
+    cli::cli_h2("Parameter Preview (from first imputation)")
+    for (p in preview_names) {
+      est <- params[[p]]$est
+      se <- params[[p]]$se
+      est_fmt <- round(est, 3)
+      se_fmt <- round(se, 3)
+      cli::cli_text("  {p}: est={est_fmt}, se={se_fmt}")
+    }
+    remaining <- length(param_names) - n_preview
+    if (remaining > 0) {
+      cli::cli_text("  ... and {remaining} more")
+    }
+  }
+
+  cli::cli_text("")
+  cli::cli_text("Next steps:")
+  cli::cli_text("  1. {.code pool_obj <- rbmi::pool(analysis_obj)}")
+  cli::cli_text("  2. {.code tidy_df <- tidy_pool_obj(pool_obj)}")
 
   summary_info <- list(
     n_imputations = length(object$results),
