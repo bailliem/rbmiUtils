@@ -100,14 +100,42 @@ efficacy_table <- function(
   n_imputations <- pool_obj$N
 
   # --- Step B: Data preparation ---
+
   tidy_df <- tidy_pool_obj(pool_obj)
+
+  # --- Edge case: unexpected parameter types ---
+  unexpected_types <- setdiff(unique(tidy_df$parameter_type), c("trt", "lsm"))
+  if (length(unexpected_types) > 0) {
+    cli::cli_warn(
+      "Unexpected parameter types detected: {.val {unexpected_types}}. {.fn efficacy_table} is designed for standard ANCOVA pool objects.",
+      class = "rbmiUtils_warning"
+    )
+  }
+
+  # --- Edge case: NA visit rows ---
+  na_visit_rows <- is.na(tidy_df$visit)
+  if (any(na_visit_rows)) {
+    cli::cli_warn(
+      "{sum(na_visit_rows)} row{?s} with missing visit information excluded from table.",
+      class = "rbmiUtils_warning"
+    )
+    tidy_df <- tidy_df[!na_visit_rows, ]
+  }
+
+  # --- Edge case: empty result after filtering ---
+  if (nrow(tidy_df) == 0) {
+    cli::cli_abort(
+      "No rows remain after filtering. The pool object may not contain standard visit-level parameters.",
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+    )
+  }
 
   # Clean visit labels: underscore -> space, letter-digit boundary -> space, title case
   visit_clean <- gsub("_", " ", tidy_df$visit)
   visit_clean <- gsub("([a-zA-Z])(\\d)", "\\1 \\2", visit_clean)
   tidy_df$visit_label <- tools::toTitleCase(visit_clean)
 
-  # Preserve visit ordering from pool object
+  # Preserve visit ordering from pool object (first-appearance order, not alphabetical)
   visit_levels <- unique(tidy_df$visit_label)
   tidy_df$visit_label <- factor(tidy_df$visit_label, levels = visit_levels)
 
@@ -165,6 +193,9 @@ efficacy_table <- function(
 
   tbl <- gt::gt(table_df, rowname_col = "row_label",
                 groupname_col = "visit_label", ...)
+
+  # Enforce visit group display order (prevents alphabetical sorting)
+  tbl <- gt::row_group_order(tbl, groups = as.character(visit_levels))
 
   tbl <- gt::fmt_number(tbl, columns = c("est", "se"), decimals = digits)
 
