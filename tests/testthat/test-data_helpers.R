@@ -597,6 +597,101 @@ test_that("prepare_data_ice warns when visit column is character", {
 })
 
 
+# --- prepare_data_ice() edge case tests (HRD-07) ---
+
+test_that("prepare_data_ice handles single subject with ICE", {
+  dat <- data.frame(
+    USUBJID = factor(rep("S1", 3)),
+    AVISIT = factor(c("Week 4", "Week 8", "Week 12"),
+                    levels = c("Week 4", "Week 8", "Week 12")),
+    TRT = factor(rep("Drug A", 3)),
+    CHG = c(1.0, NA, NA),
+    DISCFL = c("N", "Y", "Y")
+  )
+  vars <- make_test_vars()
+  result <- prepare_data_ice(dat, vars, ice_col = "DISCFL", strategy = "JR")
+  expect_equal(nrow(result), 1)
+  expect_equal(as.character(result$USUBJID), "S1")
+  expect_equal(as.character(result$AVISIT), "Week 8")
+})
+
+test_that("prepare_data_ice handles single subject without ICE", {
+  dat <- data.frame(
+    USUBJID = factor(rep("S1", 3)),
+    AVISIT = factor(c("Week 4", "Week 8", "Week 12"),
+                    levels = c("Week 4", "Week 8", "Week 12")),
+    TRT = factor(rep("Drug A", 3)),
+    CHG = c(1.0, 2.0, 3.0),
+    DISCFL = c("N", "N", "N")
+  )
+  vars <- make_test_vars()
+  result <- suppressMessages(
+    prepare_data_ice(dat, vars, ice_col = "DISCFL", strategy = "JR")
+  )
+  expect_equal(nrow(result), 0)
+  expect_named(result, c("USUBJID", "AVISIT", "strategy"))
+})
+
+test_that("prepare_data_ice handles single visit", {
+  dat <- data.frame(
+    USUBJID = factor(c("S1", "S2", "S3")),
+    AVISIT = factor(rep("Week 4", 3)),
+    TRT = factor(c("Placebo", "Drug A", "Drug A")),
+    CHG = c(1.0, NA, 3.0),
+    DISCFL = c("N", "Y", "N")
+  )
+  vars <- make_test_vars()
+  result <- prepare_data_ice(dat, vars, ice_col = "DISCFL", strategy = "CR")
+  expect_equal(nrow(result), 1)
+  expect_equal(as.character(result$USUBJID), "S2")
+})
+
+test_that("prepare_data_ice emits info message when no ICE flags found", {
+  dat <- make_test_data()
+  dat$DISCFL <- rep("N", nrow(dat))
+  vars <- make_test_vars()
+  expect_message(
+    result <- prepare_data_ice(dat, vars, ice_col = "DISCFL", strategy = "JR"),
+    class = "rbmiUtils_info"
+  )
+  expect_equal(nrow(result), 0)
+})
+
+test_that("prepare_data_ice handles all subjects with ICE at first visit", {
+  dat <- make_test_data()
+  dat$DISCFL <- rep("Y", nrow(dat))
+  vars <- make_test_vars()
+  result <- prepare_data_ice(dat, vars, ice_col = "DISCFL", strategy = "MAR")
+  # Each subject should have exactly one row with first visit
+  expect_equal(nrow(result), length(unique(dat$USUBJID)))
+  expect_true(all(as.character(result$AVISIT) == "Week 4"))
+})
+
+test_that("prepare_data_ice handles all-NA ice flag column", {
+  dat <- make_test_data()
+  dat$DISCFL <- NA_character_
+  vars <- make_test_vars()
+  result <- suppressMessages(
+    prepare_data_ice(dat, vars, ice_col = "DISCFL", strategy = "JR")
+  )
+  expect_equal(nrow(result), 0)
+})
+
+test_that("prepare_data_ice handles single subject single visit with ICE", {
+  dat <- data.frame(
+    USUBJID = factor("S1"),
+    AVISIT = factor("Week 4"),
+    TRT = factor("Drug A"),
+    CHG = NA_real_,
+    DISCFL = "Y"
+  )
+  vars <- make_test_vars()
+  result <- prepare_data_ice(dat, vars, ice_col = "DISCFL", strategy = "CIR")
+  expect_equal(nrow(result), 1)
+  expect_equal(result$strategy, "CIR")
+})
+
+
 # =============================================================================
 # summarise_missingness() tests
 # =============================================================================
