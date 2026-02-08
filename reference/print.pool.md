@@ -86,18 +86,25 @@ ana_obj <- analyse_mi_data(ADMI, vars, method, fun = ancova)
 pool_obj <- pool(ana_obj)
 print(pool_obj)
 #> 
-#> ── Pool Object ─────────────────────────────────────────────────────────────────
-#> 6 parameters across 2 visits
+#> Pool Object
+#> -----------
+#> Number of Results Combined: 20
 #> Method: rubin
-#> N imputations: 20
-#> Confidence: 95%
-#> ────────────────────────────────────────────────────────────────────────────────
-#>        parameter   visit   est   lci   uci    pval
-#>      trt_Week 24 Week 24 -2.18 -2.54 -1.82 < 0.001
-#>  lsm_ref_Week 24 Week 24  0.09 -0.17  0.34   0.514
-#>  lsm_alt_Week 24 Week 24 -2.10 -2.34 -1.85 < 0.001
-#>      trt_Week 48 Week 48 -3.79 -4.30 -3.29 < 0.001
-#>  lsm_ref_Week 48 Week 48  0.04 -0.33  0.40   0.846
-#>  lsm_alt_Week 48 Week 48 -3.76 -4.11 -3.41 < 0.001
+#> Confidence Level: 0.95
+#> Alternative: two.sided
+#> 
+#> Results:
+#> 
+#>   ========================================================
+#>       parameter      est     se     lci     uci     pval  
+#>   --------------------------------------------------------
+#>      trt_Week 24    -2.181  0.182  -2.539  -1.823  <0.001 
+#>    lsm_ref_Week 24  0.086   0.132  -0.173  0.344   0.514  
+#>    lsm_alt_Week 24  -2.096  0.126  -2.344  -1.847  <0.001 
+#>      trt_Week 48    -3.794  0.256  -4.297  -3.29   <0.001 
+#>    lsm_ref_Week 48  0.036   0.186  -0.33   0.403   0.846  
+#>    lsm_alt_Week 48  -3.758  0.177  -4.106  -3.409  <0.001 
+#>   --------------------------------------------------------
+#> 
 # }
 ```

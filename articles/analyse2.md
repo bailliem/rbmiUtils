@@ -5,13 +5,13 @@
 This vignette demonstrates how to:
 
 - Perform multiple imputation using the
-  [rbmi](https://openpharma.github.io/rbmi/) package
+  [`{rbmi}`](https://cran.r-project.org/package=rbmi) package
 - Store and modify the imputed data using
   [rbmiUtils](https://github.com/openpharma/rbmiUtils)
 - Analyze the imputed data using:
   - A standard ANCOVA on a continuous endpoint (`CHG`)
   - A binary responder analysis on `CRIT1FLN` using
-    [beeca](https://openpharma.github.io/beeca/)
+    [`{beeca}`](https://openpharma.github.io/beeca/)
 
 This pattern enables reproducible workflows where imputation and
 analysis can be separated and revisited independently.
@@ -28,7 +28,9 @@ analysis can be separated and revisited independently.
 ## Statistical Context
 
 This approach applies **Rubin’s Rules** for inference after multiple
-imputation:
+imputation (see the [rbmi quickstart
+vignette](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html)
+for background on the draws/impute/analyse/pool pipeline):
 
 > We fit a model to each imputed dataset, derive a response variable on
 > the CHG score, extract marginal effects or other statistics of
@@ -65,6 +67,10 @@ ADEFF <- ADEFF %>%
 ```
 
 ## Step 2: Define Imputation Model
+
+We use
+[`rbmi::set_vars()`](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html)
+to specify the key variable roles:
 
 ``` r
 vars <- set_vars(
@@ -104,8 +110,8 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> 
 #> SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000407 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.07 seconds.
+#> Chain 1: Gradient evaluation took 0.000406 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.06 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -122,9 +128,9 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 400 / 400 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.639 seconds (Warm-up)
-#> Chain 1:                0.525 seconds (Sampling)
-#> Chain 1:                1.164 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.635 seconds (Warm-up)
+#> Chain 1:                0.521 seconds (Sampling)
+#> Chain 1:                1.156 seconds (Total)
 #> Chain 1:
 
 impute_obj <- impute(draws_obj, references = c("Placebo" = "Placebo", "Drug A" = "Placebo"))
@@ -190,6 +196,11 @@ tidy_pool_obj(pool_obj_ancova)
 ## Step 5: Responder Endpoint Analysis (CRIT1FLN)
 
 ### Define Analysis Function
+
+We use
+[`beeca::get_marginal_effect()`](https://openpharma.github.io/beeca/reference/get_marginal_effect.html)
+for robust variance estimation of marginal treatment effects from the
+logistic model:
 
 ``` r
 gcomp_responder <- function(data, ...) {
@@ -275,3 +286,9 @@ ADMI_restored <- expand_imputed_data(reduced, ADEFF, vars)
 See the [Efficient Storage
 vignette](https://openpharma.github.io/rbmiUtils/articles/efficient-storage.md)
 for details.
+
+### See Also
+
+For a guided tutorial walking through the complete pipeline from raw
+data to regulatory tables, see
+[`vignette('pipeline')`](https://openpharma.github.io/rbmiUtils/articles/pipeline.md).

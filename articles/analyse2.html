@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Storing and Analyzing Imputed Data with rbmiUtils • rbmiUtils</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -29,11 +34,16 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/pipeline.html">Get Started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/analyse2.html">Storing and Analyzing Imputed Data with rbmiUtils</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>End-to-End Pipeline</h6></li>
+    <li><a class="dropdown-item" href="../articles/pipeline.html">From rbmi Analysis to Regulatory Tables</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Workflow Guides</h6></li>
+    <li><a class="dropdown-item" href="../articles/analyse2.html">Storing and Analyzing Imputed Data</a></li>
     <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation and Validation</a></li>
     <li><a class="dropdown-item" href="../articles/efficient-storage.html">Efficient Storage of Imputed Data</a></li>
   </ul>
@@ -57,8 +67,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Storing and Analyzing Imputed Data with rbmiUtils</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Storing and Analyzing Imputed Data with rbmiUtils</h1>
             
             <h4 data-toc-skip class="date">2026-02-08</h4>
       
@@ -73,7 +82,7 @@
 </h2>
 <p>This vignette demonstrates how to:</p>
 <ul>
-<li>Perform multiple imputation using the <a href="https://openpharma.github.io/rbmi/" class="external-link">rbmi</a>
+<li>Perform multiple imputation using the <a href="https://cran.r-project.org/package=rbmi" class="external-link"><code>{rbmi}</code></a>
 package</li>
 <li>Store and modify the imputed data using
 <a href="https://github.com/openpharma/rbmiUtils" class="external-link">rbmiUtils</a>
@@ -81,8 +90,7 @@ package</li>
 <li>Analyze the imputed data using:
 <ul>
 <li>A standard ANCOVA on a continuous endpoint (<code>CHG</code>)</li>
-<li>A binary responder analysis on <code>CRIT1FLN</code> using
-<a href="https://openpharma.github.io/beeca/" class="external-link">beeca</a>
+<li>A binary responder analysis on <code>CRIT1FLN</code> using <a href="https://openpharma.github.io/beeca/" class="external-link"><code>{beeca}</code></a>
 </li>
 </ul>
 </li>
@@ -103,7 +111,9 @@ Data</a> - Reduce storage for large imputations</li>
 <h2 id="statistical-context">Statistical Context<a class="anchor" aria-label="anchor" href="#statistical-context"></a>
 </h2>
 <p>This approach applies <strong>Rubin’s Rules</strong> for inference
-after multiple imputation:</p>
+after multiple imputation (see the <a href="https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html" class="external-link">rbmi
+quickstart vignette</a> for background on the draws/impute/analyse/pool
+pipeline):</p>
 <blockquote>
 <p>We fit a model to each imputed dataset, derive a response variable on
 the CHG score, extract marginal effects or other statistics of interest,
@@ -138,6 +148,8 @@ rules.</p>
 <div class="section level2">
 <h2 id="step-2-define-imputation-model">Step 2: Define Imputation Model<a class="anchor" aria-label="anchor" href="#step-2-define-imputation-model"></a>
 </h2>
+<p>We use <a href="https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html" class="external-link"><code>rbmi::set_vars()</code></a>
+to specify the key variable roles:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/set_vars.html" class="external-link">set_vars</a></span><span class="op">(</span></span>
 <span>  subjid <span class="op">=</span> <span class="st">"USUBJID"</span>,</span>
@@ -172,8 +184,8 @@ rules.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000407 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.07 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000406 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.06 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -190,9 +202,9 @@ rules.</p>
 <span><span class="co">#&gt; Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 400 / 400 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.639 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.525 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                1.164 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.635 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.521 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                1.156 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1:</span></span>
 <span></span>
 <span><span class="va">impute_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/impute.html" class="external-link">impute</a></span><span class="op">(</span><span class="va">draws_obj</span>, references <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Placebo"</span> <span class="op">=</span> <span class="st">"Placebo"</span>, <span class="st">"Drug A"</span> <span class="op">=</span> <span class="st">"Placebo"</span><span class="op">)</span><span class="op">)</span></span>
@@ -256,6 +268,9 @@ rules.</p>
 <div class="section level3">
 <h3 id="define-analysis-function">Define Analysis Function<a class="anchor" aria-label="anchor" href="#define-analysis-function"></a>
 </h3>
+<p>We use <a href="https://openpharma.github.io/beeca/reference/get_marginal_effect.html" class="external-link"><code>beeca::get_marginal_effect()</code></a>
+for robust variance estimation of marginal treatment effects from the
+logistic model:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gcomp_responder</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">CRIT1FLN</span> <span class="op">~</span> <span class="va">TRT</span> <span class="op">+</span> <span class="va">BASE</span> <span class="op">+</span> <span class="va">STRATA</span> <span class="op">+</span> <span class="va">REGION</span>, data <span class="op">=</span> <span class="va">data</span>, family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span></span>
@@ -334,6 +349,12 @@ reporting and review</li>
 <p>See the <a href="efficient-storage.html">Efficient Storage
 vignette</a> for details.</p>
 </div>
+<div class="section level3">
+<h3 id="see-also">See Also<a class="anchor" aria-label="anchor" href="#see-also"></a>
+</h3>
+<p>For a guided tutorial walking through the complete pipeline from raw
+data to regulatory tables, see <code><a href="../articles/pipeline.html">vignette('pipeline')</a></code>.</p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -346,7 +367,7 @@ vignette</a> for details.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Part of the <a href="https://openpharma.github.io/" class="external-link">openpharma</a> ecosystem | <a href="https://pharmaverse.org/" class="external-link">pharmaverse</a></p>
 </div>
 
     </footer>

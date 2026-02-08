@@ -90,6 +90,10 @@ the table. For example,
 using standard gt piping, e.g.,
 `efficacy_table(pool_obj) |> gt::tab_options(...)`.
 
+**Example output:**
+
+![](figures/efficacy_table-example.png)
+
 ## See also
 
 - [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)

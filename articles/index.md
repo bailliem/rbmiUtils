@@ -8,3 +8,5 @@
   Validation](https://openpharma.github.io/rbmiUtils/articles/data-preparation.md):
 - [Efficient Storage of Imputed
   Data](https://openpharma.github.io/rbmiUtils/articles/efficient-storage.md):
+- [From rbmi Analysis to Regulatory
+  Tables](https://openpharma.github.io/rbmiUtils/articles/pipeline.md):

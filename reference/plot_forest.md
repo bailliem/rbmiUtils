@@ -98,7 +98,14 @@ composition:
 for applying theme changes to all panels. For example:
 `plot_forest(pool_obj) & theme(text = element_text(size = 14))`.
 
+**Example output (treatment difference mode):**
+
+![](figures/plot_forest-trt.png)
+
 ## See also
+
+- [`rbmi::pool()`](https://openpharma.github.io/rbmi/latest-tag/reference/pool.html)
+  for creating pool objects
 
 - [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)
   for the underlying data transformation

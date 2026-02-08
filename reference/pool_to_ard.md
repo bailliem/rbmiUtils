@@ -58,9 +58,16 @@ validation and is suitable for downstream use with gtsummary.
 
 ## See also
 
-[`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md),
-[`cards::as_card()`](https://insightsengineering.github.io/cards/latest-tag/reference/as_card.html),
-[`cards::check_ard_structure()`](https://insightsengineering.github.io/cards/latest-tag/reference/check_ard_structure.html)
+- [`rbmi::pool()`](https://openpharma.github.io/rbmi/latest-tag/reference/pool.html)
+  for creating pool objects
+
+- [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)
+  for the underlying data transformation
+
+- [`cards::as_card()`](https://insightsengineering.github.io/cards/latest-tag/reference/as_card.html)
+  and
+  [`cards::check_ard_structure()`](https://insightsengineering.github.io/cards/latest-tag/reference/check_ard_structure.html)
+  for ARD validation
 
 ## Examples
 

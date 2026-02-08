@@ -100,6 +100,15 @@ before analysis.
 
 ## See also
 
+- [`rbmi::analyse()`](https://openpharma.github.io/rbmi/latest-tag/reference/analyse.html)
+  which this function wraps
+
+- [`rbmi::pool()`](https://openpharma.github.io/rbmi/latest-tag/reference/pool.html)
+  for pooling the analysis results
+
+- The [rbmi quickstart
+  vignette](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html)
+
 - [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)
   to format pooled results for publication
 

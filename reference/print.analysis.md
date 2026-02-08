@@ -44,13 +44,12 @@ ana_obj <- analyse_mi_data(ADMI, vars, method, fun = function(d, v, ...) 1)
 #> imputations.
 print(ana_obj)
 #> 
-#> ── Analysis Object ─────────────────────────────────────────────────────────────
-#> 10 imputations analysed with `<Anonymous Function>()`
-#> ────────────────────────────────────────────────────────────────────────────────
-#> Method: bayes
-#> Pooling: rubin
-#> Delta: None
+#> Analysis Object
+#> ---------------
+#> Number of Results: 10
+#> Analysis Function: <Anonymous Function>
+#> Delta Applied: FALSE
+#> Analysis Estimates:
 #> 
-#> Next: `pool_obj <- rbmi::pool(analysis_obj)`
 # }
 ```
