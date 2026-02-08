@@ -7,9 +7,9 @@
 
 ### ARD & Reporting
 
-- [ ] **ARD-01**: Convert tidy pool results to cards ARD format via `pool_to_ard()`
-- [ ] **ARD-02**: ARD includes all statistics (estimate, SE, lower CI, upper CI, p-value) per parameter
-- [ ] **ARD-03**: ARD preserves visit, parameter type (trt/lsm), and arm metadata as grouping columns
+- [x] **ARD-01**: Convert tidy pool results to cards ARD format via `pool_to_ard()`
+- [x] **ARD-02**: ARD includes all statistics (estimate, SE, lower CI, upper CI, p-value) per parameter
+- [x] **ARD-03**: ARD preserves visit, parameter type (trt/lsm), and arm metadata as grouping columns
 
 ### Efficacy Tables
 
@@ -20,23 +20,23 @@
 
 ### Visualization
 
-- [ ] **VIZ-01**: Forest plot function showing treatment effects across visits with point estimates and CIs
-- [ ] **VIZ-02**: Forest plot returns ggplot2 object for user customization
-- [ ] **VIZ-03**: Forest plot supports reference line at zero (or user-specified value)
+- [x] **VIZ-01**: Forest plot function showing treatment effects across visits with point estimates and CIs
+- [x] **VIZ-02**: Forest plot returns ggplot2 object for user customization
+- [x] **VIZ-03**: Forest plot supports reference line at zero (or user-specified value)
 
 ### Print/Summary Methods
 
-- [ ] **PRT-01**: Enhanced print method for pool objects showing rounded estimates, formatted CIs, and parameter labels
-- [ ] **PRT-02**: Summary method for pool objects with additional detail (visit breakdown, significance flags)
-- [ ] **PRT-03**: Improved print.analysis() showing parameter count, visit info, function name
-- [ ] **PRT-04**: Improved summary.analysis() with parameter preview table
+- [x] **PRT-01**: Enhanced print method for pool objects showing rounded estimates, formatted CIs, and parameter labels
+- [x] **PRT-02**: Summary method for pool objects with additional detail (visit breakdown, significance flags)
+- [x] **PRT-03**: Improved print.analysis() showing parameter count, visit info, function name
+- [x] **PRT-04**: Improved summary.analysis() with parameter preview table
 
 ### Foundation Hardening
 
-- [ ] **HRD-01**: Fix tidy_pool_obj() parameter parsing — replace `_` separator with robust regex
-- [ ] **HRD-02**: Refactor analyse_mi_data() to wrap rbmi::analyse() instead of reimplementing internals
-- [ ] **HRD-03**: Harden gcomp functions — validate inputs, handle edge cases, pin beeca output format
-- [ ] **HRD-04**: Harden storage functions — type coercion, attribute preservation, string key collision handling
+- [x] **HRD-01**: Fix tidy_pool_obj() parameter parsing — replace `_` separator with robust regex
+- [x] **HRD-02**: Refactor analyse_mi_data() to wrap rbmi::analyse() instead of reimplementing internals
+- [x] **HRD-03**: Harden gcomp functions — validate inputs, handle edge cases, pin beeca output format
+- [x] **HRD-04**: Harden storage functions — type coercion, attribute preservation, string key collision handling
 
 ## v2 Requirements
 
@@ -85,9 +85,9 @@
 | TBL-02 | Phase 3 | Complete |
 | TBL-03 | Phase 3 | Complete |
 | TBL-04 | Phase 3 | Complete |
-| VIZ-01 | Phase 4 | Pending |
-| VIZ-02 | Phase 4 | Pending |
-| VIZ-03 | Phase 4 | Pending |
+| VIZ-01 | Phase 4 | Complete |
+| VIZ-02 | Phase 4 | Complete |
+| VIZ-03 | Phase 4 | Complete |
 | PRT-01 | Phase 2 | Complete |
 | PRT-02 | Phase 2 | Complete |
 | PRT-03 | Phase 2 | Complete |
@@ -104,4 +104,4 @@
 
 ---
 *Requirements defined: 2026-02-07*
-*Last updated: 2026-02-08 after Phase 3 completion*
+*Last updated: 2026-02-08 after Phase 4 completion — all v1 requirements complete*
