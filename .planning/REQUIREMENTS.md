@@ -7,13 +7,13 @@
 
 ### Hardening (HRD)
 
-- [ ] **HRD-01**: validate_data() rejects malformed interaction terms (e.g., "A*", ":B", "") with clear error message
-- [ ] **HRD-02**: prepare_data_ice() errors when vars$strategy is NULL instead of silently defaulting to "strategy"
-- [ ] **HRD-03**: prepare_data_ice() warns when visit column is character (not factor) with ordering guidance
-- [ ] **HRD-04**: validate_data() rejects empty (zero-row) data frames with informative minimum data requirements error
-- [ ] **HRD-05**: validate_data() warns on all-NA covariate columns with actionable guidance
-- [ ] **HRD-06**: validate_data() batch-displays type coercion warnings instead of emitting them one at a time
-- [ ] **HRD-07**: Edge case test coverage for single subject, single visit, all-NA outcome, all-complete data across data prep functions
+- [x] **HRD-01**: validate_data() rejects malformed interaction terms (e.g., "A*", ":B", "") with clear error message
+- [x] **HRD-02**: prepare_data_ice() errors when vars$strategy is NULL instead of silently defaulting to "strategy"
+- [x] **HRD-03**: prepare_data_ice() warns when visit column is character (not factor) with ordering guidance
+- [x] **HRD-04**: validate_data() rejects empty (zero-row) data frames with informative minimum data requirements error
+- [x] **HRD-05**: validate_data() warns on all-NA covariate columns with actionable guidance
+- [x] **HRD-06**: validate_data() batch-displays type coercion warnings instead of emitting them one at a time
+- [x] **HRD-07**: Edge case test coverage for single subject, single visit, all-NA outcome, all-complete data across data prep functions
 
 ### Documentation (DOC)
 
@@ -62,13 +62,13 @@ Deferred from v1 Active list. Not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HRD-01 | Phase 5 | Pending |
-| HRD-02 | Phase 5 | Pending |
-| HRD-03 | Phase 5 | Pending |
-| HRD-04 | Phase 5 | Pending |
-| HRD-05 | Phase 5 | Pending |
-| HRD-06 | Phase 5 | Pending |
-| HRD-07 | Phase 5 | Pending |
+| HRD-01 | Phase 5 | Complete |
+| HRD-02 | Phase 5 | Complete |
+| HRD-03 | Phase 5 | Complete |
+| HRD-04 | Phase 5 | Complete |
+| HRD-05 | Phase 5 | Complete |
+| HRD-06 | Phase 5 | Complete |
+| HRD-07 | Phase 5 | Complete |
 | DOC-01 | Phase 6 | Pending |
 | DOC-02 | Phase 6 | Pending |
 | DOC-03 | Phase 6 | Pending |
@@ -88,4 +88,4 @@ Deferred from v1 Active list. Not in current roadmap.
 
 ---
 *Requirements defined: 2026-02-08*
-*Last updated: 2026-02-08 after roadmap creation*
+*Last updated: 2026-02-08 (HRD-01 through HRD-07 complete)*

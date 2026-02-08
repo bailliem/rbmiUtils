@@ -49,7 +49,7 @@ Plans:
 
 **Milestone Goal:** Make rbmiUtils discoverable and trustworthy -- polished site, end-to-end examples, and hardened data prep functions that give clear errors on bad input.
 
-- [ ] **Phase 5: Data Prep Hardening** - Validate_data and prepare_data_ice give clear, actionable errors on bad input
+- [x] **Phase 5: Data Prep Hardening** - Validate_data and prepare_data_ice give clear, actionable errors on bad input
 - [ ] **Phase 6: Documentation** - End-to-end vignette, rendered examples, and reference docs make the package learnable
 - [ ] **Phase 7: Site Polish** - pkgdown site is professional, navigable, and shareable
 
@@ -68,8 +68,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: Migrate validate_data() and prepare_data_ice() to cli messaging + add HRD-01 through HRD-06 validation checks
-- [ ] 05-02: Edge case test coverage (HRD-07) for single subject, single visit, all-NA outcome, all-complete data
+- [x] 05-01: Migrate validate_data() and prepare_data_ice() to cli messaging + add HRD-01 through HRD-06 validation checks
+- [x] 05-02: Edge case test coverage (HRD-07) for single subject, single visit, all-NA outcome, all-complete data
 
 ### Phase 6: Documentation
 **Goal**: Users can learn the full rbmiUtils pipeline from a single end-to-end vignette, see rendered output in function docs, and find version history in NEWS.md
@@ -112,10 +112,10 @@ Plans:
 | 2. Print/Summary & ARD | v1 | 2/2 | Complete | 2026-02-07 |
 | 3. Efficacy Tables | v1 | 2/2 | Complete | 2026-02-08 |
 | 4. Visualization | v1 | 2/2 | Complete | 2026-02-08 |
-| 5. Data Prep Hardening | v2 | 0/2 | Not started | - |
+| 5. Data Prep Hardening | v2 | 2/2 | Complete | 2026-02-08 |
 | 6. Documentation | v2 | 0/? | Not started | - |
 | 7. Site Polish | v2 | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-08*
+*Last updated: 2026-02-08 (Phase 5 complete)*
