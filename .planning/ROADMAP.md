@@ -76,10 +76,10 @@ Plans:
   1. A forest plot function produces a figure showing treatment effect point estimates and confidence intervals across visits
   2. The function returns a ggplot2 object that users can further customize with standard ggplot2 layers
   3. The plot includes a reference line at zero by default, configurable to any user-specified value
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — Implement plot_forest() with three-panel patchwork composition, tests, and visual verification (VIZ-01, VIZ-02, VIZ-03)
 
 ## Progress
 
