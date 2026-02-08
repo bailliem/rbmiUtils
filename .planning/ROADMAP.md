@@ -81,11 +81,12 @@ Plans:
   3. plot_forest() and efficacy_table() help pages display rendered example output
   4. NEWS.md documents v1 and v2 changes with version numbers
   5. Existing vignettes contain inline cross-references to rbmi and beeca documentation where relevant
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [ ] 06-01-PLAN.md -- Image generation, README visual teasers, and rendered help page examples (DOC-02, DOC-03, DOC-04)
+- [ ] 06-02-PLAN.md -- End-to-end pipeline vignette (DOC-01)
+- [ ] 06-03-PLAN.md -- NEWS.md restructuring, cross-references, and @seealso enhancements (DOC-05, DOC-06)
 
 ### Phase 7: Site Polish
 **Goal**: The pkgdown site is professional, well-organized, and produces good social media previews when shared
@@ -113,9 +114,9 @@ Plans:
 | 3. Efficacy Tables | v1 | 2/2 | Complete | 2026-02-08 |
 | 4. Visualization | v1 | 2/2 | Complete | 2026-02-08 |
 | 5. Data Prep Hardening | v2 | 2/2 | Complete | 2026-02-08 |
-| 6. Documentation | v2 | 0/? | Not started | - |
+| 6. Documentation | v2 | 0/3 | Planned | - |
 | 7. Site Polish | v2 | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-08 (Phase 5 complete)*
+*Last updated: 2026-02-08 (Phase 6 planned)*
