@@ -530,3 +530,133 @@ test_that("analyse_mi_data output is compatible with rbmi::pool", {
   pool_obj <- rbmi::pool(ana_obj)
   expect_false(is.null(pool_obj))
 })
+
+
+# =============================================================================
+# Tests for enhanced print.analysis and summary.analysis (02-02)
+# =============================================================================
+
+# Helper: create mock analysis object with named parameter lists
+make_mock_analysis <- function(n_params = 4) {
+  params <- list(
+    trt_Week4 = list(est = -2.5, se = 0.8, df = NA),
+    lsm_ref_Week4 = list(est = 10.0, se = 0.5, df = NA),
+    lsm_alt_Week4 = list(est = 7.5, se = 0.6, df = NA),
+    trt_Week8 = list(est = -1.0, se = 1.2, df = NA)
+  )
+  if (n_params > 4) {
+    for (i in 5:n_params) {
+      params[[paste0("extra_param_", i)]] <- list(
+        est = runif(1, -5, 5),
+        se = runif(1, 0.1, 1),
+        df = NA
+      )
+    }
+  }
+  method <- rbmi::method_bayes(
+    n_samples = 10,
+    control = rbmi::control_bayes(warmup = 10, thin = 1)
+  )
+  results <- rbmi::as_class(
+    rep(list(params), 10),
+    c("rubin", "list")
+  )
+  x <- list(
+    results = results,
+    delta = NULL,
+    fun = rbmi::ancova,
+    fun_name = "ancova",
+    method = method
+  )
+  class(x) <- c("analysis", "list")
+  x
+}
+
+
+# Helper to capture cli output (cli writes to message connection)
+capture_cli_output <- function(expr) {
+  out_stdout <- utils::capture.output(
+    out_msg <- utils::capture.output(expr, type = "message"),
+    type = "output"
+  )
+  paste(c(out_stdout, out_msg), collapse = "\n")
+}
+
+
+test_that("print.analysis shows parameter count and visits", {
+  set.seed(42)
+  mock <- make_mock_analysis(n_params = 4)
+
+  out_text <- capture_cli_output(print(mock))
+
+  # Should contain cli-formatted header
+  expect_true(grepl("Analysis Object", out_text))
+  # Should mention the function name
+  expect_true(grepl("ancova", out_text))
+  # Should show parameter count
+  expect_true(grepl("Parameters.*4", out_text))
+  # Should show visit name(s)
+  expect_true(grepl("Week4", out_text))
+  expect_true(grepl("Week8", out_text))
+})
+
+
+test_that("print.analysis returns invisible(x)", {
+  set.seed(42)
+  mock <- make_mock_analysis(n_params = 4)
+
+  result <- NULL
+  capture_cli_output(result <- print(mock))
+  expect_identical(result, mock)
+})
+
+
+test_that("summary.analysis shows parameter preview", {
+  set.seed(42)
+  mock <- make_mock_analysis(n_params = 4)
+
+  out_text <- capture_cli_output(summary(mock))
+
+  # Should contain parameter preview section
+  expect_true(grepl("Parameter Preview", out_text))
+  # Should show est/se values from first imputation
+  expect_true(grepl("est=", out_text))
+  expect_true(grepl("se=", out_text))
+  # Should show specific parameter name
+  expect_true(grepl("trt_Week4", out_text))
+  # Should show specific values
+  expect_true(grepl("-2.5", out_text))
+  expect_true(grepl("0.8", out_text))
+})
+
+
+test_that("summary.analysis n_preview controls preview count", {
+  set.seed(42)
+  mock <- make_mock_analysis(n_params = 10)
+
+  out_text <- capture_cli_output(summary(mock, n_preview = 3))
+
+  # Should show "... and 7 more"
+  expect_true(grepl("7 more", out_text))
+
+  # Count lines containing "est=" to verify exactly 3 parameter lines
+  out_lines <- strsplit(out_text, "\n")[[1]]
+  est_lines <- grep("est=", out_lines)
+  expect_equal(length(est_lines), 3)
+})
+
+
+test_that("summary.analysis returns summary list", {
+  set.seed(42)
+  mock <- make_mock_analysis(n_params = 4)
+
+  result <- NULL
+  capture_cli_output(result <- summary(mock))
+
+  expect_type(result, "list")
+  expect_equal(result$n_imputations, 10)
+  expect_equal(result$fun_name, "ancova")
+  expect_false(result$has_delta)
+  expect_equal(result$method_type, "bayes")
+  expect_equal(result$pooling_method, "rubin")
+})
