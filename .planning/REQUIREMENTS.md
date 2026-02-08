@@ -62,30 +62,30 @@ Deferred from v1 Active list. Not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HRD-01 | — | Pending |
-| HRD-02 | — | Pending |
-| HRD-03 | — | Pending |
-| HRD-04 | — | Pending |
-| HRD-05 | — | Pending |
-| HRD-06 | — | Pending |
-| HRD-07 | — | Pending |
-| DOC-01 | — | Pending |
-| DOC-02 | — | Pending |
-| DOC-03 | — | Pending |
-| DOC-04 | — | Pending |
-| DOC-05 | — | Pending |
-| DOC-06 | — | Pending |
-| SITE-01 | — | Pending |
-| SITE-02 | — | Pending |
-| SITE-03 | — | Pending |
-| SITE-04 | — | Pending |
-| SITE-05 | — | Pending |
+| HRD-01 | Phase 5 | Pending |
+| HRD-02 | Phase 5 | Pending |
+| HRD-03 | Phase 5 | Pending |
+| HRD-04 | Phase 5 | Pending |
+| HRD-05 | Phase 5 | Pending |
+| HRD-06 | Phase 5 | Pending |
+| HRD-07 | Phase 5 | Pending |
+| DOC-01 | Phase 6 | Pending |
+| DOC-02 | Phase 6 | Pending |
+| DOC-03 | Phase 6 | Pending |
+| DOC-04 | Phase 6 | Pending |
+| DOC-05 | Phase 6 | Pending |
+| DOC-06 | Phase 6 | Pending |
+| SITE-01 | Phase 7 | Pending |
+| SITE-02 | Phase 7 | Pending |
+| SITE-03 | Phase 7 | Pending |
+| SITE-04 | Phase 7 | Pending |
+| SITE-05 | Phase 7 | Pending |
 
 **Coverage:**
 - v2 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-08*
-*Last updated: 2026-02-08 after initial definition*
+*Last updated: 2026-02-08 after roadmap creation*
