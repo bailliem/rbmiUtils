@@ -50,7 +50,7 @@ Plans:
 **Milestone Goal:** Make rbmiUtils discoverable and trustworthy -- polished site, end-to-end examples, and hardened data prep functions that give clear errors on bad input.
 
 - [x] **Phase 5: Data Prep Hardening** - Validate_data and prepare_data_ice give clear, actionable errors on bad input
-- [ ] **Phase 6: Documentation** - End-to-end vignette, rendered examples, and reference docs make the package learnable
+- [x] **Phase 6: Documentation** - End-to-end vignette, rendered examples, and reference docs make the package learnable
 - [ ] **Phase 7: Site Polish** - pkgdown site is professional, navigable, and shareable
 
 ## Phase Details
@@ -84,9 +84,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01-PLAN.md -- Image generation, README visual teasers, and rendered help page examples (DOC-02, DOC-03, DOC-04)
-- [ ] 06-02-PLAN.md -- End-to-end pipeline vignette (DOC-01)
-- [ ] 06-03-PLAN.md -- NEWS.md restructuring, cross-references, and @seealso enhancements (DOC-05, DOC-06)
+- [x] 06-01-PLAN.md -- Image generation, README visual teasers, and rendered help page examples (DOC-02, DOC-03, DOC-04)
+- [x] 06-02-PLAN.md -- End-to-end pipeline vignette (DOC-01)
+- [x] 06-03-PLAN.md -- NEWS.md restructuring, cross-references, and @seealso enhancements (DOC-05, DOC-06)
 
 ### Phase 7: Site Polish
 **Goal**: The pkgdown site is professional, well-organized, and produces good social media previews when shared
@@ -114,9 +114,9 @@ Plans:
 | 3. Efficacy Tables | v1 | 2/2 | Complete | 2026-02-08 |
 | 4. Visualization | v1 | 2/2 | Complete | 2026-02-08 |
 | 5. Data Prep Hardening | v2 | 2/2 | Complete | 2026-02-08 |
-| 6. Documentation | v2 | 0/3 | Planned | - |
+| 6. Documentation | v2 | 3/3 | Complete | 2026-02-08 |
 | 7. Site Polish | v2 | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-08 (Phase 6 planned)*
+*Last updated: 2026-02-08 (Phase 6 complete)*
