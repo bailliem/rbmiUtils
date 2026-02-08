@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-07)
 
 **Core value:** Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures
-**Current focus:** Phase 3 - Efficacy Tables (not yet started)
+**Current focus:** Phase 3 - Efficacy Tables (plan 1 of 2 complete)
 
 ## Current Position
 
 Phase: 3 of 4 (Efficacy Tables)
-Plan: 0 of 2 in current phase (phase not yet planned)
-Status: Phase 2 complete, Phase 3 not started
-Last activity: 2026-02-08 -- Completed Phase 2 (Print/Summary & ARD Conversion)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-08 -- Completed 03-01-PLAN.md (Efficacy Table Core Function)
 
-Progress: [######....] 67% (6/9 plans)
+Progress: [#######...] 78% (7/9 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: ~7 min
-- Total execution time: ~40 min
+- Total plans completed: 7
+- Average duration: ~6 min
+- Total execution time: ~45 min
 
 **By Phase:**
 
@@ -29,9 +29,10 @@ Progress: [######....] 67% (6/9 plans)
 |-------|-------|-------|----------|
 | 1. Foundation Hardening | 3/3 | ~22 min | ~7 min |
 | 2. Print/Summary & ARD | 3/3 | ~18 min | ~6 min |
+| 3. Efficacy Tables | 1/2 | ~5 min | ~5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (~5 min), 01-03 (~8 min), 02-01 (~6 min), 02-02 (~6 min), 02-03 (~6 min)
+- Last 5 plans: 01-03 (~8 min), 02-01 (~6 min), 02-02 (~6 min), 02-03 (~6 min), 03-01 (~5 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -54,6 +55,7 @@ Recent decisions affecting current work:
 - 02-03-D1: Used as_card() direct construction over ard_identity() for batch efficiency
 - 02-03-D2: Extracted is_cards_available() helper for testable dependency guard
 - 02-03-D3: Method rows included per parameter to satisfy check_ard_structure() fully
+- 03-01-D1: Added letter-digit boundary spacing in visit label cleaning (regex)
 
 ### Pending Todos
 
@@ -61,10 +63,10 @@ None.
 
 ### Blockers/Concerns
 
-- Research flag: Phase 3 table generation may need /gsd:research-phase to validate gtsummary template approach
+None.
 
 ## Session Continuity
 
 Last session: 2026-02-08
-Stopped at: Completed Phase 2 (Print/Summary & ARD Conversion)
+Stopped at: Completed 03-01-PLAN.md (Efficacy Table Core Function)
 Resume file: None
