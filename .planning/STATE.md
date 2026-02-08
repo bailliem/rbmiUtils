@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-02-08)
 
 ## Current Position
 
-Phase: 5 of 7 (Data Prep Hardening) -- COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-02-08 -- Completed 05-02-PLAN.md (HRD-07 edge case tests)
+Phase: 6 of 7 (Documentation)
+Plan: 2 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-08 -- Completed 06-02-PLAN.md (end-to-end pipeline vignette)
 
-Progress: [██░░░░░░░░] 20% (2/10 v2 plans, 11/13 total)
+Progress: [████████░░] 86% (4/10 v2 plans, 13/14 total)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11 (9 v1 + 2 v2)
-- Average duration: ~25 min (v1), ~6 min (v2 so far)
-- Total execution time: ~4.5 hours (v1) + ~12 min (v2)
+- Total plans completed: 13 (9 v1 + 4 v2)
+- Average duration: ~25 min (v1), ~5 min (v2 so far)
+- Total execution time: ~4.5 hours (v1) + ~18 min (v2)
 
 **By Phase:**
 
@@ -32,6 +32,7 @@ Progress: [██░░░░░░░░] 20% (2/10 v2 plans, 11/13 total)
 | 3 | 2 | ~60 min | ~30 min |
 | 4 | 2 | ~60 min | ~30 min |
 | 5 | 2/2 | ~12 min | ~6 min |
+| 6 | 2/3 | ~6 min | ~3 min |
 
 *Updated after each plan completion*
 
@@ -49,6 +50,9 @@ All v1 decisions resolved with outcomes documented.
 | D-05-01-01 | All-NA covariates warn+skip, not error | validate_data returns TRUE/error, cannot modify vars |
 | D-05-01-02 | All-NA outcome is hard error | Nothing to model, analysis cannot proceed |
 | D-05-01-03 | stats::setNames() for namespace compliance | Avoids R CMD check NOTE |
+| D-06-02-01 | Tutorial tone for pipeline vignette | analyse2 is the reference; pipeline.Rmd is the getting-started guide |
+| D-06-02-02 | ADMI for binary appendix (skip second draws()) | Keeps vignette build time under 30s total |
+| D-06-02-03 | Exclude prepare_data_ice from pipeline vignette | ADEFF simple pipeline doesn't use ICE; linked to data-prep vignette |
 
 ### Pending Todos
 
@@ -61,5 +65,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-08
-Stopped at: Completed 05-02-PLAN.md (Phase 5 complete)
+Stopped at: Completed 06-02-PLAN.md (pipeline vignette)
 Resume file: None
