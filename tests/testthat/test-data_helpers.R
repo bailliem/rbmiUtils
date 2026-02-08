@@ -384,6 +384,82 @@ test_that("validate_data errors when data_ice has duplicate subjects", {
 })
 
 
+# --- validate_data() edge case tests (HRD-07) ---
+
+test_that("validate_data handles single subject without error", {
+  dat <- data.frame(
+    USUBJID = factor(rep("S1", 3)),
+    AVISIT = factor(c("Week 4", "Week 8", "Week 12"),
+                    levels = c("Week 4", "Week 8", "Week 12")),
+    TRT = factor(rep("Drug A", 3)),
+    CHG = c(1.0, 2.0, 3.0),
+    BASE = rep(10, 3),
+    STRATA = factor(rep("A", 3))
+  )
+  vars <- make_test_vars()
+  expect_true(validate_data(dat, vars))
+})
+
+test_that("validate_data handles single visit without error", {
+  dat <- data.frame(
+    USUBJID = factor(c("S1", "S2", "S3")),
+    AVISIT = factor(rep("Week 4", 3)),
+    TRT = factor(c("Placebo", "Drug A", "Drug A")),
+    CHG = c(1.0, 2.0, 3.0),
+    BASE = c(10, 12, 11),
+    STRATA = factor(c("A", "B", "A"))
+  )
+  vars <- make_test_vars()
+  expect_true(validate_data(dat, vars))
+})
+
+test_that("validate_data handles single subject single visit without error", {
+  dat <- data.frame(
+    USUBJID = factor("S1"),
+    AVISIT = factor("Week 4"),
+    TRT = factor("Drug A"),
+    CHG = 1.0,
+    BASE = 10,
+    STRATA = factor("A")
+  )
+  vars <- make_test_vars()
+  expect_true(validate_data(dat, vars))
+})
+
+test_that("validate_data emits info message when all outcomes complete", {
+  dat <- make_test_data()
+  dat$CHG <- seq_len(nrow(dat))  # no NAs
+  vars <- make_test_vars()
+  expect_message(
+    validate_data(dat, vars),
+    class = "rbmiUtils_info"
+  )
+})
+
+test_that("validate_data handles single subject with missing outcome", {
+  dat <- data.frame(
+    USUBJID = factor(rep("S1", 3)),
+    AVISIT = factor(c("Week 4", "Week 8", "Week 12"),
+                    levels = c("Week 4", "Week 8", "Week 12")),
+    TRT = factor(rep("Drug A", 3)),
+    CHG = c(1.0, NA, NA),
+    BASE = rep(10, 3),
+    STRATA = factor(rep("A", 3))
+  )
+  vars <- make_test_vars()
+  expect_true(validate_data(dat, vars))
+})
+
+test_that("validate_data passes cleanly with complete covariates", {
+  dat <- make_test_data()
+  dat$CHG <- seq_len(nrow(dat))  # complete outcomes to avoid info message
+  vars <- make_test_vars()
+  # Should not produce any errors (may produce informational message about complete data)
+  result <- validate_data(dat, vars)
+  expect_true(result)
+})
+
+
 # =============================================================================
 # prepare_data_ice() tests
 # =============================================================================
