@@ -10,20 +10,20 @@ See: .planning/PROJECT.md (updated 2026-02-08)
 ## Current Position
 
 Phase: 5 of 7 (Data Prep Hardening)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-02-08 -- Roadmap created for v2 Documentation & Hardening
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-08 -- Completed 05-01-PLAN.md (cli messaging + HRD-01 through HRD-06)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 10% (1/10 v2 plans, 10/13 total)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9 (v1)
-- Average duration: ~30 min (estimated from v1)
-- Total execution time: ~4.5 hours (v1)
+- Total plans completed: 10 (9 v1 + 1 v2)
+- Average duration: ~25 min (v1), ~8 min (v2 so far)
+- Total execution time: ~4.5 hours (v1) + ~8 min (v2)
 
-**By Phase (v1):**
+**By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
@@ -31,6 +31,7 @@ Progress: [░░░░░░░░░░] 0%
 | 2 | 2 | ~60 min | ~30 min |
 | 3 | 2 | ~60 min | ~30 min |
 | 4 | 2 | ~60 min | ~30 min |
+| 5 | 1/2 | ~8 min | ~8 min |
 
 *Updated after each plan completion*
 
@@ -41,7 +42,13 @@ Progress: [░░░░░░░░░░] 0%
 Decisions are logged in PROJECT.md Key Decisions table.
 All v1 decisions resolved with outcomes documented.
 
-No new v2 decisions yet.
+**v2 Decisions:**
+
+| ID | Decision | Rationale |
+|----|----------|-----------|
+| D-05-01-01 | All-NA covariates warn+skip, not error | validate_data returns TRUE/error, cannot modify vars |
+| D-05-01-02 | All-NA outcome is hard error | Nothing to model, analysis cannot proceed |
+| D-05-01-03 | stats::setNames() for namespace compliance | Avoids R CMD check NOTE |
 
 ### Pending Todos
 
@@ -54,5 +61,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-08
-Stopped at: v2 roadmap created, ready to plan Phase 5
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
