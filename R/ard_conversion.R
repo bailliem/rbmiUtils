@@ -44,9 +44,8 @@
 #' @export
 pool_to_ard <- function(pool_obj, conf.level = NULL) {
 
-
   # --- Dependency check ---
-  if (!requireNamespace("cards", quietly = TRUE)) {
+  if (!is_cards_available()) {
     cli::cli_abort(
       c(
         "Package {.pkg cards} is required for ARD conversion.",
@@ -54,8 +53,7 @@ pool_to_ard <- function(pool_obj, conf.level = NULL) {
       ),
       class = c("rbmiUtils_error_dependency", "rbmiUtils_error")
     )
-
-}
+  }
 
   # --- Input validation ---
   if (!inherits(pool_obj, "pool")) {
@@ -119,4 +117,17 @@ pool_to_ard <- function(pool_obj, conf.level = NULL) {
   # --- Assemble and convert to ARD ---
   ard_df <- do.call(rbind, rows)
   cards::tidy_ard_column_order(cards::as_card(ard_df))
+}
+
+
+#' Check if cards package is available
+#'
+#' Internal helper extracted for testability. Wraps
+#' `requireNamespace("cards", quietly = TRUE)`.
+#'
+#' @return Logical scalar.
+#' @keywords internal
+#' @noRd
+is_cards_available <- function() {
+  requireNamespace("cards", quietly = TRUE)
 }
