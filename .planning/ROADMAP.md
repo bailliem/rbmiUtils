@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation Hardening** - Fix fragile parameter parsing, wrap rbmi::analyse(), harden gcomp and storage functions
 - [x] **Phase 2: Print/Summary & ARD Conversion** - Improve console output for key objects and build ARD interchange layer
 - [x] **Phase 3: Efficacy Tables** - Generate regulatory-style efficacy summary tables via gtsummary + gt
-- [ ] **Phase 4: Visualization** - Forest plot function for treatment effects across visits
+- [x] **Phase 4: Visualization** - Forest plot function for treatment effects across visits
 
 ## Phase Details
 
@@ -79,7 +79,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md — Implement plot_forest() with three-panel patchwork composition, tests, and visual verification (VIZ-01, VIZ-02, VIZ-03)
+- [x] 04-01-PLAN.md — Implement plot_forest() with three-panel patchwork composition, tests, and visual verification (VIZ-01, VIZ-02, VIZ-03)
 
 ## Progress
 
@@ -92,4 +92,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Foundation Hardening | 3/3 | Complete | 2026-02-07 |
 | 2. Print/Summary & ARD Conversion | 3/3 | Complete | 2026-02-08 |
 | 3. Efficacy Tables | 2/2 | Complete | 2026-02-08 |
-| 4. Visualization | 0/1 | Not started | - |
+| 4. Visualization | 1/1 | Complete | 2026-02-08 |
