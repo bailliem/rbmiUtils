@@ -63,6 +63,10 @@ display "LS Mean (Placebo)" and "LS Mean (Drug A)" instead of the defaults.
 
 \strong{Customization:} The returned gt object can be further customized using
 standard gt piping, e.g., \code{efficacy_table(pool_obj) |> gt::tab_options(...)}.
+
+\strong{Example output:}
+
+\if{html}{\figure{efficacy_table-example.png}{options: width=80\%}}
 }
 \examples{
 \donttest{

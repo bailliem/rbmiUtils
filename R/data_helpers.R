@@ -33,9 +33,9 @@
 #' 4. Proceed with [rbmi::draws()] for imputation
 #'
 #' @seealso
+#' * [rbmi::draws()] which requires validated input data
 #' * [prepare_data_ice()] to create intercurrent event data from flags
 #' * [summarise_missingness()] to understand missing data patterns
-#' * [rbmi::draws()] to perform imputation after validation
 #'
 #' @examples
 #' library(rbmi)
@@ -339,6 +339,11 @@ validate_data <- function(data, vars, data_ice = NULL) {
 #'   `vars$visit`, and `vars$strategy`, suitable for passing to
 #'   [rbmi::draws()].
 #'
+#' @seealso
+#' * [rbmi::draws()] which accepts the `data_ice` output from this function
+#' * [validate_data()] to check data before imputation
+#' * [summarise_missingness()] to understand missing data patterns
+#'
 #' @examples
 #' library(rbmi)
 #'
@@ -535,6 +540,11 @@ prepare_data_ice <- function(data, vars, ice_col, strategy) {
 #'   \item{summary}{A tibble with columns: group, n_subjects, n_complete,
 #'     n_monotone, n_intermittent}
 #' }
+#'
+#' @seealso
+#' * [rbmi::draws()] for imputation after reviewing missingness patterns
+#' * [validate_data()] to check data before imputation
+#' * [prepare_data_ice()] to create intercurrent event data from flags
 #'
 #' @examples
 #' library(rbmi)

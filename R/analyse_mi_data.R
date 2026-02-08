@@ -28,6 +28,9 @@
 #'   Pass this to [rbmi::pool()] to obtain pooled estimates.
 #'
 #' @seealso
+#' * [rbmi::analyse()] which this function wraps
+#' * [rbmi::pool()] for pooling the analysis results
+#' * The [rbmi quickstart vignette](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html)
 #' * [tidy_pool_obj()] to format pooled results for publication
 
 #' * [get_imputed_data()] to extract imputed datasets from rbmi objects

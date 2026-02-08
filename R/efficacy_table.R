@@ -37,6 +37,10 @@
 #' **Customization:** The returned gt object can be further customized using
 #' standard gt piping, e.g., `efficacy_table(pool_obj) |> gt::tab_options(...)`.
 #'
+#' **Example output:**
+#'
+#' \if{html}{\figure{efficacy_table-example.png}{options: width=80\%}}
+#'
 #' @seealso
 #' * [tidy_pool_obj()] for the underlying data transformation
 #' * [format_pvalue()] for p-value formatting rules

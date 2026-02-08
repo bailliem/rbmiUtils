@@ -53,5 +53,9 @@ if (requireNamespace("cards", quietly = TRUE)) {
 
 }
 \seealso{
-\code{\link[=tidy_pool_obj]{tidy_pool_obj()}}, \code{\link[cards:as_card]{cards::as_card()}}, \code{\link[cards:check_ard_structure]{cards::check_ard_structure()}}
+\itemize{
+\item \code{\link[rbmi:pool]{rbmi::pool()}} for creating pool objects
+\item \code{\link[=tidy_pool_obj]{tidy_pool_obj()}} for the underlying data transformation
+\item \code{\link[cards:as_card]{cards::as_card()}} and \code{\link[cards:check_ard_structure]{cards::check_ard_structure()}} for ARD validation
+}
 }

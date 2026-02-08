@@ -33,6 +33,7 @@
 #' 4. Tidy with `tidy_pool_obj()` for publication-ready output
 #'
 #' @seealso
+#' * [rbmi::pool()] which creates the pool objects this function tidies
 #' * [analyse_mi_data()] to analyse imputed datasets
 #' * [format_results()] for additional formatting options
 #'

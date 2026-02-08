@@ -12,122 +12,102 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![test-coverage](https://github.com/openpharma/rbmiUtils/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/openpharma/rbmiUtils/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
-`rbmiUtils` extends the functionality of
-[`rbmi`](https://github.com/openpharma/rbmi) to support more streamlined
-workflows for multiple imputation in clinical trials. It is designed to
-simplify key tasks such as analysis execution, pooling, result tidying,
-and imputed data handling.
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Example](#example)
-- [Dataset](#dataset)
-- [Utilities](#utilities)
-- [Development Status](#development-status)
+`rbmiUtils` bridges [rbmi](https://github.com/openpharma/rbmi) analysis
+results into publication-ready regulatory tables and forest plots. It
+extends rbmi for clinical trial workflows, handling everything from data
+validation through to formatted efficacy outputs.
 
 ## Installation
 
-You can install the package from cran or the development version of
-`rbmiUtils` from GitHub:
+You can install the package from CRAN or the development version from
+GitHub:
 
 | Type        | Source | Command                                           |
 |-------------|--------|---------------------------------------------------|
 | Release     | CRAN   | `install.packages("rbmiUtils")`                   |
 | Development | GitHub | `remotes::install_github("openpharma/rbmiUtils")` |
 
-## Example
+## What You Get
 
-This example shows how to run a covariate-adjusted ANCOVA on imputed
-datasets using Bayesian multiple imputation:
+From a single rbmi pool object, `rbmiUtils` produces publication-ready
+outputs:
+
+**Forest Plot**
+
+<figure>
+<img src="man/figures/README-forest-plot-1.png" alt="Forest Plot" />
+<figcaption aria-hidden="true">Forest Plot</figcaption>
+</figure>
+
+**Efficacy Table**
+
+<figure>
+<img src="man/figures/README-efficacy-table-1.png"
+alt="Efficacy Table" />
+<figcaption aria-hidden="true">Efficacy Table</figcaption>
+</figure>
+
+These outputs are generated from a single rbmi pool object – see the
+[end-to-end pipeline
+vignette](https://openpharma.github.io/rbmiUtils/articles/pipeline.html)
+for the complete walkthrough.
+
+## Quick Start
 
 ``` r
-library(dplyr)
-library(rbmi)
 library(rbmiUtils)
+library(rbmi)
 
+# Load pre-imputed data
 data("ADMI")
+ADMI$TRT     <- factor(ADMI$TRT, levels = c("Placebo", "Drug A"))
+ADMI$USUBJID <- factor(ADMI$USUBJID)
+ADMI$AVISIT  <- factor(ADMI$AVISIT)
 
-# Setup
-N_IMPUTATIONS <- 100
-WARMUP <- 200
-THIN <- 5
-
-# Preprocessing
-ADMI <- ADMI %>%
-  mutate(
-    TRT = factor(TRT, levels = c("Placebo", "Drug A")),
-    USUBJID = factor(USUBJID),
-    AVISIT = factor(AVISIT)
-  )
-
-# Define analysis variables
+# Define variables and method
 vars <- set_vars(
-  subjid = "USUBJID",
-  visit = "AVISIT",
-  group = "TRT",
-  outcome = "CHG",
-  covariates = c("BASE", "STRATA", "REGION")
+  subjid = "USUBJID", visit = "AVISIT", group = "TRT",
+  outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
+)
+method <- method_bayes(
+  n_samples = 100,
+  control = control_bayes(warmup = 200, thin = 5)
 )
 
-# Specify imputation method
-method <- rbmi::method_bayes(
-  n_samples = N_IMPUTATIONS,
-  control = rbmi::control_bayes(
-    warmup = WARMUP,
-    thin = THIN
-  )
-)
-
-# Run analysis
-ana_obj <- analyse_mi_data(
-  data = ADMI,
-  vars = vars,
-  method = method,
-  fun = ancova
-)
-
-# Pool results and tidy
+# Analyse, pool, and tidy
+ana_obj  <- analyse_mi_data(data = ADMI, vars = vars, method = method)
 pool_obj <- pool(ana_obj)
-tidy_df <- tidy_pool_obj(pool_obj)
+tidy_df  <- tidy_pool_obj(pool_obj)
 
-# View results
-print(tidy_df)
-#> # A tibble: 6 × 10
-#>   parameter       description visit parameter_type lsm_type     est    se    lci
-#>   <chr>           <chr>       <chr> <chr>          <chr>      <dbl> <dbl>  <dbl>
-#> 1 trt_Week 24     Treatment … Week… trt            <NA>     -2.17   0.182 -2.53 
-#> 2 lsm_ref_Week 24 Least Squa… Week… lsm            ref       0.0782 0.131 -0.179
-#> 3 lsm_alt_Week 24 Least Squa… Week… lsm            alt      -2.09   0.126 -2.34 
-#> 4 trt_Week 48     Treatment … Week… trt            <NA>     -3.81   0.256 -4.31 
-#> 5 lsm_ref_Week 48 Least Squa… Week… lsm            ref       0.0481 0.185 -0.316
-#> 6 lsm_alt_Week 48 Least Squa… Week… lsm            alt      -3.76   0.176 -4.11 
-#> # ℹ 2 more variables: uci <dbl>, pval <dbl>
+# Publication outputs
+efficacy_table(pool_obj, arm_labels = c(ref = "Placebo", alt = "Drug A"))
+plot_forest(pool_obj, arm_labels = c(ref = "Placebo", alt = "Drug A"))
 ```
 
-## Datasets
+## Key Features
 
-The package includes two example datasets for demonstrating imputation
-and analysis:
+- `validate_data()` – pre-flight checks on data structure before
+  imputation
+- `analyse_mi_data()` – run ANCOVA (or custom analysis) across all
+  imputations
+- `tidy_pool_obj()` – tidy pooled results with visit-level annotations
+- `efficacy_table()` – regulatory-style gt tables (CDISC/ICH Table
+  14.2.x format)
+- `plot_forest()` – three-panel forest plots with estimates, CIs, and
+  p-values
+- `pool_to_ard()` – convert pool objects to pharmaverse ARD format
+- `get_imputed_data()` – extract long-format imputed datasets
+- `format_pvalue()` / `format_estimate()` – publication-ready formatting
 
-- `ADEFF`: An example efficacy dataset for with missing data.
-- `ADMI`: A large multiple imputation dataset with 100,000 rows and
-  multiple visits, treatment arms, and stratification variables.
+## Learn More
 
-Use `?ADEFF` and `?ADMI` to view full dataset documentation.
-
-## Utilities
-
-Key exported functions include:
-
-- `analyse_mi_data()`: Applies an analysis function (e.g., ANCOVA) to
-  all imputed datasets.
-- `tidy_pool_obj()`: Tidies and annotates pooled results for reporting.
-- `get_imputed_data()`: Extracts long-format imputed datasets with
-  original subject IDs mapped.
-
-These utilities wrap standard `rbmi` workflows for improved
-reproducibility and interpretability.
+- [From rbmi Analysis to Regulatory
+  Tables](https://openpharma.github.io/rbmiUtils/articles/pipeline.html)
+  – end-to-end walkthrough from raw data to regulatory outputs
+- [Storing and Analyzing Imputed
+  Data](https://openpharma.github.io/rbmiUtils/articles/analyse2.html) –
+  focused guide on analysis workflows
+- [Package documentation](https://openpharma.github.io/rbmiUtils/)
 
 ## Development Status
 

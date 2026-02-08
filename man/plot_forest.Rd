@@ -76,6 +76,10 @@ each visit.
 \strong{Customization:} The returned patchwork object supports \verb{& theme()} for
 applying theme changes to all panels. For example:
 \code{plot_forest(pool_obj) & theme(text = element_text(size = 14))}.
+
+\strong{Example output (treatment difference mode):}
+
+\if{html}{\figure{plot_forest-trt.png}{options: width=80\%}}
 }
 \examples{
 \donttest{
@@ -98,6 +102,7 @@ if (requireNamespace("ggplot2", quietly = TRUE) &&
 }
 \seealso{
 \itemize{
+\item \code{\link[rbmi:pool]{rbmi::pool()}} for creating pool objects
 \item \code{\link[=tidy_pool_obj]{tidy_pool_obj()}} for the underlying data transformation
 \item \code{\link[=efficacy_table]{efficacy_table()}} for tabular presentation of the same data
 \item \code{\link[=format_pvalue]{format_pvalue()}} for p-value formatting rules

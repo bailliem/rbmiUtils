@@ -27,8 +27,10 @@
 #' Use [expand_imputed_data()] to reconstruct the full imputed dataset when
 #' needed for analysis.
 #'
-#' @seealso [expand_imputed_data()] to reconstruct the full dataset,
-#'   [get_imputed_data()] to extract imputed data from an rbmi imputation object.
+#' @seealso
+#' * [rbmi::impute()] which creates the imputed datasets this function operates on
+#' * [expand_imputed_data()] to reconstruct the full dataset
+#' * [get_imputed_data()] to extract imputed data from an rbmi imputation object
 #'
 #' @examples
 #' library(rbmi)
@@ -201,8 +203,10 @@ reduce_imputed_data <- function(imputed_data, original_data, vars) {
 #'   \item Stacks all imputations together
 #' }
 #'
-#' @seealso [reduce_imputed_data()] to create the reduced dataset,
-#'   [get_imputed_data()] to extract imputed data from an rbmi imputation object.
+#' @seealso
+#' * [rbmi::impute()] which creates the imputed datasets this function operates on
+#' * [reduce_imputed_data()] to create the reduced dataset
+#' * [get_imputed_data()] to extract imputed data from an rbmi imputation object
 #'
 #' @examples
 #' library(rbmi)

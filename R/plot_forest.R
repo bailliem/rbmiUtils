@@ -52,7 +52,12 @@
 #' applying theme changes to all panels. For example:
 #' `plot_forest(pool_obj) & theme(text = element_text(size = 14))`.
 #'
+#' **Example output (treatment difference mode):**
+#'
+#' \if{html}{\figure{plot_forest-trt.png}{options: width=80\%}}
+#'
 #' @seealso
+#' * [rbmi::pool()] for creating pool objects
 #' * [tidy_pool_obj()] for the underlying data transformation
 #' * [efficacy_table()] for tabular presentation of the same data
 #' * [format_pvalue()] for p-value formatting rules

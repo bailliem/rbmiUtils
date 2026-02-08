@@ -28,7 +28,10 @@
 #' The resulting ARD passes [cards::check_ard_structure()] validation and is
 #' suitable for downstream use with \pkg{gtsummary}.
 #'
-#' @seealso [tidy_pool_obj()], [cards::as_card()], [cards::check_ard_structure()]
+#' @seealso
+#' * [rbmi::pool()] for creating pool objects
+#' * [tidy_pool_obj()] for the underlying data transformation
+#' * [cards::as_card()] and [cards::check_ard_structure()] for ARD validation
 #'
 #' @examples
 #' \donttest{
