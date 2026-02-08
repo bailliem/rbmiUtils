@@ -98,10 +98,11 @@ Plans:
   3. Function reference page groups functions by layer (data prep, analysis, utilities, tidying, formatting, storage, reporting)
   4. Sharing a link to the site on social media/Slack shows a branded open graph card with package name and description
   5. Site footer includes openpharma and pharmaverse links
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01-PLAN.md -- Logo rename, README update, and favicon generation (SITE-01)
+- [ ] 07-02-PLAN.md -- Complete _pkgdown.yml configuration: navbar, reference groups, open graph, footer (SITE-02, SITE-03, SITE-04, SITE-05)
 
 ## Progress
 
@@ -115,8 +116,8 @@ Plans:
 | 4. Visualization | v1 | 2/2 | Complete | 2026-02-08 |
 | 5. Data Prep Hardening | v2 | 2/2 | Complete | 2026-02-08 |
 | 6. Documentation | v2 | 3/3 | Complete | 2026-02-08 |
-| 7. Site Polish | v2 | 0/? | Not started | - |
+| 7. Site Polish | v2 | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-08 (Phase 6 complete)*
+*Last updated: 2026-02-08 (Phase 7 planned)*
