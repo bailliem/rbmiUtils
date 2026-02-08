@@ -215,3 +215,146 @@ test_that("ci_level argument overrides pool_obj$conf.level", {
 
   expect_true(grepl("99%", html))
 })
+
+
+# =============================================================================
+# Edge case tests (Plan 03-02)
+# =============================================================================
+
+# --- Visit ordering follows pool object order, not alphabetical ---
+
+test_that("visit ordering follows pool object order, not alphabetical", {
+  skip_if_not_installed("gt")
+
+  # Create pool with visits in non-alphabetical order: Week12, Week4, Week24
+  # Alphabetical would be: Week 12, Week 24, Week 4
+  mock_pool <- list(
+    pars = list(
+      trt_Week12 = list(est = -1.5, se = 0.7, ci = c(-2.9, -0.1), pvalue = 0.035),
+      lsm_ref_Week12 = list(est = 8.0, se = 0.4, ci = c(7.2, 8.8), pvalue = NA),
+      lsm_alt_Week12 = list(est = 6.5, se = 0.5, ci = c(5.5, 7.5), pvalue = NA),
+      trt_Week4 = list(est = -0.8, se = 0.9, ci = c(-2.6, 1.0), pvalue = 0.38),
+      lsm_ref_Week4 = list(est = 5.0, se = 0.3, ci = c(4.4, 5.6), pvalue = NA),
+      lsm_alt_Week4 = list(est = 4.2, se = 0.4, ci = c(3.4, 5.0), pvalue = NA),
+      trt_Week24 = list(est = -2.5, se = 0.8, ci = c(-4.1, -0.9), pvalue = 0.002),
+      lsm_ref_Week24 = list(est = 10.0, se = 0.5, ci = c(9.0, 11.0), pvalue = NA),
+      lsm_alt_Week24 = list(est = 7.5, se = 0.6, ci = c(6.3, 8.7), pvalue = NA)
+    ),
+    conf.level = 0.95,
+    alternative = "two.sided",
+    N = 100,
+    method = "rubin"
+  )
+  class(mock_pool) <- "pool"
+
+  html <- gt::as_raw_html(efficacy_table(mock_pool))
+
+  # Find first occurrence positions -- pool order is Week12, Week4, Week24
+  w12_pos <- regexpr("Week 12", html)
+  w4_pos <- regexpr("Week 4[^0-9]", html)
+  w24_pos <- regexpr("Week 24", html)
+
+  # Week 12 should appear before Week 4, and Week 4 before Week 24
+  expect_true(
+    w12_pos < w4_pos,
+    label = "Week 12 appears before Week 4 (pool object order, not alphabetical)"
+  )
+  expect_true(
+    w4_pos < w24_pos,
+    label = "Week 4 appears before Week 24 (pool object order, not alphabetical)"
+  )
+})
+
+
+# --- Single-visit pool object works ---
+
+test_that("single-visit pool object works", {
+  skip_if_not_installed("gt")
+
+  mock_pool <- list(
+    pars = list(
+      trt_Week4 = list(est = -2.5, se = 0.8, ci = c(-4.1, -0.9), pvalue = 0.002),
+      lsm_ref_Week4 = list(est = 10.0, se = 0.5, ci = c(9.0, 11.0), pvalue = NA),
+      lsm_alt_Week4 = list(est = 7.5, se = 0.6, ci = c(6.3, 8.7), pvalue = NA)
+    ),
+    conf.level = 0.95,
+    alternative = "two.sided",
+    N = 50,
+    method = "rubin"
+  )
+  class(mock_pool) <- "pool"
+
+  tbl <- efficacy_table(mock_pool)
+  expect_s3_class(tbl, "gt_tbl")
+
+  html <- gt::as_raw_html(tbl)
+  expect_true(grepl("Week 4", html, fixed = TRUE))
+})
+
+
+# --- NA visit rows produce warning and are excluded ---
+
+test_that("NA visit rows produce warning and are excluded", {
+  skip_if_not_installed("gt")
+
+  # Add a parameter with no visit suffix (lsm_ref -> visit = NA)
+  mock_pool <- list(
+    pars = list(
+      trt_Week4 = list(est = -2.5, se = 0.8, ci = c(-4.1, -0.9), pvalue = 0.002),
+      lsm_ref_Week4 = list(est = 10.0, se = 0.5, ci = c(9.0, 11.0), pvalue = NA),
+      lsm_alt_Week4 = list(est = 7.5, se = 0.6, ci = c(6.3, 8.7), pvalue = NA),
+      lsm_ref = list(est = 5.0, se = 0.3, ci = c(4.4, 5.6), pvalue = NA)
+    ),
+    conf.level = 0.95,
+    alternative = "two.sided",
+    N = 100,
+    method = "rubin"
+  )
+  class(mock_pool) <- "pool"
+
+  expect_warning(
+    tbl <- efficacy_table(mock_pool),
+    class = "rbmiUtils_warning"
+  )
+
+  # Table should still render successfully
+  expect_s3_class(tbl, "gt_tbl")
+  html <- gt::as_raw_html(tbl)
+  expect_true(grepl("Week 4", html, fixed = TRUE))
+})
+
+
+# --- gt object can be further customized via pipe ---
+
+test_that("gt object can be further customized via pipe", {
+  skip_if_not_installed("gt")
+
+  tbl <- efficacy_table(make_mock_pool())
+  customized <- tbl |> gt::tab_options(table.font.size = gt::px(10))
+  expect_s3_class(customized, "gt_tbl")
+})
+
+
+# --- Empty result after filtering aborts ---
+
+test_that("empty result after NA visit filtering aborts with clear error", {
+  skip_if_not_installed("gt")
+
+  # All parameters have no visit -- all will be filtered out
+  mock_pool <- list(
+    pars = list(
+      lsm_ref = list(est = 5.0, se = 0.3, ci = c(4.4, 5.6), pvalue = NA),
+      lsm_alt = list(est = 3.0, se = 0.4, ci = c(2.2, 3.8), pvalue = NA)
+    ),
+    conf.level = 0.95,
+    alternative = "two.sided",
+    N = 100,
+    method = "rubin"
+  )
+  class(mock_pool) <- "pool"
+
+  expect_error(
+    suppressWarnings(efficacy_table(mock_pool)),
+    class = "rbmiUtils_error_validation"
+  )
+})
