@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# rbmiUtils <a href="https://openpharma.github.io/rbmiUtils/"> <img src="man/figures/rbmiUtils.png" align="right" width="140px" alt="rbmiUtils website" /> </a>
+# rbmiUtils <a href="https://openpharma.github.io/rbmiUtils/"> <img src="man/figures/logo.png" align="right" width="140px" alt="rbmiUtils website" /> </a>
 
 <!-- badges: start -->
 

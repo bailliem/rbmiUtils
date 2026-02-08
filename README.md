@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# rbmiUtils <a href="https://openpharma.github.io/rbmiUtils/"> <img src="man/figures/rbmiUtils.png" align="right" width="140px" alt="rbmiUtils website" /> </a>
+# rbmiUtils <a href="https://openpharma.github.io/rbmiUtils/"> <img src="man/figures/logo.png" align="right" width="140px" alt="rbmiUtils website" /> </a>
 
 <!-- badges: start -->
 
