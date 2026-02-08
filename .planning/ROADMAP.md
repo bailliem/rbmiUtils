@@ -65,11 +65,11 @@ Plans:
   3. prepare_data_ice() warns when visit column is character with guidance to convert to factor for correct ordering
   4. validate_data() displays all type coercion warnings in a single batched message and warns on all-NA covariate columns
   5. Data prep functions handle edge cases (single subject, single visit, all-NA outcome, all-complete data) without crashing
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01: Migrate validate_data() and prepare_data_ice() to cli messaging + add HRD-01 through HRD-06 validation checks
+- [ ] 05-02: Edge case test coverage (HRD-07) for single subject, single visit, all-NA outcome, all-complete data
 
 ### Phase 6: Documentation
 **Goal**: Users can learn the full rbmiUtils pipeline from a single end-to-end vignette, see rendered output in function docs, and find version history in NEWS.md
@@ -112,7 +112,7 @@ Plans:
 | 2. Print/Summary & ARD | v1 | 2/2 | Complete | 2026-02-07 |
 | 3. Efficacy Tables | v1 | 2/2 | Complete | 2026-02-08 |
 | 4. Visualization | v1 | 2/2 | Complete | 2026-02-08 |
-| 5. Data Prep Hardening | v2 | 0/? | Not started | - |
+| 5. Data Prep Hardening | v2 | 0/2 | Not started | - |
 | 6. Documentation | v2 | 0/? | Not started | - |
 | 7. Site Polish | v2 | 0/? | Not started | - |
 
