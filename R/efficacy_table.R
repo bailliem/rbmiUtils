@@ -102,8 +102,10 @@ efficacy_table <- function(
   # --- Step B: Data preparation ---
   tidy_df <- tidy_pool_obj(pool_obj)
 
-  # Clean visit labels: underscore -> space, title case
-  tidy_df$visit_label <- tools::toTitleCase(gsub("_", " ", tidy_df$visit))
+  # Clean visit labels: underscore -> space, letter-digit boundary -> space, title case
+  visit_clean <- gsub("_", " ", tidy_df$visit)
+  visit_clean <- gsub("([a-zA-Z])(\\d)", "\\1 \\2", visit_clean)
+  tidy_df$visit_label <- tools::toTitleCase(visit_clean)
 
   # Preserve visit ordering from pool object
   visit_levels <- unique(tidy_df$visit_label)
