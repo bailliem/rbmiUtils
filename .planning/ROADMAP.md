@@ -62,11 +62,11 @@ Plans:
   2. The table renders as gt output suitable for HTML and PDF inclusion in clinical study reports
   3. The table includes footnotes documenting number of imputations, pooling method, and model description
   4. Users can override default formatting (decimal precision, CI bracket style) via function arguments
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — Create efficacy_table() function with gt rendering and tests (TBL-01, TBL-02, TBL-03, TBL-04)
+- [ ] 03-02-PLAN.md — Add edge case handling, visit ordering, and integration tests
 
 ### Phase 4: Visualization
 **Goal**: Users produce publication-quality forest plots of treatment effects across visits from rbmi pool objects
