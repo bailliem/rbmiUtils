@@ -2,6 +2,20 @@
 
 ## rbmiUtils (development version)
 
+### Breaking Changes
+
+- [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)
+  now uses regex-based parameter parsing instead of splitting on `_`.
+  This correctly handles parameter names containing underscores (e.g.,
+  “Week_24”, “Follow_Up”). The output columns (`parameter_type`,
+  `lsm_type`, `visit`) now contain the full visit name rather than
+  truncated fragments. (#HRD-01)
+
+### Dependencies
+
+- Added `cli` (\>= 3.6.0) and `lifecycle` (\>= 1.0.4) to Imports for
+  improved error messaging and deprecation support.
+
 ### New Features
 
 - Added

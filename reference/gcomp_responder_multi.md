@@ -77,25 +77,18 @@ ana_obj_prop <- analyse_mi_data(
 
 pool(ana_obj_prop)
 #> 
-#> Pool Object
-#> -----------
-#> Number of Results Combined: 100
+#> ── Pool Object ─────────────────────────────────────────────────────────────────
+#> 6 parameters across 4 visits
 #> Method: rubin
-#> Confidence Level: 0.95
-#> Alternative: two.sided
-#> 
-#> Results:
-#> 
-#>   ===================================================================
-#>            parameter            est     se     lci     uci     pval  
-#>   -------------------------------------------------------------------
-#>    trt_Drug A-Placebo_Week 24  -0.031  0.012  -0.053  -0.008  0.007  
-#>        lsm_Drug A_Week 24        0     0.001  -0.001  0.002   0.921  
-#>       lsm_Placebo_Week 24      0.031   0.011  0.008   0.053   0.007  
-#>    trt_Drug A-Placebo_Week 48  -0.096  0.021  -0.137  -0.054  <0.001 
-#>        lsm_Drug A_Week 48      0.007   0.005  -0.003  0.017    0.15  
-#>       lsm_Placebo_Week 48      0.103   0.021  0.063   0.143   <0.001 
-#>   -------------------------------------------------------------------
-#> 
+#> N imputations: 100
+#> Confidence: 95%
+#> ────────────────────────────────────────────────────────────────────────────────
+#>                   parameter                  visit   est   lci   uci    pval
+#>  trt_Drug A-Placebo_Week 24 Drug A-Placebo_Week 24 -0.03 -0.05 -0.01   0.007
+#>          lsm_Drug A_Week 24                Week 24  0.00  0.00  0.00   0.921
+#>         lsm_Placebo_Week 24                Week 24  0.03  0.01  0.05   0.007
+#>  trt_Drug A-Placebo_Week 48 Drug A-Placebo_Week 48 -0.10 -0.14 -0.05 < 0.001
+#>          lsm_Drug A_Week 48                Week 48  0.01  0.00  0.02   0.150
+#>         lsm_Placebo_Week 48                Week 48  0.10  0.06  0.14 < 0.001
 # }
 ```

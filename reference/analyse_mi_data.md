@@ -164,5 +164,6 @@ ana_obj_ancova <- analyse_mi_data(
   fun = ancova,  # Apply ANCOVA
   delta = NULL   # No sensitivity analysis adjustment
 )
-#> Warning: Data contains 100 imputations but method expects 20. Using first 20 imputations.
+#> Warning: Data contains 100 imputations but method expects 20. Using first 20
+#> imputations.
 ```

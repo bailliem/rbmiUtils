@@ -81,17 +81,18 @@
 <span class="r-in"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/method.html" class="external-link">method_bayes</a></span><span class="op">(</span>n_samples <span class="op">=</span> <span class="fl">10</span>, control <span class="op">=</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/control.html" class="external-link">control_bayes</a></span><span class="op">(</span>warmup <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ana_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="analyse_mi_data.html">analyse_mi_data</a></span><span class="op">(</span><span class="va">ADMI</span>, <span class="va">vars</span>, <span class="va">method</span>, fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">d</span>, <span class="va">v</span>, <span class="va">...</span><span class="op">)</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Data contains 100 imputations but method expects 10. Using first 10 imputations.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Data contains 100 imputations but method expects 10. Using first 10</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> imputations.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ana_obj</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Analysis object from rbmiUtils</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of imputations: 10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Analysis function: &lt;Anonymous Function&gt; </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Delta adjustment: No</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Method type: bayes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Pooling method: rubin </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Use `rbmi::pool()` to obtain pooled estimates.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Analysis Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 10 imputations analysed with `&lt;Anonymous Function&gt;()`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────────────────────────</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Method</span>: bayes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Pooling</span>: rubin</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Delta</span>: None</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Next: `pool_obj &lt;- rbmi::pool(analysis_obj)`</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

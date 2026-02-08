@@ -22,6 +22,9 @@
 - [`create_impid()`](https://openpharma.github.io/rbmiUtils/reference/create_impid.md)
   : Create IMPID Column for Imputed Datasets
 
+- [`efficacy_table()`](https://openpharma.github.io/rbmiUtils/reference/efficacy_table.md)
+  : Create Regulatory-Style Efficacy Summary Table
+
 - [`expand_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/expand_imputed_data.md)
   : Expand Reduced Imputed Data to Full Dataset
 
@@ -55,11 +58,20 @@
 - [`get_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/get_imputed_data.md)
   : Get Imputed Data Sets as a data frame
 
+- [`plot_forest()`](https://openpharma.github.io/rbmiUtils/reference/plot_forest.md)
+  : Create a Forest Plot from an rbmi Pool Object
+
+- [`pool_to_ard()`](https://openpharma.github.io/rbmiUtils/reference/pool_to_ard.md)
+  : Convert Pool Object to ARD Format
+
 - [`prepare_data_ice()`](https://openpharma.github.io/rbmiUtils/reference/prepare_data_ice.md)
   : Prepare Intercurrent Event Data
 
 - [`print(`*`<analysis>`*`)`](https://openpharma.github.io/rbmiUtils/reference/print.analysis.md)
   : Print Method for Analysis Objects
+
+- [`print(`*`<pool>`*`)`](https://openpharma.github.io/rbmiUtils/reference/print.pool.md)
+  : Print Method for Pool Objects
 
 - [`reduce_imputed_data()`](https://openpharma.github.io/rbmiUtils/reference/reduce_imputed_data.md)
   : Reduce Imputed Data for Efficient Storage
@@ -69,6 +81,9 @@
 
 - [`summary(`*`<analysis>`*`)`](https://openpharma.github.io/rbmiUtils/reference/summary.analysis.md)
   : Summary Method for Analysis Objects
+
+- [`summary(`*`<pool>`*`)`](https://openpharma.github.io/rbmiUtils/reference/summary.pool.md)
+  : Summary Method for Pool Objects
 
 - [`tidy_pool_obj()`](https://openpharma.github.io/rbmiUtils/reference/tidy_pool_obj.md)
   : Tidy and Annotate a Pooled Object for Publication

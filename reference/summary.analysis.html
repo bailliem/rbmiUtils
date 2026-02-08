@@ -46,7 +46,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'analysis'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, n_preview <span class="op">=</span> <span class="fl">5</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,6 +55,11 @@
 
 <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>An object of class <code>analysis</code>.</p></dd>
+
+
+<dt id="arg-n-preview">n_preview<a class="anchor" aria-label="anchor" href="#arg-n-preview"></a></dt>
+<dd><p>Maximum number of parameters to show in the preview table.
+Defaults to 5.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -81,28 +86,33 @@
 <span class="r-in"><span><span class="va">method</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/method.html" class="external-link">method_bayes</a></span><span class="op">(</span>n_samples <span class="op">=</span> <span class="fl">10</span>, control <span class="op">=</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/control.html" class="external-link">control_bayes</a></span><span class="op">(</span>warmup <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ana_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="analyse_mi_data.html">analyse_mi_data</a></span><span class="op">(</span><span class="va">ADMI</span>, <span class="va">vars</span>, <span class="va">method</span>, fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">d</span>, <span class="va">v</span>, <span class="va">...</span><span class="op">)</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Data contains 100 imputations but method expects 10. Using first 10 imputations.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Data contains 100 imputations but method expects 10. Using first 10</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> imputations.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ana_obj</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Analysis Object Summary</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> =======================</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Imputations:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Number of imputations: 10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Analysis:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Function: &lt;Anonymous Function&gt; </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Delta adjustment: None</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Method:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Type: bayes </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Samples: 10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Pooling:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Method: rubin </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Next steps:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1. Pool results: pool_obj &lt;- rbmi::pool(analysis_obj)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2. Tidy results: tidy_df &lt;- tidy_pool_obj(pool_obj)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Analysis Object Summary</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Imputations</span> ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Count</span>: 10</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Analysis</span> ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Function</span>: `&lt;Anonymous Function&gt;()`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Delta</span>: None</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Method</span> ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Type</span>: bayes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Samples</span>: 10</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Pooling</span> ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Method</span>: rubin</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Next steps:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 1. `pool_obj &lt;- rbmi::pool(analysis_obj)`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2. `tidy_df &lt;- tidy_pool_obj(pool_obj)`</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

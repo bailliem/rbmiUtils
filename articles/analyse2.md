@@ -104,8 +104,8 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> 
 #> SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.00048 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.8 seconds.
+#> Chain 1: Gradient evaluation took 0.000454 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.54 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -122,9 +122,9 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 400 / 400 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.647 seconds (Warm-up)
-#> Chain 1:                0.532 seconds (Sampling)
-#> Chain 1:                1.179 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.639 seconds (Warm-up)
+#> Chain 1:                0.523 seconds (Sampling)
+#> Chain 1:                1.162 seconds (Total)
 #> Chain 1:
 
 impute_obj <- impute(draws_obj, references = c("Placebo" = "Placebo", "Drug A" = "Placebo"))
@@ -158,25 +158,19 @@ ana_obj_ancova <- analyse_mi_data(
 pool_obj_ancova <- pool(ana_obj_ancova)
 print(pool_obj_ancova)
 #> 
-#> Pool Object
-#> -----------
-#> Number of Results Combined: 100
+#> ── Pool Object ─────────────────────────────────────────────────────────────────
+#> 6 parameters across 2 visits
 #> Method: rubin
-#> Confidence Level: 0.95
-#> Alternative: two.sided
-#> 
-#> Results:
-#> 
-#>   ========================================================
-#>       parameter      est     se     lci     uci     pval  
-#>   --------------------------------------------------------
-#>      trt_Week 24    -2.177  0.182  -2.535  -1.819  <0.001 
-#>    lsm_ref_Week 24  0.077   0.131  -0.181  0.334   0.559  
-#>    lsm_alt_Week 24   -2.1   0.126  -2.347  -1.854  <0.001 
-#>      trt_Week 48    -3.806  0.256  -4.309  -3.303  <0.001 
-#>    lsm_ref_Week 48  0.044   0.185  -0.32   0.407   0.812  
-#>    lsm_alt_Week 48  -3.762  0.175  -4.107  -3.417  <0.001 
-#>   --------------------------------------------------------
+#> N imputations: 100
+#> Confidence: 95%
+#> ────────────────────────────────────────────────────────────────────────────────
+#>        parameter   visit   est   lci   uci    pval
+#>      trt_Week 24 Week 24 -2.18 -2.54 -1.82 < 0.001
+#>  lsm_ref_Week 24 Week 24  0.08 -0.18  0.33   0.559
+#>  lsm_alt_Week 24 Week 24 -2.10 -2.35 -1.85 < 0.001
+#>      trt_Week 48 Week 48 -3.81 -4.31 -3.30 < 0.001
+#>  lsm_ref_Week 48 Week 48  0.04 -0.32  0.41   0.812
+#>  lsm_alt_Week 48 Week 48 -3.76 -4.11 -3.42 < 0.001
 ```
 
 ``` r
@@ -246,20 +240,14 @@ ana_obj_prop <- analyse_mi_data(
 pool_obj_prop <- pool(ana_obj_prop)
 print(pool_obj_prop)
 #> 
-#> Pool Object
-#> -----------
-#> Number of Results Combined: 100
+#> ── Pool Object ─────────────────────────────────────────────────────────────────
+#> 1 parameter across 0 visits
 #> Method: rubin
-#> Confidence Level: 0.95
-#> Alternative: two.sided
-#> 
-#> Results:
-#> 
-#>   ==================================================
-#>    parameter   est     se     lci     uci     pval  
-#>   --------------------------------------------------
-#>       trt     -0.063  0.012  -0.087  -0.039  <0.001 
-#>   --------------------------------------------------
+#> N imputations: 100
+#> Confidence: 95%
+#> ────────────────────────────────────────────────────────────────────────────────
+#>  parameter visit   est   lci   uci    pval
+#>        trt  <NA> -0.06 -0.09 -0.04 < 0.001
 ```
 
 ## Final Notes

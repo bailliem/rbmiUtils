@@ -41,6 +41,15 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="rbmiutils-development-version">rbmiUtils (development version)<a class="anchor" aria-label="anchor" href="#rbmiutils-development-version"></a></h2>
 <div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/tidy_pool_obj.html">tidy_pool_obj()</a></code> now uses regex-based parameter parsing instead of splitting on <code>_</code>. This correctly handles parameter names containing underscores (e.g., “Week_24”, “Follow_Up”). The output columns (<code>parameter_type</code>, <code>lsm_type</code>, <code>visit</code>) now contain the full visit name rather than truncated fragments. (#HRD-01)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="dependencies-development-version">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-development-version"></a></h3>
+<ul><li>Added <code>cli</code> (&gt;= 3.6.0) and <code>lifecycle</code> (&gt;= 1.0.4) to Imports for improved error messaging and deprecation support.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li>Added <code><a href="../reference/create_impid.html">create_impid()</a></code> to convert a list of imputed datasets into a stacked data.frame with IMPID column.</li>
 <li>Added <code><a href="../reference/combine_results.html">combine_results()</a></code> to combine tidy results from multiple analyses.</li>

@@ -40,16 +40,17 @@ vars <- set_vars(
 method <- method_bayes(n_samples = 10, control = control_bayes(warmup = 10))
 
 ana_obj <- analyse_mi_data(ADMI, vars, method, fun = function(d, v, ...) 1)
-#> Warning: Data contains 100 imputations but method expects 10. Using first 10 imputations.
+#> Warning: Data contains 100 imputations but method expects 10. Using first 10
+#> imputations.
 print(ana_obj)
-#> Analysis object from rbmiUtils
-#> -------------------------------
-#> Number of imputations: 10 
-#> Analysis function: <Anonymous Function> 
-#> Delta adjustment: No
-#> Method type: bayes 
-#> Pooling method: rubin 
 #> 
-#> Use `rbmi::pool()` to obtain pooled estimates.
+#> ── Analysis Object ─────────────────────────────────────────────────────────────
+#> 10 imputations analysed with `<Anonymous Function>()`
+#> ────────────────────────────────────────────────────────────────────────────────
+#> Method: bayes
+#> Pooling: rubin
+#> Delta: None
+#> 
+#> Next: `pool_obj <- rbmi::pool(analysis_obj)`
 # }
 ```
