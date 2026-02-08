@@ -10,12 +10,14 @@ HC
 HRD
 ICH
 IMPID
+Ito
 Intercurrent
 LCI
 LSM
 Lifecycle
 Lukas
 MMRM
+Okabe
 ORCID
 Pre
 Responder
@@ -25,14 +27,17 @@ UCI
 analyse
 beeca
 cli
+colorblind
 conf
 cran
+ggplot
 intercurrent
 interpretability
 lci
 lsm
 modularly
 parens
+patchwork
 pharmaverse
 pkgdown
 pre
@@ -47,3 +52,4 @@ tibble
 tibbles
 trt
 uci
+vermilion

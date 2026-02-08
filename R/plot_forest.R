@@ -44,7 +44,7 @@
 #'     are shown as filled circles; non-significant as open circles.
 #'   \item `"lsm"` -- LS mean estimates by treatment arm, color-coded using
 #'     the Okabe-Ito colorblind-friendly palette (blue for reference,
-#'     vermillion for treatment). Points are dodged vertically within
+#'     vermilion for treatment). Points are dodged vertically within
 #'     each visit.
 #' }
 #'
