@@ -12,11 +12,11 @@ Requirements for v3 milestone. Each maps to roadmap phases.
 - [ ] **MIDIAG-01**: User can obtain FMI (fraction of missing information) per parameter in ARD output from pool_to_ard()
 - [ ] **MIDIAG-02**: User can obtain relative increase in variance (RIV) per parameter in ARD output
 - [ ] **MIDIAG-03**: User can obtain lambda (proportion of variance due to missingness) per parameter in ARD output
-- [ ] **MIDIAG-04**: User can obtain within/between/total variance components per parameter in ARD output
+- [ ] **MIDIAG-04**: ~~User can obtain within/between/total variance components per parameter in ARD output~~ REMOVED: User decided to exclude V_w/V_b/V_t from ARD output (curated essentials only). Variance components are computed internally but not exposed.
 - [ ] **MIDIAG-05**: User can obtain Barnard-Rubin adjusted degrees of freedom per parameter in ARD output
 - [ ] **MIDIAG-06**: User can obtain relative efficiency (RE) per parameter in ARD output
 - [ ] **MIDIAG-07**: Pooling method is standardized as a proper stat_name row in ARD output
-- [ ] **MIDIAG-08**: MI diagnostic stats return NA with informative message for non-Rubin pooling methods
+- [ ] **MIDIAG-08**: MI diagnostic rows are omitted entirely (not returned as NA rows) with informative cli message for non-Rubin pooling methods
 
 ### Describe Helpers
 

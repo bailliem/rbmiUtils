@@ -31,7 +31,7 @@
 
 **Milestone Goal:** Enrich ARD output with MI-specific diagnostic metadata, add imputation diagnostic helpers, and polish tables, plots, and documentation to publication quality.
 
-- [ ] **Phase 8: MI Diagnostic Statistics** -- Enriched ARD with FMI, lambda, variance decomposition, and Rubin's rules metadata
+- [x] **Phase 8: MI Diagnostic Statistics** -- Enriched ARD with FMI, lambda, variance decomposition, and Rubin's rules metadata -- completed 2026-02-10
 - [ ] **Phase 9: Describe Helpers** -- Standalone diagnostic summaries for draws and imputation objects
 - [ ] **Phase 10: Publication Styling** -- Font, spacing, and layout controls for tables and forest plots
 - [ ] **Phase 11: Documentation Overhaul** -- README, examples, vignettes, and images reflecting all v3 features
@@ -39,20 +39,19 @@
 ## Phase Details
 
 ### Phase 8: MI Diagnostic Statistics
-**Goal**: Users can access MI-specific diagnostic metadata (FMI, lambda, variance components, degrees of freedom) directly from ARD output, enabling regulatory reviewers to assess imputation quality without manual recomputation
+**Goal**: Users can access MI-specific diagnostic metadata (FMI, lambda, degrees of freedom, relative efficiency) directly from ARD output, enabling regulatory reviewers to assess imputation quality without manual recomputation
 **Depends on**: Phase 7 (v2 complete -- existing pool_to_ard() is the integration point)
-**Requirements**: MIDIAG-01, MIDIAG-02, MIDIAG-03, MIDIAG-04, MIDIAG-05, MIDIAG-06, MIDIAG-07, MIDIAG-08
+**Requirements**: MIDIAG-01, MIDIAG-02, MIDIAG-03, MIDIAG-05, MIDIAG-06, MIDIAG-07, MIDIAG-08 (MIDIAG-04 removed: V_w/V_b/V_t excluded per user decision)
 **Success Criteria** (what must be TRUE):
-  1. User can call pool_to_ard(pool_obj, analysis_obj) and the resulting ARD contains FMI, lambda, and RIV as stat_name rows for each parameter
-  2. User can extract within-imputation variance (V_w), between-imputation variance (V_b), total variance (V_t), Barnard-Rubin adjusted df, and relative efficiency from the ARD output
-  3. The enriched ARD passes cards::check_ard_structure() validation without errors
-  4. User calling pool_to_ard(pool_obj) without analysis_obj gets the same base ARD as before (backward compatible)
-  5. When pooling method is not Rubin's rules, MI diagnostic stats return NA with an informative message rather than incorrect values
+  1. User can call pool_to_ard(pool_obj, analysis_obj) and the resulting ARD contains FMI, lambda, RIV, Barnard-Rubin adjusted df, and relative efficiency as stat_name rows for each parameter
+  2. The enriched ARD passes cards::check_ard_structure() validation without errors
+  3. User calling pool_to_ard(pool_obj) without analysis_obj gets the same base ARD as before (backward compatible)
+  4. When pooling method is not Rubin's rules, MI diagnostic rows are omitted entirely with an informative cli message
 **Plans**: 2 plans
 
 Plans:
-- [ ] 08-01-PLAN.md -- TDD: Rubin's rules diagnostic computation (compute_rubin_diagnostics)
-- [ ] 08-02-PLAN.md -- Integrate MI diagnostics into pool_to_ard() with tests and docs
+- [x] 08-01-PLAN.md -- TDD: Rubin's rules diagnostic computation (compute_rubin_diagnostics)
+- [x] 08-02-PLAN.md -- Integrate MI diagnostics into pool_to_ard() with tests and docs
 
 ### Phase 9: Describe Helpers
 **Goal**: Users can inspect draws and imputation objects to understand what happened during the MI pipeline -- method used, sample counts, convergence, missingness patterns -- without reading raw object internals
@@ -112,11 +111,11 @@ Phases 8-11 execute sequentially. Phases 8, 9, and 10 have no mutual dependencie
 | 5. Data Prep Hardening | v2 | 2/2 | Complete | 2026-02-08 |
 | 6. Documentation | v2 | 3/3 | Complete | 2026-02-08 |
 | 7. Site Polish | v2 | 2/2 | Complete | 2026-02-08 |
-| 8. MI Diagnostic Statistics | v3 | 0/2 | Planned | - |
+| 8. MI Diagnostic Statistics | v3 | 2/2 | Complete | 2026-02-10 |
 | 9. Describe Helpers | v3 | 0/TBD | Not started | - |
 | 10. Publication Styling | v3 | 0/TBD | Not started | - |
 | 11. Documentation Overhaul | v3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-10 (Phase 8 planned: 2 plans in 2 waves)*
+*Last updated: 2026-02-10 (Phase 8 complete: 2/2 plans, verified)*
