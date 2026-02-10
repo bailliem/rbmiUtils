@@ -62,10 +62,11 @@ Plans:
   2. User can see MCMC convergence diagnostics (ESS, Rhat) from describe_draws() when the draws used Bayesian methods
   3. User can call describe_imputation(imputed_data, original_data) and see method, number of imputations (M), and missingness breakdown by visit and treatment arm
   4. Both describe functions return structured S3 objects with informative print() output using cli formatting
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: TBD
+- [ ] 09-01-PLAN.md -- TDD: describe_draws() with MCMC diagnostics and print method
+- [ ] 09-02-PLAN.md -- TDD: describe_imputation() with missingness breakdown and print method
 
 ### Phase 10: Publication Styling
 **Goal**: Users can produce publication-quality tables and forest plots with controlled typography, spacing, and layout without post-hoc manual adjustments
@@ -112,7 +113,7 @@ Phases 8-11 execute sequentially. Phases 8, 9, and 10 have no mutual dependencie
 | 6. Documentation | v2 | 3/3 | Complete | 2026-02-08 |
 | 7. Site Polish | v2 | 2/2 | Complete | 2026-02-08 |
 | 8. MI Diagnostic Statistics | v3 | 2/2 | Complete | 2026-02-10 |
-| 9. Describe Helpers | v3 | 0/TBD | Not started | - |
+| 9. Describe Helpers | v3 | 0/2 | Planned | - |
 | 10. Publication Styling | v3 | 0/TBD | Not started | - |
 | 11. Documentation Overhaul | v3 | 0/TBD | Not started | - |
 
