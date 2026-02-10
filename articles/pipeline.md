@@ -229,8 +229,8 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 400 / 400 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.653 seconds (Warm-up)
-#> Chain 1:                0.537 seconds (Sampling)
+#> Chain 1:  Elapsed Time: 0.654 seconds (Warm-up)
+#> Chain 1:                0.536 seconds (Sampling)
 #> Chain 1:                1.19 seconds (Total)
 #> Chain 1:
 ```

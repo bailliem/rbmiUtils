@@ -15,10 +15,24 @@ GitHub:
 | Release     | CRAN   | `install.packages("rbmiUtils")`                   |
 | Development | GitHub | `remotes::install_github("openpharma/rbmiUtils")` |
 
-## What You Get
+## Quick Start
 
-From a single rbmi pool object, `rbmiUtils` produces publication-ready
-outputs:
+Starting from an [rbmi](https://insightsengineering.github.io/rbmi/)
+pool object, `rbmiUtils` produces publication-ready outputs in a few
+lines:
+
+``` r
+library(rbmiUtils)
+library(rbmi)
+
+# Analyse across imputations and pool results
+ana_obj  <- analyse_mi_data(data = ADMI, vars = vars, method = method)
+pool_obj <- pool(ana_obj)
+
+# Publication outputs
+efficacy_table(pool_obj, arm_labels = c(ref = "Placebo", alt = "Drug A"))
+plot_forest(pool_obj, arm_labels = c(ref = "Placebo", alt = "Drug A"))
+```
 
 **Forest Plot**
 
@@ -32,42 +46,9 @@ Forest Plot
 
 Efficacy Table
 
-These outputs are generated from a single rbmi pool object – see the
-[end-to-end pipeline
+See the [end-to-end pipeline
 vignette](https://openpharma.github.io/rbmiUtils/articles/pipeline.html)
-for the complete walkthrough.
-
-## Quick Start
-
-``` r
-library(rbmiUtils)
-library(rbmi)
-
-# Load pre-imputed data
-data("ADMI")
-ADMI$TRT     <- factor(ADMI$TRT, levels = c("Placebo", "Drug A"))
-ADMI$USUBJID <- factor(ADMI$USUBJID)
-ADMI$AVISIT  <- factor(ADMI$AVISIT)
-
-# Define variables and method
-vars <- set_vars(
-  subjid = "USUBJID", visit = "AVISIT", group = "TRT",
-  outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
-)
-method <- method_bayes(
-  n_samples = 100,
-  control = control_bayes(warmup = 200, thin = 5)
-)
-
-# Analyse, pool, and tidy
-ana_obj  <- analyse_mi_data(data = ADMI, vars = vars, method = method)
-pool_obj <- pool(ana_obj)
-tidy_df  <- tidy_pool_obj(pool_obj)
-
-# Publication outputs
-efficacy_table(pool_obj, arm_labels = c(ref = "Placebo", alt = "Drug A"))
-plot_forest(pool_obj, arm_labels = c(ref = "Placebo", alt = "Drug A"))
-```
+for the complete walkthrough from raw data to these outputs.
 
 ## Key Features
 
