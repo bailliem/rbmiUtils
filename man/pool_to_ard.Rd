@@ -4,11 +4,18 @@
 \alias{pool_to_ard}
 \title{Convert Pool Object to ARD Format}
 \usage{
-pool_to_ard(pool_obj, conf.level = NULL)
+pool_to_ard(pool_obj, analysis_obj = NULL, conf.level = NULL)
 }
 \arguments{
 \item{pool_obj}{A pooled analysis object of class \code{"pool"}, typically
 obtained from \code{\link[rbmi:pool]{rbmi::pool()}} after calling \code{\link[=analyse_mi_data]{analyse_mi_data()}}.}
+
+\item{analysis_obj}{An optional analysis object (output of
+\code{\link[=analyse_mi_data]{analyse_mi_data()}}), used to compute MI diagnostic statistics. When
+provided and the pooling method is Rubin's rules, the ARD includes
+additional stat rows for FMI, lambda, RIV, Barnard-Rubin adjusted df,
+complete-data df, relative efficiency, and the number of imputations per
+parameter. When \code{NULL} (the default), only the base ARD is returned.}
 
 \item{conf.level}{Confidence level used for CI labels (e.g., \code{0.95} produces
 "95\% CI Lower"). If \code{NULL} (the default), the value is taken from
@@ -18,7 +25,10 @@ obtained from \code{\link[rbmi:pool]{rbmi::pool()}} after calling \code{\link[=a
 A data frame of class \code{"card"} (ARD format) with grouping columns
 for visit (\code{group1}), parameter_type (\code{group2}), and lsm_type (\code{group3}).
 Each parameter produces rows for five statistics: estimate, std.error,
-conf.low, conf.high, and p.value, plus a method row.
+conf.low, conf.high, and p.value, plus a method row. When \code{analysis_obj}
+is provided and the pooling method is Rubin's rules, additional diagnostic
+stat rows are included: fmi, lambda, riv, df.adjusted, df.complete, re,
+and m.imputations.
 }
 \description{
 Converts an rbmi pool object to the pharmaverse Analysis Results Dataset
@@ -33,8 +43,19 @@ The function works by:
 \item Tidying the pool object via \code{\link[=tidy_pool_obj]{tidy_pool_obj()}}
 \item Reshaping each parameter into long-format ARD rows (one row per statistic)
 \item Adding grouping columns (visit, parameter_type, lsm_type)
+\item Optionally enriching with MI diagnostic statistics when \code{analysis_obj}
+is provided
 \item Applying \code{\link[cards:as_card]{cards::as_card()}} and \code{\link[cards:tidy_ard_order]{cards::tidy_ard_column_order()}} for
 standard ARD structure
+}
+
+When \code{analysis_obj} is provided:
+\itemize{
+\item For Rubin's rules pooling: diagnostic statistics (FMI, lambda, RIV,
+Barnard-Rubin adjusted df, relative efficiency) are computed per parameter
+using the per-imputation estimates, standard errors, and degrees of freedom.
+\item For non-Rubin pooling methods: an informative message is emitted and the
+base ARD is returned without diagnostic rows.
 }
 
 The resulting ARD passes \code{\link[cards:check_ard_structure]{cards::check_ard_structure()}} validation and is
@@ -45,8 +66,9 @@ suitable for downstream use with \pkg{gtsummary}.
 # Requires the cards package
 if (requireNamespace("cards", quietly = TRUE)) {
   # After running an rbmi analysis pipeline:
+  # analysis_obj <- analyse_mi_data(data, vars, method)
   # pool_obj <- rbmi::pool(analysis_obj)
-  # ard <- pool_to_ard(pool_obj)
+  # ard <- pool_to_ard(pool_obj, analysis_obj)
   # cards::check_ard_structure(ard)
 }
 }
@@ -55,6 +77,7 @@ if (requireNamespace("cards", quietly = TRUE)) {
 \seealso{
 \itemize{
 \item \code{\link[rbmi:pool]{rbmi::pool()}} for creating pool objects
+\item \code{\link[=analyse_mi_data]{analyse_mi_data()}} for creating analysis objects
 \item \code{\link[=tidy_pool_obj]{tidy_pool_obj()}} for the underlying data transformation
 \item \code{\link[cards:as_card]{cards::as_card()}} and \code{\link[cards:check_ard_structure]{cards::check_ard_structure()}} for ARD validation
 }

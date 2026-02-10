@@ -8,6 +8,12 @@
 #'
 #' @param pool_obj A pooled analysis object of class `"pool"`, typically
 #'   obtained from [rbmi::pool()] after calling [analyse_mi_data()].
+#' @param analysis_obj An optional analysis object (output of
+#'   [analyse_mi_data()]), used to compute MI diagnostic statistics. When
+#'   provided and the pooling method is Rubin's rules, the ARD includes
+#'   additional stat rows for FMI, lambda, RIV, Barnard-Rubin adjusted df,
+#'   complete-data df, relative efficiency, and the number of imputations per
+#'   parameter. When `NULL` (the default), only the base ARD is returned.
 #' @param conf.level Confidence level used for CI labels (e.g., `0.95` produces
 #'   "95% CI Lower"). If `NULL` (the default), the value is taken from
 #'   `pool_obj$conf.level`. If that is also `NULL`, defaults to `0.95`.
@@ -15,21 +21,34 @@
 #' @return A data frame of class `"card"` (ARD format) with grouping columns
 #'   for visit (`group1`), parameter_type (`group2`), and lsm_type (`group3`).
 #'   Each parameter produces rows for five statistics: estimate, std.error,
-#'   conf.low, conf.high, and p.value, plus a method row.
+#'   conf.low, conf.high, and p.value, plus a method row. When `analysis_obj`
+#'   is provided and the pooling method is Rubin's rules, additional diagnostic
+#'   stat rows are included: fmi, lambda, riv, df.adjusted, df.complete, re,
+#'   and m.imputations.
 #'
 #' @details
 #' The function works by:
 #' 1. Tidying the pool object via [tidy_pool_obj()]
 #' 2. Reshaping each parameter into long-format ARD rows (one row per statistic)
 #' 3. Adding grouping columns (visit, parameter_type, lsm_type)
-#' 4. Applying [cards::as_card()] and [cards::tidy_ard_column_order()] for
+#' 4. Optionally enriching with MI diagnostic statistics when `analysis_obj`
+#'    is provided
+#' 5. Applying [cards::as_card()] and [cards::tidy_ard_column_order()] for
 #'    standard ARD structure
+#'
+#' When `analysis_obj` is provided:
+#' - For Rubin's rules pooling: diagnostic statistics (FMI, lambda, RIV,
+#'   Barnard-Rubin adjusted df, relative efficiency) are computed per parameter
+#'   using the per-imputation estimates, standard errors, and degrees of freedom.
+#' - For non-Rubin pooling methods: an informative message is emitted and the
+#'   base ARD is returned without diagnostic rows.
 #'
 #' The resulting ARD passes [cards::check_ard_structure()] validation and is
 #' suitable for downstream use with \pkg{gtsummary}.
 #'
 #' @seealso
 #' * [rbmi::pool()] for creating pool objects
+#' * [analyse_mi_data()] for creating analysis objects
 #' * [tidy_pool_obj()] for the underlying data transformation
 #' * [cards::as_card()] and [cards::check_ard_structure()] for ARD validation
 #'
@@ -38,14 +57,15 @@
 #' # Requires the cards package
 #' if (requireNamespace("cards", quietly = TRUE)) {
 #'   # After running an rbmi analysis pipeline:
+#'   # analysis_obj <- analyse_mi_data(data, vars, method)
 #'   # pool_obj <- rbmi::pool(analysis_obj)
-#'   # ard <- pool_to_ard(pool_obj)
+#'   # ard <- pool_to_ard(pool_obj, analysis_obj)
 #'   # cards::check_ard_structure(ard)
 #' }
 #' }
 #'
 #' @export
-pool_to_ard <- function(pool_obj, conf.level = NULL) {
+pool_to_ard <- function(pool_obj, analysis_obj = NULL, conf.level = NULL) {
 
   # --- Dependency check ---
   if (!is_cards_available()) {
@@ -64,6 +84,30 @@ pool_to_ard <- function(pool_obj, conf.level = NULL) {
       "Input {.arg pool_obj} must be of class {.cls pool}, not {.cls {class(pool_obj)}}.",
       class = c("rbmiUtils_error_validation", "rbmiUtils_error")
     )
+  }
+
+  # --- Validate analysis_obj ---
+  if (!is.null(analysis_obj)) {
+    if (!is.list(analysis_obj) || is.null(analysis_obj$results) ||
+        !is.list(analysis_obj$results)) {
+      cli::cli_abort(
+        "{.arg analysis_obj} must have a {.field $results} element that is a list.",
+        class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+      )
+    }
+    # Verify parameter names match between pool_obj and analysis_obj
+    pool_names <- sort(names(pool_obj$pars))
+    analysis_names <- sort(names(analysis_obj$results[[1]]))
+    if (!identical(pool_names, analysis_names)) {
+      cli::cli_abort(
+        c(
+          "Parameter names in {.arg pool_obj} and {.arg analysis_obj} do not match.",
+          "i" = "pool_obj parameters: {.val {names(pool_obj$pars)}}",
+          "i" = "analysis_obj parameters: {.val {names(analysis_obj$results[[1]])}}"
+        ),
+        class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+      )
+    }
   }
 
   # --- Extract conf.level ---
