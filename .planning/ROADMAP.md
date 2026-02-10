@@ -48,11 +48,11 @@
   3. The enriched ARD passes cards::check_ard_structure() validation without errors
   4. User calling pool_to_ard(pool_obj) without analysis_obj gets the same base ARD as before (backward compatible)
   5. When pooling method is not Rubin's rules, MI diagnostic stats return NA with an informative message rather than incorrect values
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
-- [ ] 08-02: TBD
+- [ ] 08-01-PLAN.md -- TDD: Rubin's rules diagnostic computation (compute_rubin_diagnostics)
+- [ ] 08-02-PLAN.md -- Integrate MI diagnostics into pool_to_ard() with tests and docs
 
 ### Phase 9: Describe Helpers
 **Goal**: Users can inspect draws and imputation objects to understand what happened during the MI pipeline -- method used, sample counts, convergence, missingness patterns -- without reading raw object internals
@@ -112,11 +112,11 @@ Phases 8-11 execute sequentially. Phases 8, 9, and 10 have no mutual dependencie
 | 5. Data Prep Hardening | v2 | 2/2 | Complete | 2026-02-08 |
 | 6. Documentation | v2 | 3/3 | Complete | 2026-02-08 |
 | 7. Site Polish | v2 | 2/2 | Complete | 2026-02-08 |
-| 8. MI Diagnostic Statistics | v3 | 0/TBD | Not started | - |
+| 8. MI Diagnostic Statistics | v3 | 0/2 | Planned | - |
 | 9. Describe Helpers | v3 | 0/TBD | Not started | - |
 | 10. Publication Styling | v3 | 0/TBD | Not started | - |
 | 11. Documentation Overhaul | v3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-10 (v3 milestone roadmap added)*
+*Last updated: 2026-02-10 (Phase 8 planned: 2 plans in 2 waves)*
