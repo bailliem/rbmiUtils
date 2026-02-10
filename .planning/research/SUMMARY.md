@@ -1,191 +1,253 @@
 # Project Research Summary
 
-**Project:** rbmiUtils reporting milestone (ARD/gtsummary integration)
-**Domain:** Clinical trial reporting utilities for reference-based multiple imputation analysis
-**Researched:** 2026-02-07
-**Confidence:** MEDIUM-HIGH
+**Project:** rbmiUtils v3 milestone — ARD Enrichment & Publication Polish
+**Domain:** Clinical trial R package enhancement — MI-specific metadata and regulatory reporting
+**Researched:** 2026-02-10
+**Confidence:** HIGH
 
 ## Executive Summary
 
-rbmiUtils bridges rbmi's multiple imputation analysis pipeline to regulatory-quality reporting. The research confirms that the package should adopt the pharmaverse's ARD-first workflow using cards/gtsummary/gt for tables and ggplot2 for figures. This aligns with where Roche, GSK, Novartis, and Pfizer are investing and provides the traceability/reproducibility mandated by CDISC standards.
+rbmiUtils v3 adds publication-quality polish and MI-specific diagnostic metadata to an established clinical trial analysis package. The research reveals that this milestone can be delivered entirely with the existing dependency set — no new packages needed. The three feature categories (MI diagnostics in ARD, imputation diagnostic helpers, publication styling) touch different architectural layers with minimal coupling, making parallel development feasible.
 
-The recommended architecture adds three new layers (ARD Conversion, Table Generation, Visualization) on top of six existing layers, with a clean boundary at the tidy tibble produced by `tidy_pool_obj()`. The core technical challenge is converting rbmi's pooled results (wide format: est, se, lci, uci, pval) into the cards ARD format (long format: stat_name/stat/stat_label with list-columns). The conversion uses `cards::ard_identity()` for pre-calculated statistics, pivoting each row of tidy pool output into 5 ARD rows (one per statistic).
+The core technical challenge is computing MI diagnostics (FMI, lambda, relative increase in variance) that rbmi's pool() function calculates internally but discards. These must be recomputed from the analysis object's per-imputation estimates using Rubin's rules formulas — a straightforward 40-60 lines of R code. The diagnostic helpers (describe_draws, describe_imputation) are standalone functions that inspect rbmi objects but don't modify existing workflows. Publication styling refinements are pure visual polish with no data flow changes.
 
-Critical risks center on fragile parameter parsing with underscored visit names, rbmi class hierarchy coupling via `class(method)[[2]]`, and ARD column contract violations. The recommended mitigation is to harden the existing codebase first (fix parsing with regex, wrap `rbmi::analyse()` to eliminate class indexing), then build ARD conversion and reporting layers on stable foundations. Phase 1 must address these structural issues before Phase 2 adds cards/gtsummary dependencies.
+The primary risk is coupling to rbmi internal object structures. While the per-imputation data access pattern for MI diagnostics is stable (used by rbmi's own pool() function), the draws and imputation object structures accessed by diagnostic helpers are implementation details. Defensive programming with null-checks and method validation guards against fragility. The second risk is ARD validation — new MI diagnostic rows must preserve list-column types to pass cards::check_ard_structure(). Following the existing pool_to_ard() construction pattern prevents this.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The research identifies cards (v0.7.1) as the foundation for ARD conversion, with gtsummary (v2.5.0) and gt (v1.3.0) providing table generation and multi-format rendering. All three packages are actively maintained with pharma-specific features and official CDISC backing. cards has 52,000+ monthly CRAN downloads and co-development by Roche/GSK/Novartis.
+**No new dependencies required.** All v3 features are implementable with the current stack. The existing dependencies (rbmi, cards, gt, ggplot2, patchwork, cli) provide all needed capabilities. Rubin's rules formulas are 6 lines of base R arithmetic — adding mice or mitml for pool.scalar() would introduce 30+ transitive dependencies for functionality we can compute directly.
 
 **Core technologies:**
-- **cards (>= 0.7.0)** — ARD data structure and `ard_identity()` for wrapping pre-calculated statistics. Only hard dependency needed; minimal transitive dependencies (dplyr, tidyr, rlang, cli).
-- **gtsummary (>= 2.0.0)** — ARD-first table functions (`tbl_ard_wide_summary()` for efficacy tables). Suggests dependency to keep base install light.
-- **gt (>= 1.0.0)** — Multi-format rendering (HTML, RTF, LaTeX/PDF, Word). Stable APIs for regulatory submissions. Also Suggests.
-- **ggplot2 (>= 3.5.0)** — Already in Suggests. Sufficient for forest plots and responder bar charts without specialized packages.
-- **forestploter (>= 1.0.0)** — Optional Suggests for advanced forest plots with table-aligned layout. CRAN maintained (April 2025).
+- **rbmi (>= 1.4):** Provides analysis object with per-imputation estimates/SEs — stable access pattern
+- **cards (>= 0.4.0):** ARD validation via check_ard_structure() — accepts custom stat_name values
+- **gt (>= 0.10.0):** All publication styling features available via tab_options() and tab_style()
+- **ggplot2 (>= 3.4.0):** Standard API unaffected by 4.0 S7 migration — backward compatible
+- **cli (>= 3.6.0):** Formatted console output for diagnostic helpers
 
-**Avoid:**
-- rtables/tern (different ecosystem, incompatible with ARD paradigm)
-- tfrmt/chevron (adds complexity without clear benefit when gtsummary already consumes ARDs)
-- flextable/r2rtf as hard dependencies (gt handles primary use cases; fall back only when needed)
+**Version compatibility:** All packages current on CRAN as of 2026-02-10. ggplot2 4.0+ S7 migration does not affect rbmiUtils (uses only public geom/scale/theme API). No code changes needed.
 
 ### Expected Features
 
 **Must have (table stakes):**
-- **TS-1: ARD conversion from tidy pool results** — The pharmaverse has standardized on ARD as the interchange format. Any package producing clinical trial results needs ARD output to be interoperable. Maps naturally from tidy tibble (est, se, lci, uci, pval) to ARD (stat_name/stat structure).
-- **TS-2: Efficacy summary table (regulatory style)** — Every clinical study report includes a primary efficacy table showing LS means by arm, treatment differences, CIs, and p-values by visit. Standard layout: rows = visits, columns = Reference LS Mean, Treatment LS Mean, Difference (95% CI), P-value.
-- **TS-3: Forest plot for treatment effects** — Standard visualization showing treatment effects across visits with point estimates and CIs. Expected in every regulatory submission with longitudinal efficacy data.
-- **TS-4: Print/summary methods for pool objects** — Users expect enhanced print methods showing rounded estimates, formatted CIs, and clear parameter labeling at the console.
-- **TS-5: Responder analysis bar chart** — Binary endpoint reporting requires grouped bar charts showing proportion responding by treatment arm across visits. Visual counterpart to `gcomp_responder_multi()` results.
-- **TS-6: Column formatting controls for tables** — Regulatory tables require specific decimal precision, CI bracket styles, p-value thresholds. Extend existing formatters to integrate with gt/gtsummary theming.
+- **FMI in ARD** — The single most important MI diagnostic. Regulatory reviewers expect it. mice::pool() reports it. Users cannot compute it from rbmi pool objects.
+- **Relative increase in variance (RIV) in ARD** — Standard MI diagnostic reported alongside FMI.
+- **Lambda (proportion of variance due to missingness) in ARD** — Third standard diagnostic from Rubin's rules.
+- **Pooling method identification in ARD** — Already present as method row; verify standardization.
+- **describe_draws()** — Imputation model summary (method, samples, failures, formula, MCMC diagnostics for Bayes).
+- **describe_imputation()** — Imputation statistics (method, M, subjects imputed, visits with missing data).
 
-**Should have (competitive advantage):**
-- **D-1: One-call efficacy table from pool object** — `efficacy_table(pool_obj)` that goes directly from `rbmi::pool()` to gt table with no intermediate steps. Competing workflows require 5-10 lines. A function that "just works" for rbmi is a strong differentiator.
-- **D-2: Sensitivity analysis comparison table** — Side-by-side table comparing primary vs. tipping point / delta-adjusted results. Unique to MI workflow where sensitivity analyses are mandatory. No existing package does this for rbmi output.
-- **D-3: Integrated ARD with MI metadata** — Extend ARD with MI-specific metadata (number of imputations, pooling method, fraction of missing information) for self-documenting regulatory review.
+**Should have (competitive):**
+- **Within/between/total variance components in ARD** — Full Rubin's rules decomposition (V_w, V_b, V_t). mice reports ubar/b/t.
+- **Adjusted degrees of freedom in ARD** — Barnard-Rubin df for each parameter. Important for small-sample MI.
+- **Relative efficiency (RE) in ARD** — RE = 1/(1 + FMI/M). Assesses imputation adequacy.
+- **Efficacy table font/spacing refinements** — Publication defaults via theme_regulatory() helper.
+- **Forest plot font/spacing/alignment refinements** — Expose font_family and panel_widths parameters.
+- **README with realistic clinical workflow** — Full ADEFF → draws → impute → analyse → pool → table/plot with clinically meaningful data.
+- **Function documentation examples with real usage** — Replace minimal examples with ADMI/ADEFF data.
 
 **Defer (v2+):**
-- Interactive Shiny dashboards (teal/teal.modules.clinical covers this)
-- Safety tables (AE, labs, vital signs — outside rbmi efficacy domain)
-- Word/PowerPoint direct export beyond gt's built-in support
-- Spaghetti/trajectory plots (different visualization category from pooled results)
+- Sensitivity analysis comparison features (side-by-side tables, forest overlays)
+- Generic imputation diagnostic plots (trace plots, density overlays — specialized visualization)
+- BMLMI-specific MI diagnostics (requires BMLMI-modified Rubin's rules)
+- gtsummary tbl_ard_*() integration (ARD format doesn't match gtsummary's assumptions for regulatory tables)
 
 ### Architecture Approach
 
-The clean architecture boundary sits at the tidy tibble produced by `tidy_pool_obj()`. Analysis functions (layers 1-4) should never know about cards/gtsummary. Reporting functions (layers 5-7) should never reach back into rbmi imputation mechanics. This enables testing reporting functions with mocked tidy tibbles without needing the full rbmi pipeline.
+The v3 features integrate into the existing 7-layer architecture at three distinct points with clear boundaries. No changes to Layers 1-4 (data preparation, analysis execution, results processing). All features are additive.
 
 **Major components:**
-1. **ARD Conversion Layer (new)** — Converts tidy tibbles to ARD format using `cards::ard_identity()`. Each row of tidy pool output (one parameter with 5 statistics) becomes 5 rows of ARD (one per statistic with stat_name, stat_label, stat as list-column). Depends on cards (Suggests).
-2. **Table Generation Layer (new)** — Produces regulatory tables from ARDs using `gtsummary::tbl_ard_wide_summary()` for efficacy tables (treatment effects by visit) and `tbl_ard_summary()` for responder tables. Renders via gt to HTML/RTF/PDF/Word. Depends on gtsummary + gt (Suggests).
-3. **Visualization Layer (new)** — Produces forest plots (`plot_forest()`) and responder bar charts (`plot_responder_bar()`) using ggplot2. Works directly from tidy tibbles, independent of ARD path. Depends on ggplot2 (already Suggests).
+1. **MI diagnostics computation (new Layer 5 enhancement)** — compute_mi_diagnostics() internal helper recomputes FMI/lambda/RIV from analysis object per-imputation estimates. Uses Rubin's rules formulas (40-60 LOC). Integrates into pool_to_ard() via optional analysis_obj parameter.
+2. **Diagnostic helpers (new cross-cutting layer)** — describe_draws() and describe_imputation() standalone functions. Accept rbmi objects, return rbmiUtils-owned summary classes with S3 print methods. No coupling to analysis pipeline.
+3. **Publication styling (Layer 6 refinements)** — theme_regulatory() internal helper for gt tables, theme_forest() extension for ggplot2 plots. Add optional parameters, preserve defaults for backward compatibility.
 
-**Key pattern:** Tidy-first, ARD-second. Always convert pool objects to tidy tibbles first, then to ARD. Never bypass the tidy tibble contract. Use soft dependency checks (`rlang::check_installed()`) at function entry for all Suggests packages.
+**Data flow:**
+- MI diagnostics: analysis_obj → compute_mi_diagnostics() → pool_to_ard(pool_obj, analysis_obj) → enriched ARD
+- Diagnostic helpers: draws_obj → describe_draws() → summary (print), impute_obj → describe_imputation() → summary (print)
+- Styling: pool_obj → efficacy_table(theme = "regulatory") → themed table, pool_obj → plot_forest(font_family, widths) → polished plot
 
 ### Critical Pitfalls
 
-1. **ARD Column Contract Violations** — The `stat` column must be a list-column, not numeric vector. Missing `context`, `fmt_fn`, or wrong column types cause `tbl_ard_summary()` to fail silently or error cryptically. Prevention: Use `cards::as_card()` to guarantee structure, validate output class, map statistics explicitly (est -> "estimate", se -> "std.error", lci -> "conf.low", uci -> "conf.high", pval -> "p.value").
+1. **Adding FMI rows breaks check_ard_structure() validation** — New ARD rows must use I(list(...)) pattern for stat/fmt_fn/warning/error columns. A single non-list value corrupts the entire data frame. Prevention: Follow existing pool_to_ard() construction pattern, validate with check_ard_structure() after adding rows.
 
-2. **Parameter Name Parsing Breaks on Underscored Visits** — `tidy_pool_obj()` uses `tidyr::separate(parameter, sep = "_")` which fails when visit names contain underscores (e.g., "Week_24", "Follow_Up_Visit"). The delimiter collision causes silent data corruption where `parameter_type` gets partial strings and `visit` is truncated. Prevention: Replace with structured regex parsing (`"^(trt|lsm)_(ref_|alt_)?(.+)$"`) or migrate to `tidyr::separate_wider_regex()` with named capture groups.
+2. **FMI not available in rbmi pool object** — rbmi computes var_w, var_b, lambda internally but discards them. Must recompute from analysis object's per-imputation estimates/SEs. Prevention: Accept analysis_obj parameter in pool_to_ard(), compute via Rubin's rules formulas, validate against rbmi::rubin_rules() output.
 
-3. **rbmi Class Hierarchy Indexing with `class(method)[[2]]`** — `analyse_mi_data()` and `as_analysis2()` use positional indexing to determine method type (bayes, approxbayes, condmean, bmlmi). If rbmi changes class hierarchy order, this silently assigns wrong pooling methods, corrupting treatment effects and p-values. Prevention: Replace with `inherits()` checks or wrap `rbmi::analyse()` directly to avoid reimplementing the mapping.
+3. **describe_draws() couples to rbmi internal object structure** — draws object fields (samples, fit, method) lack stability guarantee. Prevention: Minimize internal field access, wrap in tryCatch, use rstan public API for MCMC diagnostics, test with multiple rbmi versions.
 
-4. **beeca Output Format Coupling** — `gcomp_responder()` directly accesses columns `STAT`, `STATVAL`, `TRTVAL` from `beeca::get_marginal_effect()$marginal_results` with no version constraint. Column renames break the entire analysis pipeline. Prevention: Pin beeca version, validate output schema immediately after beeca call, abstract column mapping to single location.
+4. **describe_imputation() memory exhaustion with full extraction** — Extracting all M imputed datasets for diagnostics is wasteful. Prevention: Accept stacked ADMI data (already in memory), sample subset of imputations if extracting from impute object.
 
-5. **gtsummary Template Brittleness** — Regulatory efficacy tables have non-standard layouts (multiple statistics per cell, visit grouping, specific headers/footers). gtsummary excels at Table 1 but complex layouts may require heavy `modify_*()` customization or direct gt construction. Prevention: Prototype exact target layout before coding, use `tbl_ard_wide_summary()` for multi-statistic columns, consider direct gt assembly for complex regulatory formats.
+5. **Enriched pool_to_ard() API signature change breaks existing callers** — Adding required analysis_obj parameter is breaking. Prevention: Make analysis_obj optional (default NULL), return base ARD when omitted, enriched ARD when provided. Backward compatible.
 
 ## Implications for Roadmap
 
-Based on research, the roadmap should prioritize hardening fragile foundations before adding new reporting dependencies. Critical structural issues (parameter parsing, class indexing, beeca coupling) will propagate into ARD conversion if not fixed first.
+Based on research, suggested phase structure mirrors architectural boundaries and risk profile:
 
-### Phase 1: Foundation Hardening
-**Rationale:** Fix fragile parameter parsing, class hierarchy indexing, and beeca coupling before building on top. These issues are observable in existing code and will corrupt ARD conversion if not addressed.
-**Delivers:** Stable tidy tibble contract, robust parameter parsing with regex, wrapped `rbmi::analyse()` eliminating class indexing, validated beeca output, delta uniqueness checks.
-**Addresses:** No new features — this is technical debt paydown.
-**Avoids:** Pitfall 2 (parameter parsing), Pitfall 3 (class indexing), Pitfall 4 (beeca coupling), Pitfall 10 (delta validation), Pitfall 11 (string key collisions).
-**Research flag:** Standard refactoring patterns. No deep research needed. Leverage existing test suite.
+### Phase 1: MI Diagnostic Statistics (Core Value)
 
-### Phase 2: Enhanced Print/Summary Methods
-**Rationale:** Independent of reporting stack. Improves developer experience immediately. Low risk, high value. Can run in parallel with or before Phase 1.
-**Delivers:** Enhanced `print.analysis()` and `summary.analysis()` showing parameter preview, custom `"tidy_pool"` class with print method, descriptive helpers (`describe_pool()`, `describe_draws()`, `describe_imputation()`).
-**Addresses:** TS-4 (print/summary methods).
-**Avoids:** Pitfall 7 (S3 dispatch conflicts — use wrapper class for rbmi-owned classes).
-**Research flag:** No research needed. Standard S3 method patterns.
+**Rationale:** Highest-value work filling a real gap. MI diagnostics (FMI, lambda, RIV) are not available from rbmi but are essential for regulatory reporting. Must come first because the diagnostic computation is the foundation for ARD enrichment. Critical risk area (Pitfalls 1, 2, 5, 9, 12) requiring careful API design.
 
-### Phase 3: ARD Conversion Layer
-**Rationale:** Foundation for all table generation. Must come before tables. Depends on Phase 1 providing stable tidy tibbles.
-**Delivers:** `pool_to_ard()` and `tidy_to_ard()` functions converting rbmi results to cards ARD format. Validates ARD structure, maps statistics explicitly, includes MI metadata.
-**Addresses:** TS-1 (ARD conversion), D-3 (MI metadata in ARD).
-**Uses:** cards (Suggests).
-**Implements:** ARD Conversion Layer from ARCHITECTURE.md.
-**Avoids:** Pitfall 1 (ARD column contract violations — use `as_card()`, validate output class).
-**Research flag:** May need deeper research into `cards::as_card()` vs `cards::tidy_as_ard()` vs `cards::ard_identity()` selection. API stability across cards v0.5-v0.7 should be verified.
+**Delivers:**
+- compute_mi_diagnostics() internal helper
+- Enriched pool_to_ard() with optional analysis_obj parameter
+- ARD with FMI, lambda, RIV, V_w, V_b, V_t, df_adjusted, RE as new stat_name rows
 
-### Phase 4: Table Generation
-**Rationale:** Flagship deliverable. Consumes ARDs from Phase 3. Can run in parallel with Phase 5 (figures).
-**Delivers:** `tbl_efficacy()` for regulatory efficacy summary tables, `tbl_responder()` for responder analysis tables. Column formatting integration (TS-6). One-call convenience function `efficacy_table()` (D-1).
-**Addresses:** TS-2 (efficacy table), TS-6 (column formatting), D-1 (one-call table), D-2 (sensitivity comparison table).
-**Uses:** gtsummary, gt (Suggests).
-**Implements:** Table Generation Layer from ARCHITECTURE.md.
-**Avoids:** Pitfall 5 (gtsummary template brittleness — prototype layout first, consider direct gt for complex formats), Pitfall 8 (Suggests breaks CRAN — guard all calls, run `R CMD check --no-suggests` in CI).
-**Research flag:** Needs deeper research during phase planning. Which `tbl_ard_*()` function fits efficacy tables? Does `tbl_ard_wide_summary()` handle mixed continuous/treatment-effect rows or is custom gt assembly needed? Flag for `/gsd:research-phase`.
+**Addresses:** TS-1/2/3 (FMI/RIV/Lambda), D-1/2/3 (variance components/df/RE), TS-4 (method standardization)
 
-### Phase 5: Visualization
-**Rationale:** Can run in parallel with Phase 4. Uses tidy tibbles directly (not ARDs). Independent of table generation.
-**Delivers:** `plot_forest()` for treatment effect forest plots, `plot_responder_bar()` for responder analysis bar charts. Return ggplot objects for user customization.
-**Addresses:** TS-3 (forest plot), TS-5 (responder bar chart).
-**Uses:** ggplot2 (already Suggests).
-**Implements:** Visualization Layer from ARCHITECTURE.md.
-**Avoids:** Pitfall 6 (forest plot scale/ordering/reference line — parameterize scale, always reverse y-axis, return ggplot object), Pitfall 12 (responder bar chart small denominators — annotate n/N, add CIs).
-**Research flag:** Standard ggplot2 patterns. No deep research needed.
+**Avoids:** Pitfall 1 (ARD validation), Pitfall 2 (recomputation strategy), Pitfall 5 (API signature)
+
+**Research flags:** Standard patterns (Rubin's rules formulas well-documented). Skip research-phase.
+
+### Phase 2: Describe Helpers (New Functions)
+
+**Rationale:** Self-contained diagnostic functions with no downstream consumers in package. Moderate complexity but high documentation value. Independent of ARD enrichment — can be built in parallel with Phase 1 but sequenced after for focus. Critical risk: coupling to rbmi internals (Pitfall 3).
+
+**Delivers:**
+- describe_draws(draws_obj) — method, samples, failures, formula, MCMC diagnostics (ESS, Rhat)
+- describe_imputation(imputed_data, original_data, vars) — method, M, missingness by visit/arm, reference mapping
+- S3 print methods for rbmiUtils-owned summary classes
+
+**Addresses:** TS-5 (describe_draws), TS-6 (describe_imputation)
+
+**Avoids:** Pitfall 3 (rbmi internals coupling via defensive access), Pitfall 4 (memory via stacked data input)
+
+**Research flags:** Skip research-phase (rbmi object structures verified, API design complete).
+
+### Phase 3: Publication Polish (Visual Refinements)
+
+**Rationale:** Lower complexity, moderate user-facing impact. Must come after functional changes to avoid regenerating images twice. Independent of Phases 1-2 — pure styling with no data flow changes. Moderate risk (Pitfalls 6, 7) but visually impactful.
+
+**Delivers:**
+- theme_regulatory() internal helper for gt styling
+- efficacy_table() with theme/font_size/row_striping parameters
+- theme_forest() extension with font_family control
+- plot_forest() with font_family and panel_widths parameters
+
+**Addresses:** D-4 (efficacy table styling), D-5 (forest plot refinements)
+
+**Avoids:** Pitfall 6 (styling changes) by adding parameters not changing defaults, Pitfall 7 (patchwork alignment) by exposing widths parameter
+
+**Research flags:** Skip research-phase (gt and ggplot2 APIs well-documented).
+
+### Phase 4: Documentation Overhaul (Last)
+
+**Rationale:** Must come after all functional changes are complete. Regenerate images, update examples, rebuild pkgdown site. Lower risk (Pitfalls 8, 10, 13) but process-heavy.
+
+**Delivers:**
+- README overhaul with realistic clinical workflow (ANCOVA + binary endpoints)
+- Function documentation examples with ADMI/ADEFF data
+- Vignette updates for MI diagnostics
+- Pre-rendered images regenerated
+- pkgdown site rebuild
+- NEWS.md updates
+
+**Addresses:** D-6 (README workflow), D-7 (documentation examples)
+
+**Avoids:** Pitfall 8 (pkgdown build) by using pre-rendered images and testing both GitHub and pkgdown rendering
+
+**Research flags:** Skip research-phase (documentation patterns, not domain research).
 
 ### Phase Ordering Rationale
 
-- **Phase 1 first because** structural fragility will propagate. Parameter parsing (Pitfall 2) and class indexing (Pitfall 3) corruption will appear in ARD conversion if not fixed first. Wrapping `rbmi::analyse()` eliminates an entire category of maintenance burden.
-- **Phase 2 independent** — can run anytime, provides immediate value. Low risk of blocking other work.
-- **Phase 3 before Phase 4** — Tables consume ARDs. ARD conversion must work before table generation can start.
-- **Phase 4 and Phase 5 parallel** — Figures use tidy tibbles directly, not ARDs. No dependency between tables and figures.
-- **Defer advanced features (D-4, D-5, D-6)** to post-MVP. Sensitivity overlay on forest plots, annotated responder charts, and `as_gt()` S3 methods are polish features that can wait.
+- **Functional correctness before visual polish before documentation** — Each layer depends on previous being stable.
+- **MI diagnostics first** — Foundation for ARD enrichment. Critical risk area requiring careful design. Highest user value.
+- **Describe helpers second** — Self-contained, no downstream coupling. Can validate independently.
+- **Styling third** — Avoid regenerating images twice. Add parameters, preserve defaults.
+- **Documentation last** — Documents finalized features. Regenerate all images once.
+
+**Phase dependencies:** Phases 2-3 can technically run in parallel after Phase 1 (describe helpers and styling are independent). Phase 4 depends on all.
 
 ### Research Flags
 
-Phases likely needing deeper research during planning:
-- **Phase 3 (ARD Conversion):** Cards API selection (`as_card()` vs `tidy_as_ard()` vs `ard_identity()`) and stability across versions. Exact mapping from tidy pool columns to ARD structure needs prototyping.
-- **Phase 4 (Table Generation):** gtsummary function selection and template layout. Whether `tbl_ard_wide_summary()` is flexible enough for regulatory tables or whether direct gt construction is needed. Likely needs `/gsd:research-phase` during planning.
+**Phases with standard patterns (skip research-phase):**
+- **Phase 1:** Rubin's rules formulas well-documented (Rubin 1987, van Buuren 2018, mice package). cards ARD format verified.
+- **Phase 2:** rbmi object structures verified via source inspection. cli formatting patterns established.
+- **Phase 3:** gt and ggplot2 APIs well-documented. Styling patterns verified.
+- **Phase 4:** Documentation patterns, not domain research.
 
-Phases with standard patterns (skip research-phase):
-- **Phase 1 (Hardening):** Standard refactoring. Regex parsing, S3 method best practices, input validation are well-documented patterns.
-- **Phase 2 (Print/Summary):** Standard S3 method patterns. No novel techniques.
-- **Phase 5 (Visualization):** Standard ggplot2 patterns for forest plots and bar charts. Clinical trial visualization conventions are well-established.
+**No phases need /gsd:research-phase.** All research complete. Ready for requirements definition.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | CRAN verified versions (cards 0.7.1, gtsummary 2.5.0, gt 1.3.0). Official docs confirm ARD workflow. Pharmaverse backing from Roche/GSK/Novartis. |
-| Features | MEDIUM-HIGH | Table stakes features (TS-1 through TS-6) validated against codebase needs and ecosystem standards. Differentiators (D-1, D-2, D-3) are rbmi-specific and have no direct precedent but are logical extensions. |
-| Architecture | HIGH | Clean boundary at tidy tibble verified from existing code. ARD column structure confirmed from cards official docs. gtsummary ARD consumption patterns verified from vignettes and workshop materials. |
-| Pitfalls | MEDIUM-HIGH | Critical pitfalls (1-4) directly observable in codebase with known fragility patterns. Moderate pitfalls (5-9) grounded in ecosystem documentation and domain knowledge. Minor pitfalls (10-13) confirmed via code inspection. |
+| Stack | HIGH | All features verified against existing package APIs; formulas are base R arithmetic |
+| Features | HIGH | Feature landscape mapped from codebase inspection, rbmi internals, mice benchmarking |
+| Architecture | HIGH | Integration points identified; no changes to core layers; clear boundaries |
+| Pitfalls | MEDIUM-HIGH | Critical pitfalls grounded in source code analysis; memory/platform concerns inferred |
 
-**Overall confidence:** MEDIUM-HIGH
-
-The stack recommendations (cards/gtsummary/gt) are HIGH confidence — these are official, CRAN-stable packages with clear documentation. The architecture approach (tidy tibble boundary, ARD conversion layer) is HIGH confidence — the data flow is well-defined and matches ecosystem patterns. The feature prioritization is MEDIUM-HIGH — table stakes features are validated against ecosystem expectations, but exact gtsummary template implementation will need iteration. The pitfalls are MEDIUM-HIGH — structural fragilities are directly observable in code, ecosystem-level pitfalls are grounded in documentation, but severity estimates for some (e.g., gtsummary template brittleness) are inferred rather than empirically tested.
+**Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **Exact ARD conversion implementation:** Which cards function (`as_card()`, `tidy_as_ard()`, `ard_identity()`) is best for rbmi pooled results? Needs prototyping during Phase 3 planning.
-- **gtsummary template flexibility:** Does `tbl_ard_wide_summary()` handle the specific regulatory table layout (LS means + treatment effects in same table, multiple statistics per cell, visit grouping)? May need fallback to direct gt construction. Validate during Phase 4 planning with `/gsd:research-phase`.
-- **forestploter vs ggplot2 for forest plots:** Research identified forestploter (1.1.3) for table-aligned layouts, but ggplot2 custom implementation gives full control and avoids dependency. Decision deferred to Phase 5 planning.
-- **rbmi::as_analysis() export status:** Is `as_analysis()` exported publicly or internal-only? Determines whether Phase 1 can use it directly or must maintain `as_analysis2()` copy. Check during Phase 1 start.
-- **cards API stability:** Is `as_card()` stable across cards v0.5 to v0.7? May need version guards. Validate during Phase 3 start.
+**During Phase 1 implementation:**
+- Validate computed FMI values against mice::pool() output for cross-validation
+- Test with all pooling methods (rubin, bootstrap, jackknife, bmlmi) — only rubin should return MI diagnostics
+- Verify var_t from manual computation matches pool_obj$pars[[x]]$se^2
+
+**During Phase 2 implementation:**
+- Confirm rbmi draws object structure across rbmi 1.4, 1.5, 1.6 (multiple version testing)
+- Test MCMC diagnostics extraction with actual Stan fits (requires rstan installation)
+- Validate memory behavior of describe_imputation() with M=100, M=1000 imputation scenarios
+
+**During Phase 3 implementation:**
+- Test styled tables/plots at multiple output sizes and DPI settings (300 DPI for publication)
+- Verify cross-platform font rendering (macOS vs Windows)
+- Check patchwork alignment with various text_size and font_family values
+
+**During Phase 4 implementation:**
+- Validate pkgdown image paths render correctly on both GitHub and built site
+- Test README rendering on GitHub (markdown) and pkgdown (HTML)
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [cards 0.7.1 on CRAN](https://cran.r-project.org/web/packages/cards/index.html) — Version verification, ARD structure
-- [cards package docs](https://insightsengineering.github.io/cards/main/index.html) — `ard_identity()`, `as_card()`, ARD column contract
-- [gtsummary 2.5.0 on CRAN](https://cran.r-project.org/web/packages/gtsummary/index.html) — Version verification
-- [gtsummary ARD-first tables](https://www.danieldsjoberg.com/gtsummary/articles/tbl_ard-functions.html) — `tbl_ard_wide_summary()`, ARD consumption
-- [gt 1.3.0 on CRAN](https://cran.r-project.org/web/packages/gt/index.html) — Multi-format rendering
-- [rbmi quickstart vignette](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html) — `analyse()` and `pool()` workflow
-- [rbmi pool.R source](https://github.com/insightsengineering/rbmi/blob/main/R/pool.R) — Pool object structure
-- Codebase analysis: `/Users/bailliem/R-projects/rbmiUtils-gsd/R/tidiers.R`, `R/analyse_mi_data.R`, `R/analysis_utils.R`, `R/formatting.R`, `.planning/codebase/CONCERNS.md`
+
+**Codebase inspection:**
+- rbmiUtils R/ source files (ard_conversion.R, efficacy_table.R, plot_forest.R, pool_methods.R, tidiers.R, analyse_mi_data.R, utils.R)
+- rbmiUtils tests/testthat/ (test-ard_conversion.R, test-pool_methods.R)
+- rbmiUtils .planning/PROJECT.md, .planning/MILESTONES.md
+
+**rbmi internals (source inspection):**
+- rbmi:::rubin_rules — computes var_w, var_b, var_t, df; returns est_point, var_t, df
+- rbmi:::rubin_df — computes lambda internally; returns df only
+- rbmi:::pool_internal.rubin — calls rubin_rules then parametric_ci
+- rbmi:::print.draws — shows formula, method, samples, failures
+- rbmi:::print.imputation — shows datasets count, missingness %, references
+- [rbmi pool.R source](https://github.com/insightsengineering/rbmi/blob/main/R/pool.R)
+- [rbmi draws.R source](https://github.com/insightsengineering/rbmi/blob/main/R/draws.R)
+
+**Package documentation:**
+- [cards 0.7.1 CRAN](https://cran.r-project.org/web/packages/cards/index.html) — check_ard_structure() validation
+- [cards check_ard_structure source](https://raw.githubusercontent.com/insightsengineering/cards/main/R/check_ard_structure.R)
+- [gt 1.3.0 CRAN](https://cran.r-project.org/web/packages/gt/index.html) — tab_options() reference
+- [ggplot2 4.0.2 CRAN](https://cran.r-project.org/web/packages/ggplot2/index.html)
+- [rbmi 1.6.0 CRAN](https://cran.r-project.org/web/packages/rbmi/index.html)
 
 ### Secondary (MEDIUM confidence)
-- [CDISC COSA Spotlight: ARD + gtsummary 2025](https://www.danieldsjoberg.com/CDISC-COSA-Spotlight-ARD-gtsummary-2025/) — End-to-end ARD workflow, ecosystem adoption
-- [ARD PHUSE Workshop 2025](https://www.danieldsjoberg.com/ARD-PHUSE-workshop-2025/) — cards overview, cardx patterns
-- [R Consortium: Supercharging Statistical Analysis with ARDs](https://r-consortium.org/posts/supercharging-statistical-analysis-with-ards-and-the-cards-r-package/) — Ecosystem overview, adoption data (52k+ monthly downloads)
-- [pharmaverse.org TLG packages](https://pharmaverse.org/e2eclinical/tlg/) — Ecosystem positioning
-- [forestploter 1.1.3 on CRAN](https://cran.r-project.org/web/packages/forestploter/index.html) — Forest plot implementation
-- [Advanced R: S3](https://adv-r.hadley.nz/s3.html) — S3 dispatch, method conflicts
-- [R Packages (2e) Dependencies](https://r-pkgs.org/dependencies-in-practice.html) — Imports vs Suggests, CRAN policy
 
-### Tertiary (LOW confidence, needs validation)
-- Exact mapping from tidy_pool_obj() columns to ARD structure — will need prototyping
-- Whether gtsummary's `tbl_ard_wide_summary()` handles specific regulatory table layout — needs testing during Phase 4
-- cards API stability across v0.5-v0.7 — inferred stable but not directly tested
+**Statistical formulas:**
+- [Rubin's Rules — Book of MI (Heymans)](https://bookdown.org/mwheymans/bookmi/rubins-rules.html)
+- [Measures of Missing Data Information (Heymans)](https://bookdown.org/mwheymans/bookmi/measures-of-missing-data-information.html)
+- [mice::pool documentation](https://amices.org/mice/reference/pool.html)
+- [van Buuren: MI in a Nutshell](https://stefvanbuuren.name/fimd/sec-nutshell.html)
+- Rubin, D.B. (1987). Multiple Imputation for Nonresponse in Surveys. Wiley.
+- Barnard, J. and Rubin, D.B. (1999). Small-sample degrees of freedom with multiple imputation. Biometrika, 86(4), 948-955.
+
+**Package ecosystem:**
+- [ggplot2 4.0.0 announcement](https://tidyverse.org/blog/2025/09/ggplot2-4-0-0/) — S7 migration compatibility
+- [patchwork layout guide](https://patchwork.data-imaginist.com/articles/guides/layout.html)
+- [gt tab_options() reference](https://gt.rstudio.com/reference/tab_options.html)
+- [pkgdown reference documentation](https://pkgdown.r-lib.org/articles/pkgdown.html)
+- [R Packages (2e)](https://r-pkgs.org/) — dependency management, README/pkgdown
+
+### Tertiary (LOW confidence)
+
+**Web search results:**
+- [R Consortium: cards package and ARD standard](https://r-consortium.org/posts/supercharging-statistical-analysis-with-ards-and-the-cards-r-package/)
+- [Introduction to clinical tables with gt](https://www.r-bloggers.com/2024/02/introduction-to-clinical-tables-with-the-gt-package/)
+- [PharmaSUG 2023 QT-263: R Tables via GT for Regulatory Submissions](https://pharmasug.org/proceedings/2023/QT/PharmaSUG-2023-QT-263.pdf)
 
 ---
-*Research completed: 2026-02-07*
+*Research completed: 2026-02-10*
 *Ready for roadmap: yes*

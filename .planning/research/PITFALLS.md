@@ -1,311 +1,328 @@
-# Domain Pitfalls
+# Domain Pitfalls: v3 ARD Enrichment & Polish
 
-**Domain:** Clinical trial reporting layer for an R package (rbmiUtils) extending rbmi
-**Researched:** 2026-02-07
-**Overall confidence:** MEDIUM-HIGH (grounded in codebase analysis + verified ecosystem documentation)
+**Domain:** Adding MI-specific ARD metadata, imputation diagnostics, and publication polish to an existing clinical trial R package (rbmiUtils)
+**Researched:** 2026-02-10
+**Overall confidence:** MEDIUM-HIGH (grounded in codebase analysis, rbmi source code, cards validation source, and verified ecosystem documentation)
+
+**Scope:** This document covers pitfalls specific to the v3 milestone features. For pitfalls related to the foundation layer (parameter parsing, class hierarchy, beeca coupling, etc.), see the v1/v2 PITFALLS.md. Many of those were resolved in v1 and v2 and are not repeated here.
 
 ---
 
 ## Critical Pitfalls
 
-Mistakes that cause rewrites or major issues.
+Mistakes that cause existing functionality to break or produce incorrect results.
 
-### Pitfall 1: ARD Column Contract Violations When Converting Custom Results
+### Pitfall 1: Adding FMI/Pooling Metadata Rows Breaks check_ard_structure() Validation
 
-**What goes wrong:** The cards/ARD ecosystem requires a precise column contract: `variable`, `stat_name`, `stat_label`, `stat`, `group1`, `group1_level`, `context`, `fmt_fn`, `warning`, `error`. When converting rbmiUtils' tidy pool results (which use `est`, `se`, `lci`, `uci`, `pval`) into ARD format, developers commonly miss required metadata columns or use wrong column types. The `stat` column must be a list-column (each cell is a list element), not a simple numeric vector. The `fmt_fn` column must contain formatting functions (or NULL), not formatted strings. Missing the `context` column causes `tbl_ard_summary()` to fail silently or produce empty tables.
+**What goes wrong:** The existing `pool_to_ard()` produces a valid ARD that passes `cards::check_ard_structure()`. When adding new MI-specific statistics (FMI, relative increase in variance, between-imputation variance, within-imputation variance, degrees of freedom), developers add new rows with custom `stat_name` values (e.g., `"fmi"`, `"riv"`, `"var_between"`, `"var_within"`, `"df"`). If these rows have incorrect column types -- particularly if `stat`, `fmt_fun`, `warning`, or `error` columns are not list-columns in the new rows -- the entire ARD fails validation. The `check_ard_structure()` function validates that `stat`, `fmt_fun`, `warning`, and `error` are all list-type columns. A single row with a non-list value in any of these columns corrupts the entire data frame.
 
-**Why it happens:** The tidy tibble from `tidy_pool_obj()` uses a flat, human-readable structure (one row per parameter, numeric columns for estimates). The ARD format is a long, machine-readable structure (one row per statistic, list-column for values). The mental model mismatch leads to surface-level column renaming instead of structural transformation.
+**Why it happens:** The current `pool_to_ard()` constructs ARD rows using `I(list(...))` to create list-columns. When developers add new rows for FMI metadata, they may construct them separately and `rbind()` them to the existing ARD. If the new rows use plain numeric values instead of list-wrapped values for `stat`, or `NULL` instead of `list(NULL)` for warning/error, the `rbind()` silently coerces the list-columns to non-list types or produces inconsistent column types.
 
-**Consequences:** `gtsummary::tbl_ard_summary()` either errors with cryptic messages about missing columns, or silently drops statistics that lack proper `stat_name`/`stat_label` pairing. Tables render with missing cells and no warning. Debugging requires understanding the cards internals.
+**Consequences:** The returned ARD object fails `cards::check_ard_structure()`, breaking the documented contract (the existing roxygen says "The resulting ARD passes cards::check_ard_structure() validation"). Downstream gtsummary consumers silently drop rows or error. Existing tests for `pool_to_ard()` that check `cards::check_ard_structure()` fail, alerting to the regression, but only if those tests run (they require `cards` to be installed).
 
 **Warning signs:**
-- Unit tests that only check column names exist, not column types
-- `tbl_ard_summary()` producing tables with fewer rows than expected
-- Errors mentioning "Level column missing" or "`stat` must be a list"
-- The ARD object prints without the `{cards} data frame` header
+- `rbind()` producing data frames where `is.list(ard$stat)` returns `FALSE`
+- `check_ard_structure()` errors mentioning column type mismatches
+- New ARD has more rows than expected but gtsummary displays only the original statistics
+- `str(ard$stat)` shows a mix of list and non-list entries
 
 **Prevention:**
-1. Use `cards::as_cards_fn()` to wrap the conversion function, which guarantees consistent output structure even on error (specifying `stat_names` upfront).
-2. Validate the output with `cards::check_ard_structure()` (or equivalent) before passing to gtsummary.
-3. Write explicit tests that the returned object inherits the `"card"` class and that `stat` is a list-column.
-4. Map rbmiUtils statistics to ARD stat_names using a documented lookup: `est` -> `"estimate"`, `se` -> `"std.error"`, `lci` -> `"conf.low"`, `uci` -> `"conf.high"`, `pval` -> `"p.value"`.
-5. Include `context = "rbmiUtils_pool"` to enable gtsummary to dispatch formatting correctly.
+1. Build all new metadata rows using the same `data.frame(..., stat = I(list(...)))` pattern as the existing `pool_to_ard()` code (lines 100-117 in `R/ard_conversion.R`).
+2. After adding new rows, verify the ARD structure before returning: `cards::check_ard_structure(ard_df)` should be called as the last step (it already is on line 122 via `cards::as_card()`).
+3. Add a test specifically for the enriched ARD: after adding FMI rows, assert `is.list(ard$stat)`, `is.list(ard$warning)`, `is.list(ard$error)`, and `is.list(ard$fmt_fun)` remain TRUE.
+4. Extra columns beyond the required set are permitted by `check_ard_structure()` -- it only validates that required columns exist and have correct types. So additional metadata can also be added as new columns rather than new rows if appropriate.
+5. Use `cards::bind_ard()` instead of `rbind()` if available -- it is designed to safely combine ARD objects while preserving list-column types.
 
-**Phase:** Reporting layer (ARD conversion). Address first before building gtsummary templates, since templates consume ARDs.
+**Detection:** The existing test `test-ard_conversion.R` lines 25-49 already test `check_ard_structure()`. Add a parallel test for the enriched version.
 
-**Confidence:** MEDIUM -- cards API verified via official documentation; exact column requirements confirmed from [insightsengineering/cards](https://insightsengineering.github.io/cards/main/) and [gtsummary ARD-first article](https://www.danieldsjoberg.com/gtsummary/articles/tbl_ard-functions.html). Specific error messages are inferred from package structure, not directly tested.
+**Phase:** ARD metadata enrichment. Must be the first feature implemented since it modifies the core ARD output.
+
+**Confidence:** HIGH -- `check_ard_structure()` required columns and type enforcement verified from [cards source code](https://raw.githubusercontent.com/insightsengineering/cards/main/R/check_ard_structure.R): required columns are `"variable"`, `"stat_name"`, `"stat_label"`, `"stat"`, `"fmt_fun"`, `"warning"`, `"error"`, and it validates that `stat`, `fmt_fun`, `warning`, `error`, and level columns are list-type.
 
 ---
 
-### Pitfall 2: Parameter Name Parsing Breaks on Underscored Visit or Treatment Names
+### Pitfall 2: FMI/Variance Components Not Available in rbmi Pool Object -- Must Be Recomputed
 
-**What goes wrong:** `tidy_pool_obj()` uses `tidyr::separate(parameter, into = c("parameter_type", "lsm_type", "visit"), sep = "_", fill = "right", extra = "merge")` to parse parameter names like `"trt_Week24"` or `"lsm_ref_Week 24"`. When visit names contain underscores (e.g., `"Week_24"`, `"Follow_Up_Visit"`) or treatment group names contain underscores passed through beeca (e.g., `"Drug_A_vs_Placebo"`), the separator becomes ambiguous. The `extra = "merge"` flag merges excess parts into the rightmost column, but the first split still consumes the wrong token.
+**What goes wrong:** Developers assume the rbmi `pool()` return object contains FMI (fraction of missing information), between-imputation variance (`var_b`), and within-imputation variance (`var_w`) as accessible fields. In reality, `rbmi::pool()` returns only: `pars` (with `est`, `ci`, `se`, `pvalue` per parameter), `conf.level`, `alternative`, `N`, and `method`. The variance components `var_w` and `var_b` are computed internally in `rbmi::rubin_rules()` but not returned. FMI is never computed at all.
 
-**Why it happens:** The parameter naming convention uses `_` as both a structural delimiter (separating type/arm/visit) and a character that legitimately appears in visit and treatment names. This is a classic delimiter-collision problem.
+The consequence: developers try `pool_obj$fmi` or `pool_obj$pars$trt_Week4$var_b` and get `NULL`, then either (a) skip the feature, (b) compute FMI incorrectly, or (c) try to access rbmi internals that are not part of the public API.
 
-**Consequences:** Silent data corruption: `parameter_type` gets assigned partial strings, `visit` contains truncated names, `lsm_type` is populated with fragments of the visit name. Downstream filtering in `extract_trt_effects()` and `extract_lsm()` returns empty results. `format_results()` produces tables with wrong visit labels. Because the errors are silent (no exception thrown), they may reach publication.
+**Why it happens:** Other MI packages (notably `mice::pool()`) return FMI, lambda, RIV, and degrees of freedom as standard output fields. Developers familiar with `mice` expect `rbmi::pool()` to behave similarly. The rbmi documentation for `rubin_rules()` confirms it returns only `est_point`, `var_t`, and `df` -- not the decomposed variance components.
 
-**Warning signs:**
-- `tidy_pool_obj()` output has `NA` in the `visit` column for some rows
-- `parameter_type` values other than `"trt"` or `"lsm"` appear
-- `extract_trt_effects()` returns zero rows when data clearly has treatment comparisons
-- Visit names in the output differ from visit names in the input data
+**Consequences:** If developers use `rbmi::rubin_rules()` directly to recompute the variance components, they need the per-imputation estimates and standard errors, which are available in the `analysis` object's `results` list but require knowledge of rbmi's internal structure. Getting this wrong means incorrect FMI values in the ARD, which would misrepresent the quality of the imputation to downstream consumers.
 
 **Prevention:**
-1. Replace `tidyr::separate()` with structured regex parsing: `"^(trt|lsm)_(ref_|alt_)?(.+)$"` using `tidyr::extract()` or `stringr::str_match()`. This anchors the known prefixes and treats everything after as the visit.
-2. Alternatively, store parameter metadata (type, arm, visit) as attributes during `analyse_mi_data()` so that parsing is unnecessary.
-3. Add a validation step: after parsing, assert that `parameter_type %in% c("trt", "lsm")` and warn if any parsed values are unexpected.
-4. Migrate away from the deprecated `tidyr::separate()` to `tidyr::separate_wider_regex()` which enables named capture groups.
+1. Accept that FMI must be computed from scratch using the `analysis` object (not the `pool` object). The formulas from Rubin (1987):
+   - `var_w = mean(se_i^2)` (average within-imputation variance)
+   - `var_b = var(est_i)` (between-imputation variance)
+   - `var_t = var_w + (1 + 1/M) * var_b` (total variance)
+   - `riv = (1 + 1/M) * var_b / var_w` (relative increase in variance)
+   - `lambda = (1 + 1/M) * var_b / var_t` (proportion of total variance due to missingness)
+   - `fmi = (riv + 2/(df+3)) / (riv + 1)` (fraction of missing information, adjusted)
+2. Pass the `analysis` object alongside the `pool` object to the enriched `pool_to_ard()`, OR compute and store metadata before pooling.
+3. Use `rbmi::rubin_rules()` (exported function) to validate the computation: it accepts vectors of estimates and SEs and returns `est_point`, `var_t`, and `df`. Compare your computed `var_t` against its output to verify correctness.
+4. Document clearly that the FMI computation follows Barnard and Rubin (1999) with small-sample degrees of freedom adjustment, matching rbmi's internal approach.
+5. Consider whether `pool_to_ard()` should accept an optional `analysis_obj` parameter for enrichment, or whether a separate `enrich_ard()` function should add metadata post-hoc.
 
-**Phase:** Hardening phase (tidier/formatter functions). Must be fixed before ARD conversion relies on correctly parsed parameters.
+**Warning signs:**
+- `pool_obj$fmi` returns NULL
+- FMI values outside [0, 1] (computation error)
+- FMI values that don't correlate with missing data percentages (possible but check if extreme)
+- `var_t` from manual computation doesn't match `pool_obj$pars[[x]]$se^2`
 
-**Confidence:** HIGH -- this fragility is directly observable in `R/tidiers.R` lines 98-106 and confirmed in CONCERNS.md. The `tidyr::separate()` supersession is documented at [tidyr reference](https://tidyr.tidyverse.org/reference/separate.html).
+**Phase:** ARD metadata enrichment. Fundamental design decision -- must be resolved before implementation begins.
+
+**Confidence:** HIGH -- rbmi `pool()` return structure verified from [rbmi pool.R source](https://github.com/insightsengineering/rbmi/blob/main/R/pool.R). `rubin_rules()` return values verified from [rbmi documentation](https://www.rdocumentation.org/packages/rbmi/versions/1.5.2/topics/rubin_rules). FMI not computed anywhere in rbmi confirmed from source code review.
 
 ---
 
-### Pitfall 3: rbmi Class Hierarchy Indexing with `class(method)[[2]]`
+### Pitfall 3: describe_draws() Accesses rbmi Internal Object Structure That May Change
 
-**What goes wrong:** `analyse_mi_data()` and `as_analysis2()` use `class(method)[[2]]` to determine the method type (bayes, approxbayes, condmean, bmlmi) and `switch()` to assign the pooling subclass. This assumes the class vector has a specific structure where the second element is the method type. If rbmi changes its class hierarchy -- adding, removing, or reordering class elements -- this code silently produces wrong pooling assignments or errors with "subscript out of bounds".
+**What goes wrong:** Creating `describe_draws()` requires accessing the internal structure of rbmi's `draws` object. The draws object is a named list with: `data` (an R6 `longdata` object), `method` (method specification), `samples` (list of per-imputation parameter estimates containing `ids`, `beta`, `sigma`, `theta`, `failed`, `ids_samp`), `fit` (Stan fit object for Bayesian methods, NULL otherwise), `n_failures` (count of failed fits), and `formula` (the model formula). None of these fields have a stability guarantee -- they are implementation details of rbmi, not a documented public API.
 
-**Why it happens:** S3 class vectors in R are ordered character vectors, and their positional access is inherently fragile. rbmi moved from 1.4 to 1.5.x in 2025, adding covariance structure support and new method parameters. While the class vector structure has been stable so far, there is no API contract guaranteeing it will remain at position `[[2]]`.
+**Why it happens:** rbmi exposes high-level functions (`draws()`, `impute()`, `analyse()`, `pool()`) but the intermediate objects are designed for internal consumption. The `draws` object is passed to `impute()`, not examined by users. Creating diagnostic helpers that peek inside these objects couples rbmiUtils to rbmi's internals.
 
-**Consequences:** Wrong pooling method assignment means `rbmi::pool()` applies incorrect variance pooling rules. For clinical trial primary analyses, this directly corrupts reported treatment effects, confidence intervals, and p-values. The error is silent -- pool() may succeed but produce wrong numbers.
-
-**Warning signs:**
-- After upgrading rbmi, pooled estimates change unexpectedly
-- `print.analysis()` shows unexpected `Method type:` or `Pooling method:` values
-- `rbmi::pool()` errors with "method not found for class..."
-- `class(method)` has a different length than expected
+**Consequences:** When rbmi releases a new version (e.g., 1.5 -> 2.0), the internal structure of the draws object may change. If `describe_draws()` accesses `draws_obj$samples[[1]]$sigma` and rbmi renames this field or restructures the samples list, `describe_draws()` silently returns wrong values or errors. Since rbmiUtils pins `rbmi (>= 1.4)` with no upper bound, this breakage happens automatically when users update rbmi.
 
 **Prevention:**
-1. Replace `class(method)[[2]]` with `inherits()` checks: `if (inherits(method, "bayes")) ...` which is stable across class vector reordering.
-2. Alternatively, wrap `rbmi::analyse()` directly instead of reimplementing the method-to-pooling mapping. This is already an active requirement in PROJECT.md.
-3. Add an explicit assertion: `stopifnot(class(method)[[2]] %in% c("bayes", "approxbayes", "condmean", "bmlmi"))` to fail loud rather than silently.
-4. Pin rbmi version more tightly: `rbmi (>= 1.4, < 2.0)` in DESCRIPTION to bound the compatibility window.
-5. Add integration tests that verify the analysis-to-pool pipeline produces expected results for each method type.
+1. Minimize the number of internal fields accessed. For `describe_draws()`, the safest information to extract is:
+   - `draws_obj$method` (method class/type) -- relatively stable since it's user-provided
+   - `draws_obj$n_failures` (number of failed fits) -- simple scalar
+   - `draws_obj$formula` (model formula) -- standard R formula object
+   - `length(draws_obj$samples)` (number of draws) -- list length
+   - `draws_obj$fit` (Stan fit for Bayesian) -- presence/absence, not internals
+2. For Bayesian methods: if `draws_obj$fit` is a stanfit object, use `rstan::summary()` or `rstan::get_sampler_params()` for convergence diagnostics (Rhat, n_eff). These are rstan public API, not rbmi internals.
+3. Wrap every internal field access in a tryCatch or null-check: `tryCatch(draws_obj$samples[[1]]$sigma, error = function(e) NULL)`. Return "unavailable" for fields that don't exist rather than erroring.
+4. Add defensive version checking: `if (packageVersion("rbmi") >= "2.0.0") cli::cli_warn("describe_draws() may need updating for rbmi >= 2.0")`.
+5. Test with at least two rbmi versions in CI (the minimum pinned version and the latest CRAN version).
+6. Use `inherits()` for method type detection (already established pattern from v1 hardening) rather than field-based detection.
 
-**Phase:** Refactor of `analyse_mi_data()` to wrap `rbmi::analyse()`. This is the highest-priority structural fix because it eliminates the fragility entirely rather than patching it.
+**Warning signs:**
+- Error messages like "$ operator is invalid for atomic vectors" or "subscript out of bounds"
+- `describe_draws()` returning NULL or NA for fields that should have values
+- Different behavior between rbmi 1.4 and 1.5
 
-**Confidence:** HIGH -- the indexing pattern is directly visible in `R/analyse_mi_data.R` lines 148-155 and 271-281. rbmi version history confirms 1.4 -> 1.5 releases in 2025 from [CRAN rbmi news](https://cran.r-project.org/web/packages/rbmi/news/news.html).
+**Phase:** Diagnostic helpers. Implement after ARD metadata (which has a safer API surface).
+
+**Confidence:** HIGH -- draws object structure verified from [rbmi draws.R source](https://github.com/insightsengineering/rbmi/blob/main/R/draws.R) and [as_draws documentation](https://www.rdocumentation.org/packages/rbmi/versions/1.4.1/topics/as_draws). The lack of stability guarantee is confirmed by the absence of any `@return` documentation specifying the fields as public API.
 
 ---
 
-### Pitfall 4: beeca Output Format Coupling in G-computation Functions
+### Pitfall 4: describe_imputation() Coupling to rbmi extract_imputed_dfs() Internal Format
 
-**What goes wrong:** `gcomp_responder()` and `gcomp_binary()` directly access columns named `STAT`, `STATVAL`, and `TRTVAL` from `beeca::get_marginal_effect()$marginal_results`. They also filter on specific `STAT` values like `"diff"`, `"diff_se"`, `"risk"`, `"risk_se"`. If beeca renames these columns or changes the stat naming convention, these functions break.
+**What goes wrong:** Creating `describe_imputation()` to summarize imputation quality requires accessing individual imputed datasets from the `impute` object. The current `get_imputed_data()` function already does this via `rbmi::extract_imputed_dfs(impute_obj, idmap = TRUE)`, which returns a list of data frames. However, diagnostic summaries (number of imputations, imputed value ranges, convergence of imputed distributions) require iterating over potentially hundreds of complete datasets, which is memory-intensive. Developers may try to access `impute_obj` internals directly to avoid the full extraction cost.
 
-**Why it happens:** beeca has no version constraint in DESCRIPTION (`Imports: beeca` with no version). The output format is treated as a stable API, but beeca is a relatively young package (pharmaverse ecosystem, active development). Column-name coupling to upstream return values is a common integration fragility.
+**Why it happens:** The `impute` object stores imputations compactly. `rbmi::extract_imputed_dfs()` materializes all M complete datasets into memory. For diagnostic summaries, you only need summary statistics across imputations for originally-missing values, not the full datasets. But the rbmi API only provides the full extraction path.
 
-**Consequences:** `gcomp_responder()` returns empty data frames (when filter matches zero rows) or errors on missing column names. Since this function is used inside `analyse_mi_data()` across hundreds of imputations, a single beeca breaking change crashes the entire analysis pipeline with an unhelpful error deep in a lapply loop.
-
-**Warning signs:**
-- `beeca::get_marginal_effect()` output structure changes after package update
-- `gcomp_responder()` returns lists with `NULL` or `numeric(0)` for `est` or `se`
-- Errors mentioning "Column STAT not found" or "Column STATVAL not found"
-- Binary outcome analysis produces different results after upgrading beeca
+**Consequences:** Memory exhaustion with large datasets and many imputations. For example, 200 subjects x 8 visits x 1000 imputations = 1.6M rows, each with all covariates. A `describe_imputation()` that extracts all datasets into memory just to compute summary statistics is wasteful and may fail on typical clinical trial analyst laptops.
 
 **Prevention:**
-1. Add `beeca (>= X.Y)` version constraint to DESCRIPTION Imports.
-2. Validate beeca output structure immediately after the `get_marginal_effect()` call: check that `STAT`, `STATVAL`, `TRTVAL` columns exist.
-3. Write integration tests that call `beeca::get_marginal_effect()` on a fixed dataset and assert the output schema.
-4. Abstract the column-name mapping into a single location (e.g., a named vector `BEECA_COLS <- c(stat = "STAT", value = "STATVAL", treatment = "TRTVAL")`) so that a beeca update requires changing only one place.
-5. Consider wrapping the beeca call in a tryCatch that produces a clear error message mentioning the beeca version.
+1. For basic diagnostics (number of imputations, method used), access metadata from the `impute` object's top-level fields rather than extracting datasets: the number of imputations is `length(rbmi::extract_imputed_dfs(impute_obj))`, but a cheaper approach is inspecting the object structure directly.
+2. For value-level diagnostics, extract a small sample of imputations (e.g., first 5) rather than all M: `imputed_dfs <- rbmi::extract_imputed_dfs(impute_obj)[1:5]`.
+3. If `get_imputed_data()` has already been called and the full stacked data frame exists, compute diagnostics from that (it's already in memory). Design `describe_imputation()` to accept either an `impute` object or a stacked data frame.
+4. Document memory requirements clearly: "For M=1000 imputations, describe_imputation() will extract N datasets into memory. Consider using describe_imputation(impute_obj, n_sample = 10) for large analyses."
+5. Consider whether `describe_imputation()` should accept the pre-existing `ADMI` stacked data frame (which is already the standard workflow input to `analyse_mi_data()`) rather than the raw impute object.
 
-**Phase:** Hardening phase (gcomp functions). Should be addressed before ARD conversion attempts to consume gcomp results.
+**Phase:** Diagnostic helpers. Design the function signature carefully before implementation.
 
-**Confidence:** HIGH -- directly observable in `R/analysis_utils.R` lines 83-100 and `R/utils.R` lines 163-171. beeca absence of version constraint confirmed in DESCRIPTION.
+**Confidence:** MEDIUM -- the memory concern is inferred from the structure of `get_imputed_data()` (lines 52-82 in `R/utils.R`) and typical clinical trial dataset sizes. The `rbmi::extract_imputed_dfs()` API is stable and documented. Memory behavior under many imputations is not directly tested.
 
 ---
 
 ## Moderate Pitfalls
 
-Mistakes that cause delays or technical debt.
+Mistakes that cause delays, visual regressions, or technical debt.
 
-### Pitfall 5: gtsummary Template Brittleness with Regulatory Table Structures
+### Pitfall 5: Enriched pool_to_ard() API Signature Change Breaks Existing Callers
 
-**What goes wrong:** Developers build gtsummary table templates assuming `tbl_ard_summary()` or `tbl_summary()` can handle the specific structure of clinical trial efficacy tables (treatment effect + LSM by visit, with specific header/footer formatting). Regulatory tables have non-standard layouts: multiple statistics per cell (estimate + CI on one line, p-value below), row grouping by visit with treatment effects and LSMs in the same table, footnotes with method descriptions. gtsummary's template system is designed for single-statistic-per-cell summaries.
+**What goes wrong:** To compute FMI and variance components, `pool_to_ard()` needs access to per-imputation results from the `analysis` object. The current signature is `pool_to_ard(pool_obj, conf.level = NULL)`. Adding a required `analysis_obj` parameter is a breaking API change. Making it optional means the enriched metadata is only available when both objects are passed, creating two code paths with different outputs. Users who upgrade rbmiUtils and call `pool_to_ard(pool_obj)` get different output (missing FMI rows) than users who call `pool_to_ard(pool_obj, analysis_obj)`.
 
-**Why it happens:** gtsummary excels at demographic/baseline tables (Table 1) and simple comparison tables. Efficacy summary tables from clinical trials have more complex layouts. Developers start with `tbl_summary()` then discover they need heavy customization via `modify_*()` functions, custom column merging, or raw gt manipulation.
+**Why it happens:** The `pool` object is the natural input for ARD conversion (it has the pooled estimates). But FMI requires the pre-pooled per-imputation estimates. These live in the `analysis` object. The information was lost during `rbmi::pool()` -- pooling is a summarization that discards the per-imputation detail.
 
 **Prevention:**
-1. Prototype the exact target table layout (using a mock-up or existing SAS/R output) before writing code.
-2. Use `tbl_ard_wide_summary()` for efficacy tables with multiple statistics rather than `tbl_ard_summary()`, since it supports wider layouts.
-3. For complex regulatory layouts, consider building the gt table directly from the ARD rather than going through gtsummary's abstractions.
-4. Build the ARD -> gtsummary -> gt pipeline incrementally: first get the data in, then customize formatting.
-5. List gtsummary and gt as Suggests (not Imports) to avoid forcing the dependency on users who only need the analysis functions.
+1. Make `analysis_obj` an optional parameter with a default of `NULL`. When NULL, return the existing 5-statistic ARD (backward compatible). When provided, add FMI/variance metadata rows.
+2. Document the enrichment clearly: "Pass the analysis object to include MI diagnostic metadata (FMI, between/within variance). Without it, only pooled statistics are included."
+3. Add a lifecycle badge: `@details ## MI Diagnostic Metadata \lifecycle{experimental}` to signal that the enrichment is new and the metadata row names may change.
+4. Consider an alternative approach: a separate `ard_add_mi_metadata()` function that takes an existing ARD and an analysis object, adding rows. This keeps `pool_to_ard()` unchanged and follows the cards philosophy of composable transformations (similar to `cards::add_calculated_row()`).
+5. Never add required parameters to an existing exported function -- always optional with backward-compatible defaults.
 
-**Phase:** Reporting layer. Address after ARD conversion is working. Expect iteration.
+**Phase:** ARD metadata enrichment. Design decision needed before implementation.
 
-**Confidence:** MEDIUM -- based on gtsummary documentation at [gtsummary tbl_ard functions](https://www.danieldsjoberg.com/gtsummary/articles/tbl_ard-functions.html) and [CDISC COSA ARD talk](https://www.danieldsjoberg.com/CDISC-COSA-Spotlight-ARD-gtsummary-2025/). The complexity of regulatory table layouts is domain knowledge from clinical trial reporting conventions.
+**Confidence:** HIGH -- API design patterns verified from [R Packages (2e)](https://r-pkgs.org/). The `cards::add_calculated_row()` pattern confirmed from [cards documentation](https://cran.r-project.org/web/packages/cards/refman/cards.html).
 
 ---
 
-### Pitfall 6: Forest Plot Scale, Ordering, and Reference Line Mistakes
+### Pitfall 6: gt Table Styling Changes Break Existing Visual Output
 
-**What goes wrong:** Clinical trial forest plots require specific conventions that ggplot2 does not enforce by default:
+**What goes wrong:** Modifying `efficacy_table()` styling (fonts, spacing, alignment, borders, header formatting) changes the visual output. Existing pre-rendered images in `man/figures/` (used in README, roxygen examples, and pkgdown site) no longer match the function output. Users who have screenshots or reports built with the old styling see visual regressions. More critically, snapshot tests (if any exist via `testthat::expect_snapshot()`) fail on the first run and need manual approval.
 
-1. **Scale mismatch:** Using linear scale for odds/hazard ratios (should be log scale) or log scale for mean differences (should be linear). rbmiUtils will report mean differences from ANCOVA and risk differences from g-computation, which need linear scales, but if the package later supports odds ratios, the same function will produce misleading plots.
-2. **Visit ordering reversed:** ggplot2 orders factor levels bottom-to-top on the y-axis. Clinical convention is chronological top-to-bottom. Developers forget `scale_y_discrete(limits = rev)` or fail to set factor levels explicitly.
-3. **Reference line at wrong value:** Reference line should be at 0 for differences and 1 for ratios. Hardcoding either value makes the function wrong for the other scale.
-4. **Label truncation:** Long visit names or subgroup labels overflow the plot area, especially when combining with CI annotations.
-5. **Diamond vs. point size encoding:** Developers encode effect size in point size (common in meta-analysis forest plots for study weight), which is inappropriate for clinical trial visit-level effects where all visits have equal standing.
+**Why it happens:** gt tables render to HTML, and their visual appearance depends on CSS, font availability, and rendering engine. The current `efficacy_table()` uses gt defaults with some customization (source notes, column alignment, number formatting). Adding styling refinements (row striping, header borders, font stacks, compact spacing) changes every rendered table.
 
-**Prevention:**
-1. Parameterize `reference_line` with a sensible default (0 for difference scale) and document when to change it.
-2. Accept a `scale` argument (`"identity"` vs `"log"`) that controls both the x-axis transform and the reference line default.
-3. Always reverse y-axis factor levels for chronological top-to-bottom display.
-4. Use `ggplot2::coord_cartesian(clip = "off")` with `ggplot2::geom_text(hjust = 0)` outside the plot area for labels, or use a two-panel layout (labels | plot) via patchwork or cowplot.
-5. Use fixed point size for clinical trial forest plots; reserve size encoding for meta-analysis contexts.
-6. Return the ggplot object (not a rendered plot) so users can customize further with standard ggplot2 operations.
-
-**Phase:** Reporting layer (forest plot function). Can be developed in parallel with ARD conversion.
-
-**Confidence:** MEDIUM -- clinical trial forest plot conventions are well-established domain knowledge. ggplot2 axis ordering behavior verified via [ggplot2 documentation](https://ggplot2.tidyverse.org/). Specific clinical trial conventions cross-referenced with [KHstats forest plot guide](https://www.khstats.com/blog/forest-plots/) and [forestplot vignette](https://cran.r-project.org/web/packages/forestplot/vignettes/forestplot.html).
-
----
-
-### Pitfall 7: print/summary S3 Method Dispatch Conflicts with rbmi's Own Methods
-
-**What goes wrong:** rbmiUtils defines `print.analysis` and `summary.analysis` for its own `analysis` class. If rbmi also defines or later adds methods for the same class, R's S3 dispatch will use whichever package was loaded last (or whichever is found first on the search path). Additionally, if `rbmi::pool()` returns an object that inherits from multiple classes, adding `print.pool` in rbmiUtils could shadow rbmi's own `print.pool` method.
-
-**Why it happens:** Both rbmiUtils and rbmi operate on the same S3 class names (`analysis`, `pool`). R's S3 dispatch is namespace-aware for registered methods but still susceptible to masking via `library()` load order. The `analysis` class in rbmiUtils is constructed by `as_analysis2()` to be compatible with rbmi's `pool()`, meaning the class vectors overlap.
-
-**Consequences:** Users get different output depending on package load order. If rbmi adds a `print.analysis` method in a future version, there is a method conflict. Worse, if the method signatures differ (rbmi's method expects different internal structure), calling `print()` on an rbmiUtils analysis object could error or print misleading information.
+**Consequences:**
+- Pre-rendered images (`man/figures/efficacy_table-example.png`, `man/figures/README-efficacy-table-1.png`) become stale
+- pkgdown site shows old images until rebuilt
+- R CMD check may warn about changed man page content if images are regenerated but not committed
+- Users' existing scripts produce different-looking tables after upgrading
 
 **Warning signs:**
-- `methods(print)` shows duplicate registrations for `print.analysis`
-- R CMD check WARNING about "method masked" or "S3 method overwritten"
-- `print()` output changes depending on whether rbmi or rbmiUtils is loaded first
+- `man/figures/` images look different from live `efficacy_table()` output
+- pkgdown build produces different site than committed `docs/` directory
+- User reports of "tables look different after update"
 
 **Prevention:**
-1. For the `analysis` class: since rbmiUtils creates these objects via `as_analysis2()`, it legitimately owns the print/summary methods. Ensure they are registered in NAMESPACE with `S3method(print, analysis)` and `S3method(summary, analysis)`.
-2. For the `pool` class: do NOT add print/summary methods directly. Instead, create a wrapper class (e.g., `"rbmiUtils_pool"`) that inherits from `"pool"` and add methods for the wrapper class.
-3. Test for method conflicts: in test suite, check `methods(class = "analysis")` does not contain entries from rbmi.
-4. Use the `...` argument in print/summary methods even if currently unused, to maintain forward compatibility.
-5. Ensure `print()` returns `invisible(x)` and `summary()` returns a summary object (invisibly), following R conventions.
+1. Add styling parameters to `efficacy_table()` rather than changing defaults: e.g., `compact = FALSE` (default preserves current look), `theme = "default"` (new themes available but not forced).
+2. If changing defaults, increment the package version to signal the visual change and document it in NEWS.md.
+3. Regenerate all pre-rendered images after styling changes: `man/figures/efficacy_table-example.png`, `man/figures/README-efficacy-table-1.png`, and any images in vignette outputs.
+4. Use `gt::opt_table_font()` with system font stacks (e.g., `"rounded-sans"`) rather than specific font names to ensure cross-platform consistency.
+5. Test rendered output on both macOS and Windows if possible -- font rendering differs significantly. gt tables rendered to PDF/LaTeX have different styling capabilities than HTML; be cautious about promising "publication quality" across all output formats.
+6. Consider whether styling changes should be a new function (e.g., `efficacy_table_styled()`) or a `theme` parameter on the existing function.
 
-**Phase:** print/summary improvements. Address during that dedicated phase.
+**Phase:** Table/plot polish. Implement after ARD metadata (which is functionally more important than visual polish).
 
-**Confidence:** HIGH -- the current `print.analysis` and `summary.analysis` implementations are visible in `R/analyse_mi_data.R` lines 330-442. S3 dispatch rules verified via [Advanced R S3 chapter](https://adv-r.hadley.nz/s3.html).
+**Confidence:** MEDIUM -- gt cross-platform rendering differences verified from [gt font issues](https://github.com/rstudio/gt/issues/337) and [gt/LaTeX rendering discussion](https://forum.posit.co/t/rmarkdown-gt-package-rendering-different-in-html-and-pdf/140864). Pre-rendered image staleness confirmed from `man/figures/` directory listing.
 
 ---
 
-### Pitfall 8: Optional Dependencies (Suggests) Break CRAN Checks or Silently Degrade
+### Pitfall 7: Forest Plot Patchwork Alignment Breaks with Styling Changes
 
-**What goes wrong:** Adding cards, cardx, gtsummary, and gt as Suggests (rather than Imports) requires guarding every call to these packages with availability checks. Developers commonly miss guards in:
-- Helper functions called by the main ARD conversion function
-- Default argument values that reference Suggests packages
-- Examples in roxygen documentation
-- Vignette code that runs during `R CMD check`
+**What goes wrong:** The current `plot_forest()` uses a three-panel patchwork composition with width ratios `c(3, 4, 1.5)`. Changing text size, font family, point size, or adding new annotation elements (e.g., FMI annotation, sample size labels) disrupts the panel alignment. Patchwork aligns panels based on plot area dimensions, but text elements in `theme_void()` panels (the left table and right p-value panels) don't participate in ggplot2's standard alignment system. When text becomes wider or taller, it overflows the allocated panel width.
 
-CRAN policy requires that package functionality must not error if Suggests are not installed. Additionally, the cardx package has its own hidden Suggests dependencies (e.g., emmeans, broom.helpers) that `{renv}` will not record unless explicitly referenced.
+**Why it happens:** The three-panel forest plot is a creative hack: the left and right panels are not true ggplot2 plots but text annotation panels using `geom_text()` on a `theme_void()` canvas. Patchwork aligns the plot areas, but `theme_void()` panels have no axes to align. When text content changes size, the layout breaks because patchwork cannot negotiate space between panels that have no alignment anchors. The `free()` function in patchwork can help but introduces its own complexity.
 
-**Why it happens:** During development, Suggests packages are always installed, so missing guards are invisible. The failure only manifests during `R CMD check --no-suggests` or when a user installs rbmiUtils without the optional packages.
-
-**Consequences:** CRAN rejection if examples or tests call Suggests packages without guards. Users who install only rbmiUtils (without gtsummary) get cryptic "there is no package called 'gtsummary'" errors when they call any function, even unrelated ones, if the package-level imports are not properly conditional.
+**Consequences:** Forest plot text overlaps with the forest panel, p-value labels are clipped, or excessive whitespace appears between panels. The issue is resolution/DPI-dependent: a plot that looks fine at screen resolution may have alignment issues when exported at 300 DPI for publication.
 
 **Warning signs:**
-- `R CMD check --no-suggests` produces errors
-- `.Rd` examples fail when Suggests are not installed
-- Tests fail on CI when Suggests installation is skipped
-- `renv::snapshot()` misses cards/gtsummary/gt in lockfile
+- Text labels truncated or overlapping with the forest plot whiskers
+- Plot looks correct in RStudio viewer but wrong in saved PNG/PDF
+- Different appearance at different `width` and `height` values in `ggsave()`
+- Alignment breaks when `text_size` or `point_size` parameters are changed from defaults
 
 **Prevention:**
-1. Use `rlang::check_installed("cards", reason = "to convert results to ARD format")` at the top of every function that uses a Suggests package. This gives clear error messages and offers installation in interactive sessions.
-2. Wrap all examples using Suggests in `\donttest{}` or guard with `if (requireNamespace("gtsummary", quietly = TRUE))`.
-3. Add `testthat::skip_if_not_installed("cards")` to every test that uses Suggests.
-4. Run `R CMD check --no-suggests` in CI to catch unguarded calls early.
-5. For cardx hidden dependencies: add explicit `library(emmeans)` or similar references in vignettes so renv captures them.
-6. Consider making `cards` an Import (not Suggests) if the ARD conversion is core functionality, and keep `gtsummary`/`gt` as Suggests since they are only needed for table rendering.
+1. Any styling changes to `plot_forest()` should be tested at multiple output sizes: `ggsave("test.png", width = 8, height = 4)`, `ggsave("test.png", width = 12, height = 6)`, and `ggsave("test.png", width = 6, height = 3)`.
+2. Expose `widths` as a parameter: `widths = c(3, 4, 1.5)` so users can adjust panel proportions without modifying the function.
+3. For text panels, use `ggplot2::scale_x_continuous(expand = expansion(mult = c(0.3, 0.05)))` (already done in current code) -- verify this expansion is sufficient for longer text labels from v3 changes.
+4. Prefer relative sizing (`text_size = 3` in points) over absolute sizing. Avoid pixel-based sizing.
+5. If adding new annotation panels (e.g., FMI column), test with the two-panel layout (`show_pvalues = FALSE`) as well as three-panel.
+6. Regenerate `man/figures/plot_forest-trt.png` and `man/figures/README-forest-plot-1.png` after any visual changes.
 
-**Phase:** Reporting layer and throughout. The dependency classification decision (Imports vs Suggests) should be made early in planning, as it affects every subsequent function.
+**Phase:** Plot polish. Can be implemented in parallel with table polish.
 
-**Confidence:** HIGH -- CRAN Suggests policy verified via [R Packages (2e) Dependencies chapter](https://r-pkgs.org/dependencies-in-practice.html). rlang guard pattern verified via [rlang is_installed reference](https://rlang.r-lib.org/reference/is_installed.html). cardx hidden dependency issue documented in [cardx README](https://github.com/insightsengineering/cardx).
+**Confidence:** MEDIUM -- patchwork alignment issues verified from [patchwork documentation](https://patchwork.data-imaginist.com/articles/guides/layout.html) and [patchwork issues](https://github.com/thomasp85/patchwork/issues/276). The specific three-panel layout fragility is directly observable in `R/plot_forest.R` lines 354-361.
 
 ---
 
-### Pitfall 9: Formula Construction from Unsanitized User Input
+### Pitfall 8: README/Documentation Changes Break pkgdown Build or GitHub Rendering
 
-**What goes wrong:** `as_simple_formula2()` in `R/analysis_utils.R` constructs formulas by pasting user-supplied covariate names: `paste0(outcome, " ~ 1 + ", paste0(covars, collapse = " + "))`. If covariate names contain special characters, spaces, or R formula operators (e.g., `"log(BASE)"`, `"I(AGE^2)"`, `"BASE * TRT"`), the resulting formula may be syntactically valid but semantically wrong, or may error with an unhelpful message from `stats::glm()`.
+**What goes wrong:** Overhauling the README to add realistic clinical trial examples introduces several failure modes:
 
-**Why it happens:** Clinical trial datasets sometimes use variable names with embedded transformations or interaction terms specified as single strings. The `extract_covariates2()` function splits on `:` and `*` but does not handle parenthesized expressions, `I()` wrappers, or spaces in variable names.
-
-**Consequences:** Model fitting errors deep inside `stats::glm()` or `stats::lm()` with stack traces that point to the model formula rather than the user's input. For legitimate R formula operators embedded in covariate strings (like `"BASE:TRT"`), the intent may be an interaction, but the naive splitting in `extract_covariates2()` will try to validate `"BASE"` and `"TRT"` as separate columns.
+1. **Image path inconsistency:** pkgdown relocates `man/figures/` images to `reference/figures/` on the site. Image paths that work in GitHub README rendering (`man/figures/image.png`) may break on the pkgdown site, or vice versa.
+2. **README.Rmd rendering:** If using `README.Rmd`, `usethis::use_readme_rmd()` sets `fig.path = "man/figures/README-"`. pkgdown expects a pre-rendered `README.md`. If `README.Rmd` is edited but not knitted, the site shows stale content.
+3. **Example code in README runs during pkgdown build:** Code blocks in `README.Rmd` execute during knitting. If they depend on rbmi (which requires Stan for Bayesian methods), the README cannot be built on CI without a full Stan installation. This is why the current README uses pre-rendered images.
+4. **HTML in README.md:** GitHub renders a subset of HTML. The current README uses `<figure>` tags. pkgdown renders the full README as HTML. Some HTML tags supported by pkgdown are not supported by GitHub's markdown renderer, and vice versa.
+5. **Vignette code changes:** If documentation examples are moved from vignettes to README or vice versa, resource paths (images, data) may break because pkgdown processes `articles/` and `index.html` differently.
 
 **Prevention:**
-1. Validate covariate names against `names(data)` before formula construction, and report unmatched names clearly.
-2. For interaction terms: support them explicitly with documentation and testing, or reject them with a clear error message saying "use `*` syntax in the covariates argument".
-3. For transformations: either support `I()` and function calls in covariates, or reject them early with "transform variables before passing to analysis functions".
-4. Sanitize covariate names: reject names containing characters other than `[A-Za-z0-9_.]` unless they match known formula operators.
-5. Environment scoping: `as_simple_formula2()` sets `environment(frm) <- globalenv()` which may fail if variables are defined in a non-global environment. Consider using `environment(frm) <- parent.frame()` or the calling environment.
+1. Keep using pre-rendered static images for README. Do NOT add code that calls `rbmi::draws()` in README.Rmd chunks -- it requires Stan/MCMC and is too slow for CI.
+2. Test both rendering targets: `pkgdown::build_home()` for the site, and visually inspect the GitHub rendering of `README.md`.
+3. Use relative paths from the package root for images: `man/figures/image.png`. This works for both GitHub and pkgdown.
+4. After any README change, run `pkgdown::build_site()` locally and check `docs/index.html` for broken images or layout issues before committing.
+5. Do NOT use markdown image resizing syntax (`![](image.png =WIDTHxHEIGHT)`) -- it breaks on pkgdown. Use HTML `<img>` tags with `width` attributes instead.
+6. If switching from `README.Rmd` to `README.md`, remove the `README.Rmd` file entirely to avoid confusion about which file is authoritative.
+7. Any new images must go in `man/figures/` -- pkgdown only copies images from `man/figures/` and `vignettes/` to the built site.
 
-**Phase:** Hardening phase (gcomp functions).
+**Phase:** Documentation overhaul. Implement after functional changes (ARD metadata, diagnostic helpers) to avoid re-doing documentation.
 
-**Confidence:** HIGH -- directly visible in `R/analysis_utils.R` lines 205-214.
+**Confidence:** HIGH -- pkgdown image path handling verified from [pkgdown issues #1472](https://github.com/r-lib/pkgdown/issues/1472), [#1943](https://github.com/r-lib/pkgdown/issues/1943), [#2194](https://github.com/r-lib/pkgdown/issues/2194), and [#2389](https://github.com/r-lib/pkgdown/issues/2389). GitHub HTML rendering limitations confirmed from [R Packages (2e) chapter 18](https://r-pkgs.org/other-markdown.html). Current README structure confirmed from codebase (`README.md` lines 51-62 use `<figure>` tags, images in `man/figures/`).
+
+---
+
+### Pitfall 9: FMI Computation Requires Per-Parameter Estimates from analysis Object Internals
+
+**What goes wrong:** To compute FMI for each pooled parameter, you need the per-imputation estimate (`est_i`) and standard error (`se_i`) for that parameter across all M imputations. These live in `analysis_obj$results` -- a list of M elements, each containing named parameter results with `$est` and `$se` fields. Extracting these requires iterating over `analysis_obj$results` and matching parameter names, which couples to rbmi's internal analysis result structure.
+
+**Why it happens:** The `analysis` object is created by `as_analysis2()` (lines 295-345 in `R/analyse_mi_data.R`) which stores results as `list(results = rbmi::as_class(results, c(next_class, "list")))`. Each element of `results` is a named list where names are parameter names (e.g., `"trt_Week4"`, `"lsm_ref_Week4"`) and values are lists with `$est` and `$se`. This structure is how `rbmi::pool()` consumes the results -- so it's relatively stable, but it's still an internal contract.
+
+**Consequences:** If the extraction logic has an off-by-one error or mismatches parameter names between the analysis and pool objects, FMI values are assigned to the wrong parameters. Since FMI values are plausible-looking numbers (between 0 and 1), the error is silent and may not be caught without explicit validation.
+
+**Prevention:**
+1. Extract per-imputation values by parameter name, not by position: `sapply(analysis_obj$results, function(r) r[["trt_Week4"]]$est)`.
+2. Validate that parameter names in the analysis object match those in the pool object: `names(analysis_obj$results[[1]])` should match the parameter names in `tidy_pool_obj(pool_obj)$parameter`.
+3. Compute FMI for one known parameter first and verify against manual calculation on the same data.
+4. Add a sanity check: `var_t_manual = var_w + (1 + 1/M) * var_b` should equal `pool_obj$pars[[param]]$se^2` (within floating point tolerance). If they don't match, the extraction is wrong.
+5. Consider wrapping the extraction in a standalone function (e.g., `extract_per_imputation_stats(analysis_obj, param_name)`) with clear error messages when the structure doesn't match expectations.
+
+**Phase:** ARD metadata enrichment. Part of the FMI computation design.
+
+**Confidence:** HIGH -- analysis object structure directly observable in `R/analyse_mi_data.R` and confirmed by `make_mock_pool()` helper in test file `test-ard_conversion.R` which shows the parameter naming convention.
+
+---
+
+### Pitfall 10: New pkgdown Reference Groups for Diagnostic Functions May Break Existing Site Layout
+
+**What goes wrong:** Adding `describe_draws()` and `describe_imputation()` to the package requires adding them to `_pkgdown.yml` reference groups. If they are added to the wrong group or a new group is created without updating the group list, pkgdown's `build_reference()` either omits them (they appear in an "Other" section) or errors with "Topic not found" if the function name doesn't match the roxygen export.
+
+**Why it happens:** The current `_pkgdown.yml` has 9 reference groups (Data Preparation, Analysis, Tidying, Reporting, Formatting, Storage, Utilities, Print & Summary Methods, Datasets). The new diagnostic functions don't fit neatly into any existing group. If a "Diagnostics" group is added, the YAML indentation must be exact -- a single space error causes silent drops.
+
+**Prevention:**
+1. Add a new "Diagnostics" reference group between "Tidying" and "Reporting" in `_pkgdown.yml`.
+2. After modifying `_pkgdown.yml`, run `pkgdown::build_reference_index()` locally and verify all exported functions appear.
+3. Check that the YAML is valid: `yaml::read_yaml("_pkgdown.yml")` should not error.
+4. Match function names exactly: if the function is `describe_draws`, the contents entry must be `describe_draws` (not `describe_draws()` or `describe-draws`).
+
+**Phase:** Documentation overhaul. Must coordinate with the implementation of diagnostic functions.
+
+**Confidence:** HIGH -- `_pkgdown.yml` structure confirmed from codebase (lines 39-92). pkgdown reference grouping behavior documented at [pkgdown reference](https://pkgdown.r-lib.org/articles/pkgdown.html).
 
 ---
 
 ## Minor Pitfalls
 
-Mistakes that cause annoyance but are fixable.
+Mistakes that cause annoyance or cosmetic issues but are fixable.
 
-### Pitfall 10: Delta Data Without Subject-Visit Uniqueness Validation
+### Pitfall 11: gt Source Notes Ordering Affects Table Footer Readability
 
-**What goes wrong:** `analyse_mi_data()` validates that delta has the required columns but does not check for duplicate subject-visit combinations. A `dplyr::left_join()` with duplicated keys silently replicates rows, inflating the dataset. The analysis then runs on more rows than intended, producing biased estimates.
+**What goes wrong:** The current `efficacy_table()` adds three source notes in sequence: pooling method, number of imputations, and confidence level (lines 224-226). Adding FMI summary or additional MI metadata to the footer requires careful ordering. `gt::tab_source_note()` adds notes in the order called, with the last call appearing at the bottom. If MI-specific metadata (e.g., "Average FMI: 0.23") is added first, it appears above the method note, which is confusing. If added last, it appears at the bottom, which may be overlooked.
 
 **Prevention:**
-1. Add uniqueness check: `if (anyDuplicated(delta[, c(vars$subjid, vars$visit)])) stop("delta has duplicate subject-visit rows")`.
-2. Place this check immediately after column validation, before the join.
+1. Define a consistent note ordering: (1) Method, (2) N imputations, (3) Confidence level, (4) MI diagnostics (FMI, etc.).
+2. Use `gt::tab_footnote()` for parameter-specific annotations (e.g., per-visit FMI) rather than `tab_source_note()` which applies to the whole table.
+3. Consider using a single source note for MI metadata: "Pooling: Rubin's rules | M = 100 | 95% CI | Avg FMI = 0.23" to reduce footer clutter.
 
-**Phase:** Hardening phase (analyse_mi_data).
+**Phase:** Table polish.
 
-**Confidence:** HIGH -- directly observable in `R/analyse_mi_data.R` lines 195-214. Also flagged in CONCERNS.md.
+**Confidence:** HIGH -- gt source note ordering behavior confirmed from [gt tab_source_note documentation](https://gt.rstudio.com/reference/tab_options.html).
 
 ---
 
-### Pitfall 11: String-Based Key Matching with "|||" Separator Masking Type Mismatches
+### Pitfall 12: Bootstrap and Conditional Mean Methods Return NA for Standard Errors
 
-**What goes wrong:** `reduce_imputed_data()` and `expand_imputed_data()` convert subject and visit columns to character and concatenate with `"|||"` separator for matching. If a subject ID literally contains `"|||"`, key collisions occur. More commonly, the `as.character()` conversion masks type mismatches between `imputed_data` and `original_data` (e.g., factor vs. integer subject IDs that happen to have the same string representation but different semantics).
+**What goes wrong:** When computing FMI for non-Bayesian pooling methods (bootstrap percentile, jackknife), the standard error may be `NA` in the pool object. The bootstrap percentile method computes CIs directly from quantiles without a standard error. If FMI computation assumes `se` is always available, it will produce `NaN` or error for bootstrap analyses.
 
 **Prevention:**
-1. Use `interaction(col1, col2, drop = TRUE)` or `dplyr::left_join()` on the key columns directly instead of string concatenation.
-2. Add explicit type equality checks before the join: warn if `class(imputed_data[[subjid]]) != class(original_data[[subjid]])`.
-3. If keeping string concatenation, validate that no values in either key column contain the separator.
+1. Check `pool_obj$method` before attempting FMI computation. FMI from Rubin's rules is only meaningful for `method = "rubin"` (Bayesian and approximate Bayesian).
+2. For bootstrap/jackknife methods, either skip FMI computation entirely or compute a bootstrap-based analog (variance of estimates across resamples).
+3. Return `NA` for FMI when the pooling method doesn't support it, and document why.
+4. Test FMI computation with all three method types: `method_bayes()`, `method_approxbayes()`, and `method_condmean()`.
 
-**Phase:** Hardening phase (storage functions).
+**Phase:** ARD metadata enrichment.
 
-**Confidence:** HIGH -- directly observable in `R/imputation_storage.R` lines 131-134 and lines 266-269.
+**Confidence:** MEDIUM -- bootstrap SE behavior inferred from rbmi pool.R source code where method-specific handling produces NA for standard errors with percentile-based methods. Needs verification with actual rbmi output.
 
 ---
 
-### Pitfall 12: Responder Bar Chart Misrepresenting Proportions with Small Denominators
+### Pitfall 13: Snapshot Tests for Visual Output Are Platform-Dependent
 
-**What goes wrong:** When creating responder bar charts (proportion responding by arm and visit), developers use raw proportions without considering the denominator. Visits with high dropout have small denominators, making proportions volatile. Displaying proportions without confidence intervals or denominator annotation misleads readers into treating a 4/5 (80%) proportion the same as a 40/50 (80%) proportion.
-
-**Prevention:**
-1. Always annotate bars with n/N (count over denominator).
-2. Include error bars showing binomial confidence intervals (Wilson or Clopper-Pearson).
-3. If using ggplot2, use `geom_col()` (not `geom_bar(stat = "identity")`) to avoid confusion about count vs. proportion encoding.
-4. Consider a table-under-the-figure showing n at risk per visit per arm.
-
-**Phase:** Reporting layer (responder bar chart function).
-
-**Confidence:** MEDIUM -- domain knowledge from clinical trial reporting conventions. Not verified against a specific source.
-
----
-
-### Pitfall 13: tidyr::separate() Deprecation Creating Future Maintenance Burden
-
-**What goes wrong:** `tidy_pool_obj()` uses `tidyr::separate()` which is superseded by `tidyr::separate_wider_delim()`, `tidyr::separate_wider_position()`, and `tidyr::separate_wider_regex()`. While superseded functions will continue to receive critical bug fixes, they will not receive new features and are excluded from tidyr documentation search. Over time, new tidyverse releases may produce deprecation warnings that surface to users.
+**What goes wrong:** Adding snapshot tests (`testthat::expect_snapshot()`) for `describe_draws()` or `describe_imputation()` console output captures platform-specific details like Unicode rendering, cli formatting codes, and terminal width. A snapshot created on macOS will fail on Windows CI if Unicode characters differ or terminal width assumptions change.
 
 **Prevention:**
-1. Migrate to `tidyr::separate_wider_regex()` with named capture groups, which also solves the underscore-in-parameter-names problem (Pitfall 2).
-2. If keeping `tidyr::separate()` for now, add a comment documenting the supersession and linking to the migration path.
-3. Pin `tidyr (>= 1.3.0)` in DESCRIPTION to ensure the replacement functions are available.
+1. Use `expect_snapshot()` with `variant = .Platform$OS.type` if platform-specific output is expected.
+2. Prefer structural assertions over snapshot tests: `expect_equal(result$n_imputations, 100)` rather than `expect_snapshot(print(result))`.
+3. If using snapshot tests for cli-formatted output, set `cli::cli_inform()` width explicitly: `withr::local_options(cli.width = 80)`.
+4. For gt table snapshots, use `gt::as_raw_html()` and compare string content rather than relying on visual rendering.
 
-**Phase:** Hardening phase (tidier/formatter functions). Combine with Pitfall 2 fix.
+**Phase:** All phases with new console or visual output.
 
-**Confidence:** HIGH -- `tidyr::separate()` supersession confirmed at [tidyr::separate reference](https://tidyr.tidyverse.org/reference/separate.html).
+**Confidence:** MEDIUM -- testthat snapshot platform sensitivity documented in [testthat 3e snapshot testing](https://testthat.r-lib.org/articles/snapshotting.html).
 
 ---
 
@@ -313,47 +330,59 @@ Mistakes that cause annoyance but are fixable.
 
 | Phase Topic | Likely Pitfall | Mitigation | Severity |
 |---|---|---|---|
-| ARD conversion (cards) | Column contract violations (Pitfall 1) | Use `cards::as_cards_fn()`, validate output class | Critical |
-| ARD conversion (cards) | cardx hidden Suggests deps (Pitfall 8) | Explicit references for renv, `check_installed()` | Moderate |
-| gtsummary table templates | Regulatory table layout mismatch (Pitfall 5) | Prototype layout first, consider direct gt | Moderate |
-| Forest plot function | Scale/ordering/reference line errors (Pitfall 6) | Parameterize scale, always reverse y-axis | Moderate |
-| Responder bar chart | Small denominator misrepresentation (Pitfall 12) | Annotate n/N, add CIs | Minor |
-| print/summary methods | S3 dispatch conflicts with rbmi (Pitfall 7) | Use wrapper class for pool, register methods | Moderate |
-| Refactor analyse_mi_data | class(method)[[2]] fragility (Pitfall 3) | Wrap rbmi::analyse() or use inherits() | Critical |
-| Harden gcomp functions | beeca column coupling (Pitfall 4) | Version pin, validate output schema | Critical |
-| Harden gcomp functions | Formula injection (Pitfall 9) | Sanitize covariate names, validate against data | Moderate |
-| Harden storage functions | String key collision (Pitfall 11) | Use interaction() or direct join | Minor |
-| Harden tidier/formatter | Parameter parsing fragility (Pitfall 2) | Regex parsing or metadata attributes | Critical |
-| Harden tidier/formatter | tidyr::separate() supersession (Pitfall 13) | Migrate to separate_wider_regex() | Minor |
-| Harden analyse_mi_data | Delta uniqueness gap (Pitfall 10) | Add uniqueness assertion | Minor |
-| Dependency management | Suggests break CRAN check (Pitfall 8) | Guard all calls, run --no-suggests in CI | Moderate |
-
-## Recommended Phase Ordering Based on Pitfalls
-
-1. **Hardening first** -- Fix Pitfalls 2, 3, 4, 9, 10, 11 before building on top of fragile foundations. The parameter parsing (Pitfall 2) and class hierarchy (Pitfall 3) issues will propagate into ARD conversion if not fixed first.
-2. **Refactor analyse_mi_data** -- Wrapping `rbmi::analyse()` eliminates Pitfall 3 entirely and reduces the internal helper surface area.
-3. **ARD conversion** -- With hardened parsing and stable class hierarchy, convert tidy results to ARD format (Pitfall 1 guidance).
-4. **Reporting layer** -- Build gtsummary templates (Pitfall 5), forest plots (Pitfall 6), and bar charts (Pitfall 12) on top of correct ARDs.
-5. **print/summary improvements** -- Low risk of blocking other work (Pitfall 7).
-
-## Sources
-
-- [cards package documentation](https://insightsengineering.github.io/cards/main/) -- ARD structure, `as_cards_fn()`
-- [cardx package](https://github.com/insightsengineering/cardx) -- hidden Suggests dependency warning
-- [gtsummary ARD-first Tables](https://www.danieldsjoberg.com/gtsummary/articles/tbl_ard-functions.html) -- `tbl_ard_summary()` requirements
-- [CDISC COSA Spotlight ARD + gtsummary 2025](https://www.danieldsjoberg.com/CDISC-COSA-Spotlight-ARD-gtsummary-2025/) -- clinical trial ARD workflow
-- [R Packages (2e) Dependencies in Practice](https://r-pkgs.org/dependencies-in-practice.html) -- Suggests/Imports guidance, CRAN policy
-- [rlang is_installed reference](https://rlang.r-lib.org/reference/is_installed.html) -- conditional dependency checks
-- [Advanced R: S3](https://adv-r.hadley.nz/s3.html) -- S3 dispatch, method conflicts
-- [tidyr::separate reference](https://tidyr.tidyverse.org/reference/separate.html) -- supersession status
-- [rbmi CRAN news](https://cran.r-project.org/web/packages/rbmi/news/news.html) -- version history 1.4 -> 1.5
-- [KHstats Forest Plots](https://www.khstats.com/blog/forest-plots/) -- clinical trial forest plot conventions
-- [forestplot vignette](https://cran.r-project.org/web/packages/forestplot/vignettes/forestplot.html) -- reference line and scale conventions
-- [R Consortium: Supercharging Statistical Analysis with ARDs](https://r-consortium.org/posts/supercharging-statistical-analysis-with-ards-and-the-cards-r-package/) -- ARD ecosystem overview
-- [PHUSE 2025 ARD Workshop](https://www.danieldsjoberg.com/ARD-PHUSE-workshop-2025/) -- ARD practical guidance
-- Codebase analysis: `R/tidiers.R`, `R/analyse_mi_data.R`, `R/analysis_utils.R`, `R/imputation_storage.R`, `R/utils.R`, `R/data_helpers.R`, `R/formatting.R`
-- Existing `.planning/codebase/CONCERNS.md` -- confirmed fragilities
+| ARD metadata enrichment | List-column corruption from rbind (Pitfall 1) | Use same `I(list(...))` pattern, validate with `check_ard_structure()` | Critical |
+| ARD metadata enrichment | FMI not in pool object (Pitfall 2) | Compute from analysis object, validate against `rubin_rules()` | Critical |
+| ARD metadata enrichment | API signature change (Pitfall 5) | Optional `analysis_obj` param or separate `enrich_ard()` function | Moderate |
+| ARD metadata enrichment | Per-imputation extraction fragility (Pitfall 9) | Extract by name not position, validate parameter name matching | Moderate |
+| ARD metadata enrichment | Bootstrap/condmean SE is NA (Pitfall 12) | Check method before FMI, return NA for non-Rubin methods | Minor |
+| Diagnostic helpers: describe_draws() | rbmi draws internal structure (Pitfall 3) | Defensive access with tryCatch, minimize fields accessed | Critical |
+| Diagnostic helpers: describe_imputation() | Memory from full extraction (Pitfall 4) | Sample imputations, accept pre-extracted data | Moderate |
+| Table polish | Visual regression from styling changes (Pitfall 6) | Add parameters not change defaults, regenerate images | Moderate |
+| Table polish | Source note ordering (Pitfall 11) | Define consistent ordering convention | Minor |
+| Plot polish | Patchwork alignment with new elements (Pitfall 7) | Test at multiple output sizes, expose `widths` param | Moderate |
+| Documentation overhaul | Image paths, pkgdown build breakage (Pitfall 8) | Pre-rendered images, test both GitHub and pkgdown rendering | Moderate |
+| Documentation overhaul | pkgdown reference group changes (Pitfall 10) | Validate YAML, run build_reference_index() locally | Minor |
+| All phases | Snapshot test platform sensitivity (Pitfall 13) | Prefer structural assertions over snapshots | Minor |
 
 ---
 
-*Pitfalls research: 2026-02-07*
+## Recommended Phase Ordering Based on Pitfalls
+
+1. **ARD metadata enrichment first** -- Pitfalls 1, 2, 5, 9, 12 cluster here. The fundamental design decision (how to get per-imputation stats for FMI, API signature for enriched `pool_to_ard()`) must be resolved before building on top. This is the highest-risk area because it modifies the core ARD output that passes `check_ard_structure()`.
+
+2. **Diagnostic helpers second** -- Pitfalls 3 and 4 require careful API design. `describe_draws()` couples to rbmi internals (inherently fragile). `describe_imputation()` has memory considerations. Design function signatures before implementing.
+
+3. **Table/plot polish third** -- Pitfalls 6 and 7 are moderate risk but visually impactful. Implement AFTER functional changes to avoid regenerating images twice. Add styling as new parameters, not changed defaults.
+
+4. **Documentation overhaul last** -- Pitfalls 8, 10 are lower risk and should be done after all functional changes are complete. Regenerate all images, update `_pkgdown.yml`, rebuild site.
+
+**Rationale:** Functional correctness (ARD, diagnostics) before visual polish (tables, plots) before documentation. Each layer depends on the previous one being stable.
+
+---
+
+## Sources
+
+- [cards check_ard_structure source](https://raw.githubusercontent.com/insightsengineering/cards/main/R/check_ard_structure.R) -- required columns: `variable`, `stat_name`, `stat_label`, `stat`, `fmt_fun`, `warning`, `error`; list-column enforcement on `stat`, `fmt_fun`, `warning`, `error`
+- [rbmi pool.R source](https://github.com/insightsengineering/rbmi/blob/main/R/pool.R) -- pool object returns `pars`, `conf.level`, `alternative`, `N`, `method`; `var_w` and `var_b` computed internally but not returned; FMI never computed
+- [rbmi rubin_rules documentation](https://www.rdocumentation.org/packages/rbmi/versions/1.5.2/topics/rubin_rules) -- returns `est_point`, `var_t`, `df` only
+- [rbmi draws.R source](https://github.com/insightsengineering/rbmi/blob/main/R/draws.R) -- draws object structure: `data`, `method`, `samples`, `fit`, `n_failures`, `formula`
+- [rbmi as_draws documentation](https://www.rdocumentation.org/packages/rbmi/versions/1.4.1/topics/as_draws) -- samples subcomponents: `ids`, `beta`, `sigma`, `theta`, `failed`, `ids_samp`
+- [Rubin's Rules reference](https://bookdown.org/mwheymans/bookmi/rubins-rules.html) -- FMI, lambda, RIV formulas
+- [Barnard-Rubin (1999) df adjustment](https://rdrr.io/cran/rbmi/man/rubin_df.html) -- small-sample degrees of freedom
+- [cards package documentation](https://insightsengineering.github.io/cards/main/) -- `as_card()`, `add_calculated_row()`
+- [gt font size issues](https://github.com/rstudio/gt/issues/337) -- `table.font.size` does not affect column labels
+- [gt rendering HTML vs PDF](https://forum.posit.co/t/rmarkdown-gt-package-rendering-different-in-html-and-pdf/140864) -- cross-format differences
+- [patchwork layout guide](https://patchwork.data-imaginist.com/articles/guides/layout.html) -- alignment, `free()`, panel proportions
+- [patchwork title alignment issue](https://github.com/thomasp85/patchwork/issues/276) -- text angle alignment bugs
+- [pkgdown image path issues](https://github.com/r-lib/pkgdown/issues/1472) -- `man/figures/` relocation to `reference/figures/`
+- [pkgdown figure path relocation](https://github.com/r-lib/pkgdown/issues/1943) -- path rewriting behavior
+- [pkgdown false missing image warnings](https://github.com/r-lib/pkgdown/issues/2194) -- build order: `build_home_index()` before `build_articles()`
+- [pkgdown markdown image resizing](https://github.com/r-lib/pkgdown/issues/2389) -- resizing syntax breaks on pkgdown
+- [R Packages (2e) Dependencies](https://r-pkgs.org/dependencies-in-practice.html) -- Suggests/Imports guidance
+- [R Packages (2e) Other Markdown](https://r-pkgs.org/other-markdown.html) -- README/pkgdown interaction
+- [testthat snapshot testing](https://testthat.r-lib.org/articles/snapshotting.html) -- platform-specific variants
+- Codebase analysis: `R/ard_conversion.R`, `R/tidiers.R`, `R/pool_methods.R`, `R/efficacy_table.R`, `R/plot_forest.R`, `R/analyse_mi_data.R`, `R/utils.R`, `tests/testthat/test-ard_conversion.R`, `_pkgdown.yml`, `man/figures/`
+
+---
+
+*Pitfalls research for v3 ARD Enrichment & Polish: 2026-02-10*
