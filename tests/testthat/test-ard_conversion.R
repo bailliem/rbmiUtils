@@ -396,3 +396,255 @@ test_that("compute_rubin_diagnostics handles NA v_com", {
   # dfcom should be NA (pass-through)
   expect_true(is.na(result$dfcom))
 })
+
+
+# =============================================================================
+# Tests for pool_to_ard() enriched ARD with MI diagnostics (Plan 08-02)
+# =============================================================================
+
+# Helper to build a mock analysis object compatible with make_mock_pool()
+make_mock_analysis <- function(M = 5L) {
+  set.seed(42)
+  param_names <- c("trt_Week4", "lsm_ref_Week4", "lsm_alt_Week4", "trt_Week8")
+
+  # Base estimates matching pool_obj$pars
+  base_ests <- c(-2.5, 10.0, 7.5, -1.0)
+  base_ses  <- c(0.8, 0.5, 0.6, 1.2)
+  base_dfs  <- c(100, 100, 100, 100)
+
+  results <- lapply(seq_len(M), function(m) {
+    imp <- lapply(seq_along(param_names), function(j) {
+      list(
+        est = base_ests[j] + rnorm(1, sd = base_ses[j] * 0.3),
+        se  = base_ses[j] * runif(1, 0.8, 1.2),
+        df  = base_dfs[j]
+      )
+    })
+    names(imp) <- param_names
+    imp
+  })
+
+  class(results) <- c("rubin", "list")
+
+  analysis_obj <- list(
+    results = results,
+    fun_name = "ancova",
+    method = structure(list(n_samples = M), class = "bayes")
+  )
+  class(analysis_obj) <- c("analysis", "list")
+  analysis_obj
+}
+
+
+test_that("pool_to_ard with analysis_obj returns diagnostic stat rows", {
+  skip_if_not_installed("cards")
+
+  mock_pool <- make_mock_pool()
+  mock_analysis <- make_mock_analysis()
+  ard <- pool_to_ard(mock_pool, mock_analysis)
+
+  # Diagnostic stat_names expected per parameter
+  diag_stats <- c("fmi", "lambda", "riv", "df.adjusted", "df.complete",
+                   "re", "m.imputations")
+
+  unique_vars <- unique(ard$variable)
+  for (v in unique_vars) {
+    var_ard <- ard[ard$variable == v, ]
+    var_stat_names <- var_ard$stat_name
+
+    for (s in diag_stats) {
+      expect_true(
+        s %in% var_stat_names,
+        info = paste("Variable", v, "missing diagnostic stat_name:", s)
+      )
+    }
+
+    # Verify stat values are numeric (not NA, not NULL) for normal case
+    for (s in diag_stats) {
+      row <- var_ard[var_ard$stat_name == s, ]
+      expect_true(is.numeric(row$stat[[1]]),
+                  info = paste("Variable", v, "stat", s, "is not numeric"))
+      expect_false(is.na(row$stat[[1]]),
+                   info = paste("Variable", v, "stat", s, "is NA"))
+    }
+
+    # Verify m.imputations equals M (5)
+    m_row <- var_ard[var_ard$stat_name == "m.imputations", ]
+    expect_equal(m_row$stat[[1]], 5)
+
+    # Verify stat_label values are populated (not empty strings)
+    for (s in diag_stats) {
+      row <- var_ard[var_ard$stat_name == s, ]
+      expect_true(nchar(row$stat_label) > 0,
+                  info = paste("Variable", v, "stat", s, "has empty label"))
+    }
+  }
+
+  # Verify NO variance component stat_names (locked decision: curated essentials)
+  variance_stats <- c("var.within", "var.between", "var.total")
+  for (vs in variance_stats) {
+    expect_false(
+      vs %in% ard$stat_name,
+      info = paste("Variance component", vs, "should NOT be in ARD")
+    )
+  }
+})
+
+
+test_that("pool_to_ard backward compatibility without analysis_obj", {
+  skip_if_not_installed("cards")
+
+  mock_pool <- make_mock_pool()
+
+  # Call without analysis_obj (pre-Plan-02 behavior)
+  ard <- pool_to_ard(mock_pool)
+
+  # Base stat_names only
+  base_stats <- c("estimate", "std.error", "conf.low", "conf.high", "p.value", "method")
+  all_stat_names <- unique(ard$stat_name)
+  expect_true(all(all_stat_names %in% base_stats),
+              info = "Base ARD should only contain base stat_names")
+
+  # Diagnostic stat_names should NOT be present
+  diag_stats <- c("fmi", "lambda", "riv", "df.adjusted", "df.complete",
+                   "re", "m.imputations")
+  for (s in diag_stats) {
+    expect_false(s %in% all_stat_names,
+                 info = paste("Diagnostic stat", s, "should NOT be in base ARD"))
+  }
+})
+
+
+test_that("enriched ARD passes cards::check_ard_structure()", {
+  skip_if_not_installed("cards")
+
+  mock_pool <- make_mock_pool()
+  mock_analysis <- make_mock_analysis()
+  ard <- pool_to_ard(mock_pool, mock_analysis)
+
+  # cards validation
+
+  expect_no_error(cards::check_ard_structure(ard))
+
+  # Class check
+  expect_s3_class(ard, "card")
+
+  # All list columns are actually lists
+  list_cols <- c("stat", "group1_level", "group2_level", "group3_level",
+                 "variable_level", "fmt_fun", "warning", "error")
+  for (col in list_cols) {
+    expect_true(is.list(ard[[col]]),
+                info = paste("Column", col, "should be a list"))
+  }
+})
+
+
+test_that("pool_to_ard with non-Rubin pool omits diagnostics with message", {
+  skip_if_not_installed("cards")
+
+  # Create a mock pool with jackknife method
+  jackknife_pool <- make_mock_pool()
+  jackknife_pool$method <- "jackknife"
+
+  mock_analysis <- make_mock_analysis()
+
+  # Should emit informative message about Rubin's rules
+  expect_message(
+    ard <- pool_to_ard(jackknife_pool, mock_analysis),
+    "Rubin"
+  )
+
+  # Result should have NO diagnostic stat_names (same as base ARD)
+  diag_stats <- c("fmi", "lambda", "riv", "df.adjusted", "df.complete",
+                   "re", "m.imputations")
+  all_stat_names <- unique(ard$stat_name)
+  for (s in diag_stats) {
+    expect_false(s %in% all_stat_names,
+                 info = paste("Non-Rubin ARD should NOT contain", s))
+  }
+
+  # Should still have base stats
+  expect_true("estimate" %in% all_stat_names)
+  expect_true("method" %in% all_stat_names)
+})
+
+
+test_that("pool_to_ard method row present in enriched ARD", {
+  skip_if_not_installed("cards")
+
+  mock_pool <- make_mock_pool()
+  mock_analysis <- make_mock_analysis()
+  ard <- pool_to_ard(mock_pool, mock_analysis)
+
+  unique_vars <- unique(ard$variable)
+  for (v in unique_vars) {
+    var_ard <- ard[ard$variable == v, ]
+
+    # method row should exist
+    method_rows <- var_ard[var_ard$stat_name == "method", ]
+    expect_equal(nrow(method_rows), 1,
+                 info = paste("Variable", v, "should have exactly 1 method row"))
+
+    # method value should be "rubin"
+    expect_equal(method_rows$stat[[1]], "rubin",
+                 info = paste("Variable", v, "method should be 'rubin'"))
+  }
+})
+
+
+test_that("pool_to_ard diagnostic values are numerically reasonable", {
+  skip_if_not_installed("cards")
+
+  mock_pool <- make_mock_pool()
+  mock_analysis <- make_mock_analysis()
+  ard <- pool_to_ard(mock_pool, mock_analysis)
+
+  unique_vars <- unique(ard$variable)
+  for (v in unique_vars) {
+    var_ard <- ard[ard$variable == v, ]
+
+    # FMI between 0 and 1
+    fmi_val <- var_ard[var_ard$stat_name == "fmi", ]$stat[[1]]
+    expect_true(fmi_val >= 0 && fmi_val <= 1,
+                info = paste("FMI for", v, "should be in [0, 1], got", fmi_val))
+
+    # Lambda between 0 and 1
+    lambda_val <- var_ard[var_ard$stat_name == "lambda", ]$stat[[1]]
+    expect_true(lambda_val >= 0 && lambda_val <= 1,
+                info = paste("Lambda for", v, "should be in [0, 1], got", lambda_val))
+
+    # RIV >= 0
+    riv_val <- var_ard[var_ard$stat_name == "riv", ]$stat[[1]]
+    expect_true(riv_val >= 0,
+                info = paste("RIV for", v, "should be >= 0, got", riv_val))
+
+    # RE between 0 and 1
+    re_val <- var_ard[var_ard$stat_name == "re", ]$stat[[1]]
+    expect_true(re_val >= 0 && re_val <= 1,
+                info = paste("RE for", v, "should be in [0, 1], got", re_val))
+
+    # df.adjusted > 0
+    df_val <- var_ard[var_ard$stat_name == "df.adjusted", ]$stat[[1]]
+    expect_true(df_val > 0,
+                info = paste("df.adjusted for", v, "should be > 0, got", df_val))
+  }
+})
+
+
+test_that("pool_to_ard validates analysis_obj parameter names match pool_obj", {
+  skip_if_not_installed("cards")
+
+  mock_pool <- make_mock_pool()
+
+  # Create a mock analysis with mismatched parameter names
+  bad_analysis <- make_mock_analysis()
+  for (i in seq_along(bad_analysis$results)) {
+    names(bad_analysis$results[[i]]) <- c("wrong_param1", "wrong_param2",
+                                           "wrong_param3", "wrong_param4")
+  }
+
+  expect_error(
+    pool_to_ard(mock_pool, bad_analysis),
+    class = "rbmiUtils_error_validation"
+  )
+})
