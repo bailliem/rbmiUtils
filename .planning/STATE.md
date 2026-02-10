@@ -5,15 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures
-**Current focus:** Planning next milestone
+**Current focus:** v3 ARD Enrichment & Polish
 
 ## Current Position
 
-Phase: All complete (7/7)
-Status: Between milestones
-Last activity: 2026-02-10 — Completed v2 Documentation & Hardening milestone
-
-Progress: [████████████] 100% (v1 + v2 complete)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-10 — Milestone v3 started
 
 ## Performance Metrics
 
@@ -52,5 +51,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed v2 milestone archival
+Stopped at: Starting v3 milestone
 Resume file: None

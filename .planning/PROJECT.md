@@ -44,19 +44,27 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 
 ### Active
 
-(None — planning next milestone)
+## Current Milestone: v3 ARD Enrichment & Polish
 
-### Deferred (v3+)
+**Goal:** Enrich ARD output with MI-specific metadata, add imputation diagnostics helpers, and polish tables, plots, and documentation to publication quality.
+
+**Target features:**
+- MI-specific metadata in ARD (FMI, relative increase in variance, pooling method)
+- describe_draws() summary diagnostics for draws objects
+- describe_imputation() summary diagnostics for impute objects
+- Efficacy table styling refinements for publication quality
+- Forest plot visual refinements (fonts, spacing, alignment)
+- README overhaul with realistic clinical trial workflow examples
+- Documentation examples that reflect real usage patterns
+
+### Deferred (v4+)
 
 - Responder bar chart function (proportion responding by arm and visit)
 - Forest plot with sensitivity analysis overlay
 - Responder chart with treatment difference annotations
 - Column formatting controls for gt theming
 - Sensitivity analysis comparison table
-- MI-specific metadata in ARD (FMI, pooling method)
 - as_gt() / as_gtsummary() S3 methods for pool objects
-- describe_draws() helper for draws objects
-- describe_imputation() helper for impute objects
 
 ### Out of Scope
 
@@ -115,8 +123,9 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 
 - **v1 Reporting & Robustness** (2026-02-08) — Phases 1-4: Foundation hardening, print/summary, ARD, efficacy tables, forest plots
 - **v2 Documentation & Hardening** (2026-02-10) — Phases 5-7: Data prep hardening, end-to-end vignette, pkgdown site polish
+- **v3 ARD Enrichment & Polish** (in progress) — ARD metadata, describe helpers, table/plot polish, documentation overhaul
 
 See `.planning/MILESTONES.md` for full details.
 
 ---
-*Last updated: 2026-02-10 after v2 milestone*
+*Last updated: 2026-02-10 after v3 milestone started*
