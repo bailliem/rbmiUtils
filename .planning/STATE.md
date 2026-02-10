@@ -5,14 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures
-**Current focus:** v3 ARD Enrichment & Polish
+**Current focus:** Phase 8 - MI Diagnostic Statistics (v3)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-10 — Milestone v3 started
+Phase: 8 of 11 (MI Diagnostic Statistics)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-02-10 -- v3 roadmap created (Phases 8-11)
+
+Progress: [################..........] 16/16 v1+v2 plans complete, v3 starting
 
 ## Performance Metrics
 
@@ -29,16 +31,16 @@ Last activity: 2026-02-10 — Milestone v3 started
 | 2 | 2 | ~60 min | ~30 min |
 | 3 | 2 | ~60 min | ~30 min |
 | 4 | 2 | ~60 min | ~30 min |
-| 5 | 2/2 | ~12 min | ~6 min |
-| 6 | 3/3 | ~21 min | ~7 min |
-| 7 | 2/2 | ~19 min | ~10 min |
+| 5 | 2 | ~12 min | ~6 min |
+| 6 | 3 | ~21 min | ~7 min |
+| 7 | 2 | ~19 min | ~10 min |
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions logged in PROJECT.md Key Decisions table.
-v1 and v2 decisions resolved with outcomes documented.
+All v1/v2 decisions logged in PROJECT.md Key Decisions table.
+No new decisions for v3 yet.
 
 ### Pending Todos
 
@@ -51,5 +53,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Starting v3 milestone
+Stopped at: v3 roadmap created, ready to plan Phase 8
 Resume file: None

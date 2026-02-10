@@ -81,34 +81,34 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MIDIAG-01 | — | Pending |
-| MIDIAG-02 | — | Pending |
-| MIDIAG-03 | — | Pending |
-| MIDIAG-04 | — | Pending |
-| MIDIAG-05 | — | Pending |
-| MIDIAG-06 | — | Pending |
-| MIDIAG-07 | — | Pending |
-| MIDIAG-08 | — | Pending |
-| DESC-01 | — | Pending |
-| DESC-02 | — | Pending |
-| DESC-03 | — | Pending |
-| DESC-04 | — | Pending |
-| STYLE-01 | — | Pending |
-| STYLE-02 | — | Pending |
-| STYLE-03 | — | Pending |
-| STYLE-04 | — | Pending |
-| STYLE-05 | — | Pending |
-| DOCS-01 | — | Pending |
-| DOCS-02 | — | Pending |
-| DOCS-03 | — | Pending |
-| DOCS-04 | — | Pending |
-| DOCS-05 | — | Pending |
+| MIDIAG-01 | Phase 8 | Pending |
+| MIDIAG-02 | Phase 8 | Pending |
+| MIDIAG-03 | Phase 8 | Pending |
+| MIDIAG-04 | Phase 8 | Pending |
+| MIDIAG-05 | Phase 8 | Pending |
+| MIDIAG-06 | Phase 8 | Pending |
+| MIDIAG-07 | Phase 8 | Pending |
+| MIDIAG-08 | Phase 8 | Pending |
+| DESC-01 | Phase 9 | Pending |
+| DESC-02 | Phase 9 | Pending |
+| DESC-03 | Phase 9 | Pending |
+| DESC-04 | Phase 9 | Pending |
+| STYLE-01 | Phase 10 | Pending |
+| STYLE-02 | Phase 10 | Pending |
+| STYLE-03 | Phase 10 | Pending |
+| STYLE-04 | Phase 10 | Pending |
+| STYLE-05 | Phase 10 | Pending |
+| DOCS-01 | Phase 11 | Pending |
+| DOCS-02 | Phase 11 | Pending |
+| DOCS-03 | Phase 11 | Pending |
+| DOCS-04 | Phase 11 | Pending |
+| DOCS-05 | Phase 11 | Pending |
 
 **Coverage:**
 - v3 requirements: 22 total
-- Mapped to phases: 0
-- Unmapped: 22 (roadmap pending)
+- Mapped to phases: 22
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-10*
-*Last updated: 2026-02-10 after initial definition*
+*Last updated: 2026-02-10 (traceability updated with phase mappings)*
