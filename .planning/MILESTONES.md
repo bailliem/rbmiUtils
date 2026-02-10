@@ -24,3 +24,30 @@
 **What's next:** v2 features — responder bar charts, sensitivity analysis overlays, column formatting controls, MI-specific ARD metadata, draws/imputation print helpers
 
 ---
+
+## v2 Documentation & Hardening (Shipped: 2026-02-10)
+
+**Delivered:** Made rbmiUtils discoverable and trustworthy with a polished pkgdown site, end-to-end vignette, hardened data prep functions, and comprehensive documentation
+
+**Phases completed:** 5-7 (7 plans total)
+
+**Key accomplishments:**
+- Hardened validate_data() and prepare_data_ice() with cli messaging and 6 new validation checks (malformed interaction terms, NULL strategy, character visit warnings, empty data frames, all-NA covariates, batched coercion warnings)
+- Added 13 edge case tests covering single subject, single visit, all-NA outcome, and all-complete data scenarios (95 total data prep tests)
+- Created end-to-end pipeline vignette from ADEFF data through rbmi draws/impute/analyse/pool to efficacy_table() and plot_forest(), with binary responder appendix using beeca
+- Pre-rendered documentation images for README visual teasers and roxygen help page examples
+- Restructured NEWS.md into versioned changelog (0.2.0/0.1.0) with inline rbmi/beeca cross-references across all vignettes
+- Configured complete pkgdown site with hex logo, 9-group reference index, navbar, open graph social cards, and pharmaverse footer
+
+**Stats:**
+- 69 files created/modified
+- 4,146 lines of R source code, 5,285 lines of test code
+- 3 phases, 7 plans
+- 2 days (2026-02-08 to 2026-02-10)
+
+**Git range:** `01c2d22` → `51c4348`
+
+**What's next:** v3 features — responder bar charts, sensitivity analysis overlays, column formatting controls, MI-specific ARD metadata, draws/imputation helpers
+
+---
+

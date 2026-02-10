@@ -1,3 +1,12 @@
+# Requirements Archive: v2 Documentation & Hardening
+
+**Archived:** 2026-02-10
+**Status:** SHIPPED
+
+For current requirements, see `.planning/REQUIREMENTS.md`.
+
+---
+
 # Requirements: rbmiUtils v2 Documentation & Hardening
 
 **Defined:** 2026-02-08
@@ -17,20 +26,20 @@
 
 ### Documentation (DOC)
 
-- [ ] **DOC-01**: End-to-end clinical trial analysis vignette covering raw data → rbmi draws/impute/analyse/pool → rbmiUtils tidy/format → efficacy table + forest plot with inline rbmi/beeca links
-- [ ] **DOC-02**: README enhanced with visual teaser showing rendered efficacy table and forest plot output, linking to end-to-end vignette
-- [ ] **DOC-03**: Rendered @examples for plot_forest() showing treatment effect forest plot
-- [ ] **DOC-04**: Rendered @examples for efficacy_table() showing regulatory summary table
-- [ ] **DOC-05**: NEWS.md tracking v1 and v2 changes with version history
-- [ ] **DOC-06**: Inline cross-references to rbmi and beeca documentation in all existing vignettes where relevant
+- [x] **DOC-01**: End-to-end clinical trial analysis vignette covering raw data → rbmi draws/impute/analyse/pool → rbmiUtils tidy/format → efficacy table + forest plot with inline rbmi/beeca links
+- [x] **DOC-02**: README enhanced with visual teaser showing rendered efficacy table and forest plot output, linking to end-to-end vignette
+- [x] **DOC-03**: Rendered @examples for plot_forest() showing treatment effect forest plot
+- [x] **DOC-04**: Rendered @examples for efficacy_table() showing regulatory summary table
+- [x] **DOC-05**: NEWS.md tracking v1 and v2 changes with version history
+- [x] **DOC-06**: Inline cross-references to rbmi and beeca documentation in all existing vignettes where relevant
 
 ### Site (SITE)
 
-- [ ] **SITE-01**: Hex logo for rbmiUtils package
-- [ ] **SITE-02**: Custom pkgdown navbar with articles menu, getting started link, and news
-- [ ] **SITE-03**: Grouped function reference organized by layer (data prep, analysis, utilities, tidying, formatting, storage, reporting)
-- [ ] **SITE-04**: Social/open graph cards for link sharing
-- [ ] **SITE-05**: Custom footer with openpharma/pharmaverse links
+- [x] **SITE-01**: Hex logo for rbmiUtils package
+- [x] **SITE-02**: Custom pkgdown navbar with articles menu, getting started link, and news
+- [x] **SITE-03**: Grouped function reference organized by layer (data prep, analysis, utilities, tidying, formatting, storage, reporting)
+- [x] **SITE-04**: Social/open graph cards for link sharing
+- [x] **SITE-05**: Custom footer with openpharma/pharmaverse links
 
 ## Future Requirements (v3+)
 
@@ -69,17 +78,17 @@ Deferred from v1 Active list. Not in current roadmap.
 | HRD-05 | Phase 5 | Complete |
 | HRD-06 | Phase 5 | Complete |
 | HRD-07 | Phase 5 | Complete |
-| DOC-01 | Phase 6 | Pending |
-| DOC-02 | Phase 6 | Pending |
-| DOC-03 | Phase 6 | Pending |
-| DOC-04 | Phase 6 | Pending |
-| DOC-05 | Phase 6 | Pending |
-| DOC-06 | Phase 6 | Pending |
-| SITE-01 | Phase 7 | Pending |
-| SITE-02 | Phase 7 | Pending |
-| SITE-03 | Phase 7 | Pending |
-| SITE-04 | Phase 7 | Pending |
-| SITE-05 | Phase 7 | Pending |
+| DOC-01 | Phase 6 | Complete |
+| DOC-02 | Phase 6 | Complete |
+| DOC-03 | Phase 6 | Complete |
+| DOC-04 | Phase 6 | Complete |
+| DOC-05 | Phase 6 | Complete |
+| DOC-06 | Phase 6 | Complete |
+| SITE-01 | Phase 7 | Complete |
+| SITE-02 | Phase 7 | Complete |
+| SITE-03 | Phase 7 | Complete |
+| SITE-04 | Phase 7 | Complete |
+| SITE-05 | Phase 7 | Complete |
 
 **Coverage:**
 - v2 requirements: 18 total

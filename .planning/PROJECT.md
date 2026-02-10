@@ -34,16 +34,17 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 - ✓ Harden gcomp functions (input validation, beeca output pinning) — v1
 - ✓ Harden storage functions (round-trip digest verification) — v1
 - ✓ Harden tidier functions (regex-based parameter parsing) — v1
+- ✓ Harden data preparation functions (cli messaging, interaction term validation, factor handling, edge cases) — v2
+- ✓ End-to-end clinical trial analysis vignette (rbmi → rbmiUtils → table + forest plot) — v2
+- ✓ README enhancement with visual teaser and pipeline overview — v2
+- ✓ Full pkgdown site polish (navbar, grouped references, hex logo, social cards, footer) — v2
+- ✓ Rendered examples for plot_forest() and efficacy_table() — v2
+- ✓ NEWS.md version history — v2
+- ✓ Inline cross-references to rbmi and beeca in vignettes — v2
 
 ### Active
 
-- [ ] Harden data preparation functions (validation gaps, factor handling, edge cases)
-- [ ] End-to-end clinical trial analysis vignette (rbmi → rbmiUtils → table + forest plot)
-- [ ] README enhancement with visual teaser and pipeline overview
-- [ ] Full pkgdown site polish (navbar, grouped references, hex logo, social cards, footer)
-- [ ] Rendered examples for plot_forest() and efficacy_table()
-- [ ] NEWS.md version history
-- [ ] Inline cross-references to rbmi and beeca in vignettes
+(None — planning next milestone)
 
 ### Deferred (v3+)
 
@@ -68,15 +69,16 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 
 ## Context
 
-- **Shipped:** v1 Reporting & Robustness (2026-02-08)
+- **Shipped:** v1 Reporting & Robustness (2026-02-08), v2 Documentation & Hardening (2026-02-10)
 - **Codebase:** 28 exported functions across 7 layers (data prep, analysis, utilities, tidying, formatting, storage, reporting)
-- **Source code:** 3,976 lines R, 4,916 lines tests
-- **Test coverage:** 14 test files, comprehensive coverage of all functions
+- **Source code:** 4,146 lines R, 5,285 lines tests
+- **Test coverage:** 14 test files, 95+ data prep tests, comprehensive coverage of all functions
 - **Dependencies:** cli, lifecycle as Imports; cards, gt, ggplot2, patchwork as Suggests with dependency guards
 - **cards/cardx ecosystem:** pool_to_ard() produces valid ARD passing cards::check_ard_structure()
-- **Known gaps:** No validation of delta data subject-visit uniqueness; silent defaults for vars$strategy; no vignettes for efficacy_table/plot_forest
-- **Documentation:** 3 vignettes (analysis, data prep, storage); README with basic example; minimal pkgdown config; no hex logo; no NEWS.md
-- **Site:** pkgdown deployed at openpharma.github.io/rbmiUtils but no function grouping, navbar, or visual polish
+- **Documentation:** 4 vignettes (pipeline, analysis, data prep, storage); visual README with rendered table/plot teasers; versioned NEWS.md (0.2.0/0.1.0)
+- **Site:** pkgdown at openpharma.github.io/rbmiUtils with hex logo, 9-group reference index, navbar, open graph cards, pharmaverse footer
+- **Known gaps:** No validation of delta data subject-visit uniqueness; show_pvalues parameter added late (not in original spec)
+- **Tech debt:** Some pre-generated images may need regeneration if plot functions change
 
 ## Constraints
 
@@ -98,17 +100,23 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 | Two-pass regex parsing for parameters | Single regex can't handle both ANCOVA and gcomp formats cleanly | ✓ Good — handles underscores correctly |
 | Okabe-Ito palette for LSM colors | Maximally distinguishable for color vision deficiency | ✓ Good — accessible default |
 | Filled vs open circles for significance | Clear visual distinction without relying on color alone | ✓ Good — accessible |
+| All-NA covariates warn+skip, not error | validate_data returns TRUE/error, cannot modify vars | ✓ Good — non-breaking |
+| All-NA outcome is hard error | Nothing to model, analysis cannot proceed | ✓ Good — fail-fast |
+| Pre-generated static images for README | Avoids slow MCMC during README rendering | ✓ Good — fast builds |
+| Static images via \figure{} for help pages | gt tables cannot render in base R help | ✓ Good — works everywhere |
+| Tutorial tone for pipeline vignette | analyse2 is the reference; pipeline.Rmd is getting-started | ✓ Good — clear roles |
+| NEWS.md organized by version (0.2.0, 0.1.0) | Tidyverse convention for pkgdown::build_news() | ✓ Good — standard |
+| Inline hyperlinks, not callout boxes | Natural reading flow, avoids visual clutter | ✓ Good — clean prose |
+| Keep original rbmiUtils.png alongside logo.png | Avoid breaking external links | ✓ Good — backward compat |
+| Added show_pvalues parameter to plot_forest() | User feedback: cleaner without p-value panel | ✓ Good — flexible |
+| Restructured README: code before images | Better narrative flow showing pipeline then output | ✓ Good — clearer |
 
-## Current Milestone: v2 Documentation & Hardening
+## Milestone History
 
-**Goal:** Make rbmiUtils discoverable and trustworthy — polished site, end-to-end examples, and hardened data prep functions that give clear errors on bad input.
+- **v1 Reporting & Robustness** (2026-02-08) — Phases 1-4: Foundation hardening, print/summary, ARD, efficacy tables, forest plots
+- **v2 Documentation & Hardening** (2026-02-10) — Phases 5-7: Data prep hardening, end-to-end vignette, pkgdown site polish
 
-**Target features:**
-- Harden data preparation functions (interaction term validation, factor handling, edge cases, batched warnings)
-- End-to-end clinical trial vignette showing full pipeline with rbmi/beeca integration
-- README visual teaser with table and forest plot output
-- Full pkgdown site polish (hex logo, custom navbar, grouped references, social cards)
-- NEWS.md, rendered function examples, inline cross-references to rbmi/beeca
+See `.planning/MILESTONES.md` for full details.
 
 ---
-*Last updated: 2026-02-08 after v2 milestone start*
+*Last updated: 2026-02-10 after v2 milestone*
