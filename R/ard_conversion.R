@@ -179,7 +179,7 @@ compute_rubin_diagnostics <- function(ests, ses, v_com, M) {
   if (all(is.na(ses))) {
     return(list(
       var_w  = NA_real_,
-      var_b  = var(ests),
+      var_b  = stats::var(ests),
       var_t  = NA_real_,
       lambda = NA_real_,
       riv    = NA_real_,
@@ -192,7 +192,7 @@ compute_rubin_diagnostics <- function(ests, ses, v_com, M) {
 
   # --- Core Rubin's rules decomposition ---
   var_w <- mean(ses^2)                    # Within-imputation variance
-  var_b <- var(ests)                      # Between-imputation variance
+  var_b <- stats::var(ests)               # Between-imputation variance
   var_t <- var_w + var_b + var_b / M      # Total variance
 
   # Lambda: proportion of total variance due to missingness
