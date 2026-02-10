@@ -3,7 +3,7 @@
 ## Milestones
 
 - [x] **v1 Reporting & Robustness** - Phases 1-4 (shipped 2026-02-08)
-- [ ] **v2 Documentation & Hardening** - Phases 5-7 (in progress)
+- [x] **v2 Documentation & Hardening** - Phases 5-7 (shipped 2026-02-08)
 
 ## Phases
 
@@ -51,7 +51,7 @@ Plans:
 
 - [x] **Phase 5: Data Prep Hardening** - Validate_data and prepare_data_ice give clear, actionable errors on bad input
 - [x] **Phase 6: Documentation** - End-to-end vignette, rendered examples, and reference docs make the package learnable
-- [ ] **Phase 7: Site Polish** - pkgdown site is professional, navigable, and shareable
+- [x] **Phase 7: Site Polish** - pkgdown site is professional, navigable, and shareable
 
 ## Phase Details
 
@@ -101,8 +101,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md -- Logo rename, README update, and favicon generation (SITE-01)
-- [ ] 07-02-PLAN.md -- Complete _pkgdown.yml configuration: navbar, reference groups, open graph, footer (SITE-02, SITE-03, SITE-04, SITE-05)
+- [x] 07-01-PLAN.md -- Logo rename, README update, and favicon generation (SITE-01)
+- [x] 07-02-PLAN.md -- Complete _pkgdown.yml configuration: navbar, reference groups, open graph, footer (SITE-02, SITE-03, SITE-04, SITE-05)
 
 ## Progress
 
@@ -116,8 +116,8 @@ Plans:
 | 4. Visualization | v1 | 2/2 | Complete | 2026-02-08 |
 | 5. Data Prep Hardening | v2 | 2/2 | Complete | 2026-02-08 |
 | 6. Documentation | v2 | 3/3 | Complete | 2026-02-08 |
-| 7. Site Polish | v2 | 0/2 | Not started | - |
+| 7. Site Polish | v2 | 2/2 | Complete | 2026-02-08 |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-08 (Phase 7 planned)*
+*Last updated: 2026-02-08 (Phase 7 complete — v2 milestone complete)*
