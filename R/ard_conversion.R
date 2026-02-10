@@ -163,6 +163,15 @@ pool_to_ard <- function(pool_obj, analysis_obj = NULL, conf.level = NULL) {
 
   # --- Assemble and convert to ARD ---
   ard_df <- do.call(rbind, rows)
+
+  # --- Diagnostic enrichment ---
+  if (!is.null(analysis_obj)) {
+    diag_rows <- compute_mi_diagnostics(pool_obj, analysis_obj, tidy_df)
+    if (!is.null(diag_rows)) {
+      ard_df <- rbind(ard_df, diag_rows)
+    }
+  }
+
   cards::tidy_ard_column_order(cards::as_card(ard_df))
 }
 
@@ -177,6 +186,118 @@ pool_to_ard <- function(pool_obj, analysis_obj = NULL, conf.level = NULL) {
 #' @noRd
 is_cards_available <- function() {
   requireNamespace("cards", quietly = TRUE)
+}
+
+
+#' Compute MI Diagnostic Statistics for All Parameters
+#'
+#' Internal helper that orchestrates the computation of MI diagnostic
+#' statistics across all parameters. Checks the pooling method, extracts
+#' per-imputation estimates/SEs/dfs, calls [compute_rubin_diagnostics()]
+#' for each parameter, and returns diagnostic ARD rows.
+#'
+#' @param pool_obj A pooled analysis object of class `"pool"`.
+#' @param analysis_obj An analysis object from [analyse_mi_data()].
+#' @param tidy_df Tidy data frame from [tidy_pool_obj()].
+#'
+#' @return A data.frame of diagnostic ARD rows to rbind with the base ARD,
+#'   or `NULL` if diagnostics are not applicable (non-Rubin pooling).
+#'
+#' @keywords internal
+#' @noRd
+compute_mi_diagnostics <- function(pool_obj, analysis_obj, tidy_df) {
+
+  # --- Check pooling method ---
+  if (is.null(pool_obj$method) || pool_obj$method != "rubin") {
+    cli::cli_inform(
+      "MI diagnostic statistics are only available for Rubin's rules pooling. Diagnostics omitted from ARD."
+    )
+    return(NULL)
+  }
+
+  # --- Extract number of imputations ---
+  M <- length(analysis_obj$results)
+
+  # --- Compute diagnostics per parameter ---
+  param_names <- names(analysis_obj$results[[1]])
+  diag_row_list <- lapply(param_names, function(pname) {
+    # Extract per-imputation estimates, SEs, and dfs
+    ests <- vapply(analysis_obj$results, function(imp) imp[[pname]]$est, numeric(1))
+    ses  <- vapply(analysis_obj$results, function(imp) imp[[pname]]$se, numeric(1))
+    dfs  <- vapply(analysis_obj$results, function(imp) imp[[pname]]$df, numeric(1))
+
+    # Complete-data df (constant across imputations)
+    v_com <- unique(dfs)[1]
+
+    # Compute Rubin's rules diagnostics
+    diag <- compute_rubin_diagnostics(ests, ses, v_com, M)
+
+    # Find matching row in tidy_df for grouping columns
+    param_row <- tidy_df[tidy_df$parameter == pname, ]
+
+    # Build diagnostic ARD rows
+    build_diagnostic_ard_rows(diag, param_row, M)
+  })
+
+  do.call(rbind, diag_row_list)
+}
+
+
+#' Build Diagnostic ARD Rows for One Parameter
+#'
+#' Internal helper that constructs a data.frame of diagnostic stat rows
+#' for a single parameter, using the same grouping columns as the base
+#' ARD rows.
+#'
+#' @param diag Named list from [compute_rubin_diagnostics()].
+#' @param param_row One-row data.frame from [tidy_pool_obj()] for this parameter.
+#' @param M Integer, number of imputations.
+#'
+#' @return A data.frame of diagnostic ARD rows (7 rows: fmi, lambda, riv,
+#'   df.adjusted, df.complete, re, m.imputations).
+#'
+#' @keywords internal
+#' @noRd
+build_diagnostic_ard_rows <- function(diag, param_row, M) {
+
+  diag_stat_names <- c(
+    "fmi", "lambda", "riv", "df.adjusted", "df.complete", "re", "m.imputations"
+  )
+  diag_stat_labels <- c(
+    "Fraction of Missing Information",
+    "Lambda",
+    "Relative Increase in Variance",
+    "Barnard-Rubin Adjusted df",
+    "Complete-Data df",
+    "Relative Efficiency",
+    "Number of Imputations"
+  )
+  diag_stat_values <- list(
+    diag$fmi, diag$lambda, diag$riv, diag$df_adj, diag$dfcom, diag$re, M
+  )
+
+  n_diag <- length(diag_stat_names)
+
+  lsm_val <- if (is.na(param_row$lsm_type)) NA_character_ else param_row$lsm_type
+
+  data.frame(
+    group1       = rep("visit", n_diag),
+    group1_level = I(as.list(rep(param_row$visit, n_diag))),
+    group2       = rep("parameter_type", n_diag),
+    group2_level = I(as.list(rep(param_row$parameter_type, n_diag))),
+    group3       = rep("lsm_type", n_diag),
+    group3_level = I(as.list(rep(lsm_val, n_diag))),
+    variable       = rep(param_row$parameter, n_diag),
+    variable_level = I(as.list(rep(NA, n_diag))),
+    context        = rep("rbmi_pool", n_diag),
+    stat_name  = diag_stat_names,
+    stat_label = diag_stat_labels,
+    stat       = I(diag_stat_values),
+    fmt_fun    = I(as.list(rep(1L, n_diag))),
+    warning    = I(as.list(rep(list(NULL), n_diag))),
+    error      = I(as.list(rep(list(NULL), n_diag))),
+    stringsAsFactors = FALSE
+  )
 }
 
 
