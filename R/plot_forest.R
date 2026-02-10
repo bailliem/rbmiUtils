@@ -24,6 +24,9 @@
 #' @param text_size Numeric. Text size for the table and p-value panels.
 #'   Default is 3.
 #' @param point_size Numeric. Point size for the forest plot. Default is 3.
+#' @param show_pvalues Logical. Whether to display the p-value panel on the
+#'   right side of the plot. Default is `TRUE`. Set to `FALSE` for a cleaner
+#'   two-panel layout without p-values.
 #'
 #' @return A patchwork/ggplot object that can be further customized using
 #'   `& theme()` to modify all panels simultaneously.
@@ -90,7 +93,8 @@ plot_forest <- function(
     arm_labels = NULL,
     title = NULL,
     text_size = 3,
-    point_size = 3
+    point_size = 3,
+    show_pvalues = TRUE
 ) {
 
   # --- Dependency checks ---
@@ -213,10 +217,13 @@ plot_forest <- function(
       ) +
       ggplot2::geom_text(
         ggplot2::aes(x = 1, label = .data$est_ci_label),
-        hjust = 0.5, size = text_size
+        hjust = 1, size = text_size
       ) +
+      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.3, 0.05))) +
       ggplot2::scale_y_discrete(limits = rev) +
+      ggplot2::coord_cartesian(clip = "off") +
       ggplot2::theme_void() +
+      ggplot2::theme(plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5)) +
       ggplot2::labs(subtitle = paste0("Visit / Estimate (", ci_label, ")"))
   } else {
     # For LSM mode, create a combined label per row
@@ -241,10 +248,13 @@ plot_forest <- function(
       ) +
       ggplot2::geom_text(
         ggplot2::aes(x = 1, label = .data$est_ci_label),
-        hjust = 0.5, size = text_size
+        hjust = 1, size = text_size
       ) +
+      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.3, 0.05))) +
       ggplot2::scale_y_discrete(limits = rev) +
+      ggplot2::coord_cartesian(clip = "off") +
       ggplot2::theme_void() +
+      ggplot2::theme(plot.margin = ggplot2::margin(5.5, 5.5, 5.5, 5.5)) +
       ggplot2::labs(subtitle = paste0("Arm / Estimate (", ci_label, ")"))
   }
 
@@ -342,8 +352,13 @@ plot_forest <- function(
   }
 
   # --- Combine with patchwork ---
-  combined <- p_left + p_mid + p_right +
-    patchwork::plot_layout(widths = c(3, 4, 1.5))
+  if (show_pvalues) {
+    combined <- p_left + p_mid + p_right +
+      patchwork::plot_layout(widths = c(3, 4, 1.5))
+  } else {
+    combined <- p_left + p_mid +
+      patchwork::plot_layout(widths = c(3, 5))
+  }
 
   if (!is.null(title)) {
     combined <- combined +

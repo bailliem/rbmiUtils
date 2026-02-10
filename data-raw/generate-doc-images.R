@@ -60,32 +60,61 @@ pool_obj <- pool(ana_obj)
 # Ensure output directory exists
 dir.create("man/figures", recursive = TRUE, showWarnings = FALSE)
 
-# 1. README forest plot
+# 1. README forest plot (compact, no p-values, larger text)
 p_forest <- plot_forest(
   pool_obj,
   title = "Treatment Effect: Change from Baseline",
-  arm_labels = c(ref = "Placebo", alt = "Drug A")
+  arm_labels = c(ref = "Placebo", alt = "Drug A"),
+  text_size = 4.5,
+  point_size = 4,
+  show_pvalues = FALSE
 )
 ggsave(
   "man/figures/README-forest-plot-1.png",
   plot = p_forest,
-  width = 10, height = 4.5, dpi = 150
+  width = 9, height = 3, dpi = 150
 )
 
-# 2. README efficacy table
+# 2. README efficacy table (publication styling)
 tbl <- efficacy_table(
   pool_obj,
   title = "Table 14.2.1: ANCOVA of Change from Baseline",
   subtitle = "Mixed Model for Repeated Measures",
   arm_labels = c(ref = "Placebo", alt = "Drug A")
-)
+) |>
+  gt::tab_options(
+    table.font.size = gt::px(13),
+    heading.title.font.size = gt::px(16),
+    heading.subtitle.font.size = gt::px(13),
+    heading.border.bottom.width = gt::px(2),
+    heading.border.bottom.color = "#333333",
+    column_labels.font.weight = "bold",
+    column_labels.border.top.width = gt::px(2),
+    column_labels.border.top.color = "#333333",
+    column_labels.border.bottom.width = gt::px(2),
+    column_labels.border.bottom.color = "#333333",
+    row_group.font.weight = "bold",
+    row_group.background.color = "#F7F7F7",
+    row_group.border.top.width = gt::px(1),
+    row_group.border.top.color = "#CCCCCC",
+    row_group.border.bottom.width = gt::px(1),
+    row_group.border.bottom.color = "#CCCCCC",
+    stub.border.width = gt::px(0),
+    table_body.border.bottom.width = gt::px(2),
+    table_body.border.bottom.color = "#333333",
+    table.border.top.width = gt::px(0),
+    table.border.bottom.width = gt::px(0),
+    source_notes.font.size = gt::px(11),
+    source_notes.border.lr.style = "none",
+    table.width = gt::pct(100)
+  )
 gt::gtsave(tbl, "man/figures/README-efficacy-table-1.png", vwidth = 800)
 
 # 3. Help page forest plot (same as README version)
 ggsave(
   "man/figures/plot_forest-trt.png",
   plot = p_forest,
-  width = 10, height = 4.5, dpi = 150
+  width = 9, height = 3, dpi = 150
 )
 
 # 4. Help page efficacy table (same as README version)
