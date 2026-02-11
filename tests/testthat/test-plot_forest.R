@@ -294,3 +294,106 @@ test_that("patchwork object can be customized with & theme()", {
   expect_s3_class(customized, "patchwork")
   expect_no_error(print(customized))
 })
+
+
+# --- font_family parameter tests (STYLE-03) ---
+
+test_that("font_family parameter propagates to left panel text layers", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("patchwork")
+  mock_pool <- make_mock_pool()
+  p <- plot_forest(mock_pool, font_family = "serif")
+  # Left panel is first in patches
+  left_panel <- p$patches$plots[[1]]
+  b <- ggplot2::ggplot_build(left_panel)
+  # Both text layers should have family = "serif"
+  expect_equal(b$data[[1]]$family[1], "serif")
+  expect_equal(b$data[[2]]$family[1], "serif")
+})
+
+test_that("font_family parameter propagates to right panel text layer", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("patchwork")
+  mock_pool <- make_mock_pool()
+  p <- plot_forest(mock_pool, font_family = "mono")
+  # In patchwork, the "main" plot wraps the last added panel (p_right)
+  right_build <- ggplot2::ggplot_build(p)
+  expect_equal(right_build$data[[1]]$family[1], "mono")
+})
+
+test_that("font_family NULL default does not override ggplot2 default", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("patchwork")
+  mock_pool <- make_mock_pool()
+  p <- plot_forest(mock_pool)
+  left_panel <- p$patches$plots[[1]]
+  b <- ggplot2::ggplot_build(left_panel)
+  # Default should be empty string (ggplot2's default sans)
+  expect_equal(b$data[[1]]$family[1], "")
+})
+
+
+# --- panel_widths parameter tests (STYLE-04) ---
+
+test_that("panel_widths parameter controls layout without error", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("patchwork")
+  mock_pool <- make_mock_pool()
+  p <- plot_forest(mock_pool, panel_widths = c(2, 5, 1))
+  expect_s3_class(p, "patchwork")
+  expect_no_error(print(p))
+})
+
+test_that("panel_widths validates length against show_pvalues", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("patchwork")
+  mock_pool <- make_mock_pool()
+  # 3 widths with show_pvalues = FALSE should error
+  expect_error(
+    plot_forest(mock_pool, panel_widths = c(3, 4, 1.5), show_pvalues = FALSE),
+    class = "rbmiUtils_error_validation"
+  )
+  # 2 widths with show_pvalues = TRUE should error
+  expect_error(
+    plot_forest(mock_pool, panel_widths = c(3, 5)),
+    class = "rbmiUtils_error_validation"
+  )
+})
+
+test_that("panel_widths works in 2-panel mode (show_pvalues = FALSE)", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("patchwork")
+  mock_pool <- make_mock_pool()
+  p <- plot_forest(mock_pool, show_pvalues = FALSE, panel_widths = c(2, 6))
+  expect_s3_class(p, "patchwork")
+  expect_no_error(print(p))
+})
+
+
+# --- Left-panel alignment test (STYLE-05) ---
+
+test_that("left panel text is left-aligned (hjust = 0)", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("patchwork")
+  mock_pool <- make_mock_pool()
+  p <- plot_forest(mock_pool)
+  left_panel <- p$patches$plots[[1]]
+  b <- ggplot2::ggplot_build(left_panel)
+  # Both text layers should use hjust = 0 (left-aligned)
+  expect_equal(b$data[[1]]$hjust[1], 0)
+  expect_equal(b$data[[2]]$hjust[1], 0)
+})
+
+
+# --- LSM mode styling ---
+
+test_that("LSM mode respects font_family and left-alignment", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("patchwork")
+  mock_pool <- make_mock_pool()
+  p <- plot_forest(mock_pool, display = "lsm", font_family = "serif")
+  left_panel <- p$patches$plots[[1]]
+  b <- ggplot2::ggplot_build(left_panel)
+  expect_equal(b$data[[1]]$family[1], "serif")
+  expect_equal(b$data[[1]]$hjust[1], 0)
+})
