@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures
-**Current focus:** Phase 8 - MI Diagnostic Statistics (v3) -- COMPLETE
+**Current focus:** Phase 9 - Describe Helpers -- In Progress
 
 ## Current Position
 
-Phase: 8 of 11 (MI Diagnostic Statistics)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-02-10 -- Completed 08-02-PLAN.md (ARD Diagnostic Enrichment)
+Phase: 9 of 11 (Describe Helpers)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-11 -- Completed 09-01-PLAN.md (describe_draws)
 
-Progress: [##################........] 18/18 v1+v2+v3 plans (2 of 2 phase 8 plans complete)
+Progress: [###################.......] 19/20 v1+v2+v3+v4 plans (1 of 2 phase 9 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18 (9 v1 + 7 v2 + 2 v3)
-- Average duration: ~25 min (v1), ~7 min (v2), ~10 min (v3)
-- Total execution time: ~4.5 hours (v1) + ~52 min (v2) + ~19 min (v3)
+- Total plans completed: 19 (9 v1 + 7 v2 + 2 v3 + 1 v4)
+- Average duration: ~25 min (v1), ~7 min (v2), ~10 min (v3), ~7 min (v4)
+- Total execution time: ~4.5 hours (v1) + ~52 min (v2) + ~19 min (v3) + ~7 min (v4)
 
 **By Phase:**
 
@@ -35,6 +35,7 @@ Progress: [##################........] 18/18 v1+v2+v3 plans (2 of 2 phase 8 plan
 | 6 | 3 | ~21 min | ~7 min |
 | 7 | 2 | ~19 min | ~10 min |
 | 8 | 2/2 | ~19 min | ~10 min |
+| 9 | 1/2 | ~7 min | ~7 min |
 
 ## Accumulated Context
 
@@ -51,6 +52,13 @@ All v1/v2 decisions logged in PROJECT.md Key Decisions table.
 - 08-02-D3: Stat naming follows mice convention: lowercase dot-separated (df.adjusted, df.complete, m.imputations)
 - 08-02-D4: Parameter validation uses sorted name comparison between pool_obj$pars and analysis_obj$results[[1]]
 
+**v4 decisions:**
+- 09-01-D1: Method name includes subtype for condmean: "Conditional Mean (jackknife)" not just "Conditional Mean"
+- 09-01-D2: Condmean sample display uses n_primary/n_resampled fields with "1 + N" print format
+- 09-01-D3: All-NA Rhat converged = NA (not TRUE), handled explicitly to avoid misleading result
+- 09-01-D4: approxbayes has no bayes_control (only bayes has it) since approxbayes uses different internals
+- 09-01-D5: cli output captured via type="message" in tests since cli writes to stderr connection
+
 ### Pending Todos
 
 None.
@@ -61,6 +69,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-10T22:28Z
-Stopped at: Completed 08-02-PLAN.md (ARD Diagnostic Enrichment) -- Phase 8 complete
+Last session: 2026-02-11T05:50Z
+Stopped at: Completed 09-01-PLAN.md (describe_draws) -- Phase 9 plan 1 of 2 done
 Resume file: None
