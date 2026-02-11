@@ -1,6 +1,6 @@
 # Changelog
 
-## rbmiUtils 0.3.0
+## rbmiUtils 0.4.0
 
 ### New Features
 
@@ -33,7 +33,7 @@
   message when MI diagnostics are not applicable, rather than returning
   NA rows.
 
-## rbmiUtils 0.2.0
+## rbmiUtils 0.3.0
 
 ### New Features
 
@@ -66,7 +66,7 @@
 - Data preparation functions handle edge cases (single subject, single
   visit, all-NA outcome, all-complete data) gracefully.
 
-## rbmiUtils 0.1.0
+## rbmiUtils 0.2.0
 
 ### Breaking Changes
 
@@ -137,3 +137,29 @@
   formatting utilities.
 - `ADEFF` and `ADMI` example datasets.
 - Initial documentation via pkgdown.
+
+### rbmiUtils 0.1.8
+
+CRAN release: 2026-01-24
+
+### rbmiUtils 0.1.7
+
+- Moved tidyr from Suggests to Imports (used in tidy_pool_obj()).
+- Added examples to gcomp_responder() documentation.
+- Standardized examples to use native pipe operator \|\>.
+
+### rbmiUtils 0.1.6
+
+CRAN release: 2025-09-13 Added additional tests for all utility
+functions.
+
+### rbmiUtils 0.1.4
+
+CRAN release: 2025-05-23
+
+### First release
+
+- Preparation for CRAN submission.
+- Initial draft package.
+- Added a NEWS.md file to track changes to the package.
+- Added documentation via pkgdown.

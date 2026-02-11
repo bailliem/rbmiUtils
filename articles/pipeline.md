@@ -211,8 +211,8 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> 
 #> SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000438 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.38 seconds.
+#> Chain 1: Gradient evaluation took 0.000512 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 5.12 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -229,9 +229,9 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 400 / 400 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.644 seconds (Warm-up)
-#> Chain 1:                0.53 seconds (Sampling)
-#> Chain 1:                1.174 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.643 seconds (Warm-up)
+#> Chain 1:                0.527 seconds (Sampling)
+#> Chain 1:                1.17 seconds (Total)
 #> Chain 1:
 ```
 
