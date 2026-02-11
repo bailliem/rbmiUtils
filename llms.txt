@@ -17,10 +17,9 @@ GitHub:
 
 ## Quick Start
 
-`rbmiUtils` extends the
-[rbmi](https://insightsengineering.github.io/rbmi/) pipeline from raw
-data to publication-ready outputs. Here is the complete workflow using
-the bundled `ADEFF` dataset:
+`rbmiUtils` extends the [rbmi](https://openpharma.github.io/rbmi/)
+pipeline from raw data to publication-ready outputs. Here is the
+complete workflow using the bundled `ADEFF` dataset:
 
 ``` r
 library(rbmiUtils)
