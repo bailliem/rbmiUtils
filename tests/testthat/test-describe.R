@@ -317,8 +317,8 @@ test_that("print.describe_draws returns invisible(x) and produces output", {
   draws_obj <- make_mock_draws_condmean(type = "jackknife", n_resampled = 10)
   desc <- describe_draws(draws_obj)
 
-  # Capture output
-  out <- capture.output(result <- print(desc))
+  # Capture cli output (writes to stderr/message connection)
+  out <- capture.output(result <- print(desc), type = "message")
 
   # Returns invisible(x) - same object
   expect_identical(result, desc)
@@ -336,7 +336,7 @@ test_that("print.describe_draws shows 1 + N format for condmean", {
   draws_obj <- make_mock_draws_condmean(type = "jackknife", n_resampled = 10)
   desc <- describe_draws(draws_obj)
 
-  out <- paste(capture.output(print(desc)), collapse = "\n")
+  out <- paste(capture.output(print(desc), type = "message"), collapse = "\n")
 
   # Should contain "1 + 10" format
   expect_match(out, "1 \\+ 10", fixed = FALSE)
@@ -352,7 +352,7 @@ test_that("print.describe_draws shows Bayesian method info", {
   draws_obj <- make_mock_draws_bayes(n_samples = 50)
   desc <- describe_draws(draws_obj)
 
-  out <- paste(capture.output(print(desc)), collapse = "\n")
+  out <- paste(capture.output(print(desc), type = "message"), collapse = "\n")
 
   expect_match(out, "Bayesian", ignore.case = TRUE)
   expect_match(out, "50")
