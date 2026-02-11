@@ -103,17 +103,35 @@ applying theme changes to all panels. For example:
 \donttest{
 if (requireNamespace("ggplot2", quietly = TRUE) &&
     requireNamespace("patchwork", quietly = TRUE)) {
-  # After running an rbmi analysis pipeline:
-  # pool_obj <- rbmi::pool(analysis_obj)
-  # p <- plot_forest(pool_obj)
-  # p  # renders the forest plot
-  #
-  # LSM display mode with custom arm labels:
-  # plot_forest(pool_obj,
-  #   display = "lsm",
-  #   arm_labels = c(ref = "Placebo", alt = "Drug A"),
-  #   title = "LS Mean Estimates by Visit"
-  # )
+  library(rbmi)
+  data("ADMI", package = "rbmiUtils")
+  ADMI$TRT <- factor(ADMI$TRT, levels = c("Placebo", "Drug A"))
+  ADMI$USUBJID <- factor(ADMI$USUBJID)
+  ADMI$AVISIT <- factor(ADMI$AVISIT)
+
+  vars <- set_vars(
+    subjid = "USUBJID", visit = "AVISIT", group = "TRT",
+    outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
+  )
+  method <- method_bayes(
+    n_samples = 20,
+    control = control_bayes(warmup = 20, thin = 1)
+  )
+
+  ana_obj <- analyse_mi_data(ADMI, vars, method, fun = ancova)
+  pool_obj <- pool(ana_obj)
+
+  # Treatment difference forest plot
+  plot_forest(pool_obj, arm_labels = c(ref = "Placebo", alt = "Drug A"))
+
+  # LSM display with custom panel widths
+  plot_forest(
+    pool_obj,
+    display = "lsm",
+    arm_labels = c(ref = "Placebo", alt = "Drug A"),
+    title = "LS Mean Estimates by Visit",
+    panel_widths = c(3, 5)
+  )
 }
 }
 

@@ -58,17 +58,36 @@
 #' @examples
 #' \donttest{
 #' if (requireNamespace("gt", quietly = TRUE)) {
-#'   # After running an rbmi analysis pipeline:
-#'   # pool_obj <- rbmi::pool(analysis_obj)
-#'   # tbl <- efficacy_table(pool_obj)
-#'   # tbl  # renders in viewer
-#'   #
-#'   # With custom labels:
-#'   # efficacy_table(pool_obj,
-#'   #   title = "Table 14.2.1",
-#'   #   subtitle = "ANCOVA of Change from Baseline",
-#'   #   arm_labels = c(ref = "Placebo", alt = "Drug A")
-#'   # )
+#'   library(rbmi)
+#'   data("ADMI", package = "rbmiUtils")
+#'   ADMI$TRT <- factor(ADMI$TRT, levels = c("Placebo", "Drug A"))
+#'   ADMI$USUBJID <- factor(ADMI$USUBJID)
+#'   ADMI$AVISIT <- factor(ADMI$AVISIT)
+#'
+#'   vars <- set_vars(
+#'     subjid = "USUBJID", visit = "AVISIT", group = "TRT",
+#'     outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
+#'   )
+#'   method <- method_bayes(
+#'     n_samples = 20,
+#'     control = control_bayes(warmup = 20, thin = 1)
+#'   )
+#'
+#'   ana_obj <- analyse_mi_data(ADMI, vars, method, fun = ancova)
+#'   pool_obj <- pool(ana_obj)
+#'
+#'   # Basic table
+#'   tbl <- efficacy_table(pool_obj)
+#'
+#'   # Publication-styled table
+#'   efficacy_table(
+#'     pool_obj,
+#'     title = "Table 14.2.1: ANCOVA of Change from Baseline",
+#'     subtitle = "Mixed Model for Repeated Measures",
+#'     arm_labels = c(ref = "Placebo", alt = "Drug A"),
+#'     font_size = 12,
+#'     row_padding = 4
+#'   )
 #' }
 #' }
 #'

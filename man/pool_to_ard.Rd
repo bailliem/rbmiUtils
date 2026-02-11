@@ -63,13 +63,30 @@ suitable for downstream use with \pkg{gtsummary}.
 }
 \examples{
 \donttest{
-# Requires the cards package
 if (requireNamespace("cards", quietly = TRUE)) {
-  # After running an rbmi analysis pipeline:
-  # analysis_obj <- analyse_mi_data(data, vars, method)
-  # pool_obj <- rbmi::pool(analysis_obj)
-  # ard <- pool_to_ard(pool_obj, analysis_obj)
-  # cards::check_ard_structure(ard)
+  library(rbmi)
+  data("ADMI", package = "rbmiUtils")
+  ADMI$TRT <- factor(ADMI$TRT, levels = c("Placebo", "Drug A"))
+  ADMI$USUBJID <- factor(ADMI$USUBJID)
+  ADMI$AVISIT <- factor(ADMI$AVISIT)
+
+  vars <- set_vars(
+    subjid = "USUBJID", visit = "AVISIT", group = "TRT",
+    outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
+  )
+  method <- method_bayes(
+    n_samples = 20,
+    control = control_bayes(warmup = 20, thin = 1)
+  )
+
+  ana_obj <- analyse_mi_data(ADMI, vars, method, fun = ancova)
+  pool_obj <- pool(ana_obj)
+
+  # Base ARD
+  ard <- pool_to_ard(pool_obj)
+
+  # Enriched ARD with MI diagnostics (FMI, lambda, RIV, df)
+  ard_diag <- pool_to_ard(pool_obj, analysis_obj = ana_obj)
 }
 }
 
