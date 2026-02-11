@@ -60,6 +60,8 @@ pool_obj <- pool(ana_obj)
 # Ensure output directory exists
 dir.create("man/figures", recursive = TRUE, showWarnings = FALSE)
 
+# --- Forest plot images (via ggsave, no browser required) ---
+
 # 1. README forest plot (compact, no p-values, larger text)
 p_forest <- plot_forest(
   pool_obj,
@@ -74,8 +76,18 @@ ggsave(
   plot = p_forest,
   width = 9, height = 3, dpi = 150
 )
+message("  man/figures/README-forest-plot-1.png [OK]")
 
-# 2. README efficacy table (publication styling)
+# 2. Help page forest plot (same as README version)
+ggsave(
+  "man/figures/plot_forest-trt.png",
+  plot = p_forest,
+  width = 9, height = 3, dpi = 150
+)
+message("  man/figures/plot_forest-trt.png [OK]")
+
+# --- Efficacy table images (via gt::gtsave, requires Chromium browser) ---
+
 tbl <- efficacy_table(
   pool_obj,
   title = "Table 14.2.1: ANCOVA of Change from Baseline",
@@ -108,21 +120,23 @@ tbl <- efficacy_table(
     source_notes.border.lr.style = "none",
     table.width = gt::pct(100)
   )
-gt::gtsave(tbl, "man/figures/README-efficacy-table-1.png", vwidth = 800)
 
-# 3. Help page forest plot (same as README version)
-ggsave(
-  "man/figures/plot_forest-trt.png",
-  plot = p_forest,
-  width = 9, height = 3, dpi = 150
-)
+# 3. README efficacy table
+tryCatch({
+  gt::gtsave(tbl, "man/figures/README-efficacy-table-1.png", vwidth = 800)
+  message("  man/figures/README-efficacy-table-1.png [OK]")
+}, error = function(e) {
+  message("  man/figures/README-efficacy-table-1.png [SKIPPED - Chromium not available]")
+  message("    ", conditionMessage(e))
+})
 
-# 4. Help page efficacy table (same as README version)
-gt::gtsave(tbl, "man/figures/efficacy_table-example.png", vwidth = 800)
+# 4. Help page efficacy table
+tryCatch({
+  gt::gtsave(tbl, "man/figures/efficacy_table-example.png", vwidth = 800)
+  message("  man/figures/efficacy_table-example.png [OK]")
+}, error = function(e) {
+  message("  man/figures/efficacy_table-example.png [SKIPPED - Chromium not available]")
+  message("    ", conditionMessage(e))
+})
 
-message("All documentation images generated successfully.")
-message("Files created:")
-message("  man/figures/README-forest-plot-1.png")
-message("  man/figures/README-efficacy-table-1.png")
-message("  man/figures/plot_forest-trt.png")
-message("  man/figures/efficacy_table-example.png")
+message("\nDocumentation image generation complete.")
