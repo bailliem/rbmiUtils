@@ -358,3 +358,86 @@ test_that("empty result after NA visit filtering aborts with clear error", {
     class = "rbmiUtils_error_validation"
   )
 })
+
+
+# =============================================================================
+# Publication styling parameter tests (Plan 10-01)
+# =============================================================================
+
+# --- font_family parameter ---
+
+test_that("font_family parameter applies font to gt table HTML", {
+  skip_if_not_installed("gt")
+
+  mock_pool <- make_mock_pool()
+  tbl <- efficacy_table(mock_pool, font_family = "Courier")
+  html <- gt::as_raw_html(tbl)
+
+  expect_true(grepl("Courier", html, fixed = TRUE))
+})
+
+
+# --- font_size parameter ---
+
+test_that("font_size parameter applies pixel size to gt table HTML", {
+  skip_if_not_installed("gt")
+
+  mock_pool <- make_mock_pool()
+  tbl <- efficacy_table(mock_pool, font_size = 10)
+  html <- gt::as_raw_html(tbl)
+
+  expect_true(grepl("10px", html, fixed = TRUE))
+})
+
+
+# --- row_padding parameter ---
+
+test_that("row_padding parameter applies pixel padding to gt table HTML", {
+  skip_if_not_installed("gt")
+
+  mock_pool <- make_mock_pool()
+  tbl <- efficacy_table(mock_pool, row_padding = 2)
+  html <- gt::as_raw_html(tbl)
+
+  expect_true(grepl("2px", html, fixed = TRUE))
+})
+
+
+# --- NULL defaults backward compatibility ---
+
+test_that("NULL defaults do not override default styling", {
+  skip_if_not_installed("gt")
+
+  mock_pool <- make_mock_pool()
+  tbl <- efficacy_table(mock_pool)
+  html <- gt::as_raw_html(tbl)
+
+  # Courier should NOT appear when font_family is NULL (default)
+  expect_false(grepl("Courier", html, fixed = TRUE))
+})
+
+
+# --- Combined styling parameters ---
+
+test_that("combined styling parameters work together", {
+  skip_if_not_installed("gt")
+
+  mock_pool <- make_mock_pool()
+  tbl <- efficacy_table(
+    mock_pool,
+    font_family = "Georgia",
+    font_size = 11,
+    row_padding = 3
+  )
+
+  expect_s3_class(tbl, "gt_tbl")
+
+  # Renders without error
+  html <- gt::as_raw_html(tbl)
+  expect_true(nchar(html) > 0)
+
+  # All styling values present in HTML
+  expect_true(grepl("Georgia", html, fixed = TRUE))
+  expect_true(grepl("11px", html, fixed = TRUE))
+  expect_true(grepl("3px", html, fixed = TRUE))
+})
