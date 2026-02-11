@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures
-**Current focus:** Phase 11 - Documentation Overhaul -- In progress
+**Current focus:** Phase 11 - Documentation Overhaul -- Complete
 
 ## Current Position
 
 Phase: 11 of 11 (Documentation Overhaul)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-11 -- Completed 11-02-PLAN.md (function @examples upgrade)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-11 -- Completed 11-03-PLAN.md (diagnostics vignette, images, verification)
 
-Progress: [########################.] 24/25 plans (2 of 3 phase 11 plans complete)
+Progress: [#########################] 25/25 plans (3 of 3 phase 11 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24 (9 v1 + 7 v2 + 2 v3 + 2 v4 + 2 v5 + 2 v6)
-- Average duration: ~25 min (v1), ~7 min (v2), ~10 min (v3), ~7 min (v4), ~7 min (v5), ~2 min (v6)
-- Total execution time: ~4.5 hours (v1) + ~52 min (v2) + ~19 min (v3) + ~14 min (v4) + ~13 min (v5) + ~4 min (v6)
+- Total plans completed: 25 (9 v1 + 7 v2 + 2 v3 + 2 v4 + 2 v5 + 3 v6)
+- Average duration: ~25 min (v1), ~7 min (v2), ~10 min (v3), ~7 min (v4), ~7 min (v5), ~3 min (v6)
+- Total execution time: ~4.5 hours (v1) + ~52 min (v2) + ~19 min (v3) + ~14 min (v4) + ~13 min (v5) + ~10 min (v6)
 
 **By Phase:**
 
@@ -37,7 +37,7 @@ Progress: [########################.] 24/25 plans (2 of 3 phase 11 plans complet
 | 8 | 2/2 | ~19 min | ~10 min |
 | 9 | 2/2 | ~14 min | ~7 min |
 | 10 | 2/2 | ~13 min | ~7 min |
-| 11 | 2/3 | ~4 min | ~2 min |
+| 11 | 3/3 | ~10 min | ~3 min |
 
 ## Accumulated Context
 
@@ -77,6 +77,9 @@ All v1/v2 decisions logged in PROJECT.md Key Decisions table.
 - 11-02-D1: ADMI examples use \donttest{} (executable but slow); ADEFF examples use \dontrun{} (require MCMC)
 - 11-02-D2: print.* examples use short references to parent function instead of repeating full pipeline
 - 11-02-D3: Example pattern: data() -> factor prep -> set_vars -> method -> analyse/draws -> pool/impute -> function
+- 11-03-D1: Forest plot README image uses panel_widths c(5,4,1.5) with show_pvalues=TRUE to prevent CI text clipping
+- 11-03-D2: Table images not regenerated (Chromium unavailable); existing images remain valid
+- 11-03-D3: rbmi link corrected from insightsengineering.github.io to openpharma.github.io
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-11T19:45Z
-Stopped at: Completed 11-02-PLAN.md (function @examples upgrade)
+Last session: 2026-02-11T20:00Z
+Stopped at: Completed 11-03-PLAN.md (diagnostics vignette, images, verification) -- Phase 11 complete
 Resume file: None
