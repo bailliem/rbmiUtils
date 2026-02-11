@@ -1,3 +1,12 @@
+# Requirements Archive: v3 ARD Enrichment & Polish
+
+**Archived:** 2026-02-11
+**Status:** SHIPPED
+
+For current requirements, see `.planning/REQUIREMENTS.md`.
+
+---
+
 # Requirements: rbmiUtils v3 ARD Enrichment & Polish
 
 **Defined:** 2026-02-10

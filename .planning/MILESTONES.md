@@ -51,3 +51,30 @@
 
 ---
 
+
+## v3 ARD Enrichment & Polish (Shipped: 2026-02-11)
+
+**Delivered:** Enriched ARD output with MI diagnostic metadata, added pipeline introspection helpers, polished tables and plots to publication quality, and overhauled all documentation with realistic examples
+
+**Phases completed:** 8-11 (9 plans total)
+
+**Key accomplishments:**
+- Enriched pool_to_ard() with 7 MI diagnostic statistics per parameter (FMI, lambda, RIV, Barnard-Rubin df, relative efficiency) via compute_rubin_diagnostics(), with curated ARD rows passing cards validation
+- Added describe_draws() and describe_imputation() introspection helpers with cli-formatted print methods, MCMC convergence diagnostics (ESS, Rhat), and missingness breakdown by visit/arm
+- Added publication styling controls to efficacy_table() (font_family, font_size, row_padding) and plot_forest() (font_family, panel_widths) with backward-compatible NULL defaults
+- Overhauled README with complete ADEFF-through-pipeline Quick Start, upgraded 5 function examples to use realistic package datasets (ADMI/ADEFF)
+- Created MI diagnostics and pipeline inspection vignette, regenerated forest plot images, bumped version to v0.3.0 with comprehensive NEWS.md entries
+- Added 400+ new test expectations across 9 plans (98 data prep tests total, 6,668 total test lines) with zero R CMD check errors/warnings
+
+**Stats:**
+- 57 files changed, 9,700 insertions, 145 deletions
+- 4,980 lines of R source code, 6,668 lines of test code
+- 4 phases, 9 plans, 48 commits
+- 2 days (2026-02-10 to 2026-02-11)
+
+**Git range:** `59e4ff4` → `5d8b503`
+
+**What's next:** v4 features — responder bar charts, sensitivity analysis overlays, column formatting controls, as_gt()/as_gtsummary() S3 methods, BMLMI diagnostics
+
+---
+
