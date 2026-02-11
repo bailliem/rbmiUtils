@@ -98,6 +98,42 @@ Plans:
 - [ ] 11-01: TBD
 - [ ] 11-02: TBD
 
+## Future Considerations
+
+### Efficient Storage for Large-Scale Imputation Datasets
+
+**Scope**: Explore and potentially implement efficient storage formats (e.g., Parquet, Arrow) for imputation datasets when scaling to large sample sizes (100,000+ observations)
+
+**Rationale**:
+- Current in-memory R data structures may become memory-intensive for large clinical trials
+- Multiple imputation with M=100 imputations on 100,000+ observations could create memory pressure
+- Columnar formats like Parquet offer compression and efficient column-wise operations
+- Integration with arrow package could enable out-of-core processing for massive datasets
+
+**Potential Approaches**:
+1. **Parquet Backend**: Store imputed datasets as Parquet files with metadata
+   - Advantages: Compression, cross-platform compatibility, efficient column reads
+   - Considerations: I/O overhead vs memory savings, integration with rbmi workflow
+2. **Arrow Tables**: Use Arrow's in-memory format with optional disk spilling
+   - Advantages: Zero-copy reads, interop with Python/pandas, memory mapping
+   - Considerations: Package dependencies, user learning curve
+3. **HDF5 Format**: Hierarchical data storage for imputation sets
+   - Advantages: Mature ecosystem, supports complex nested structures
+   - Considerations: Additional dependencies, less modern than Arrow/Parquet
+
+**Dependencies**:
+- Performance benchmarking with realistic large-scale datasets
+- User feedback on typical dataset sizes in practice
+- Evaluation of arrow/parquet R package maturity and stability
+
+**Questions to Resolve**:
+- What is the realistic upper bound for dataset size in production use?
+- Should this be opt-in or automatic based on dataset size thresholds?
+- How does this interact with rbmi's existing data structures?
+- What is the acceptable trade-off between speed and memory usage?
+
+**Status**: Under consideration -- needs scoping and performance analysis
+
 ## Progress
 
 **Execution Order:**
@@ -119,4 +155,4 @@ Phases 8-11 execute sequentially. Phases 8, 9, and 10 have no mutual dependencie
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-11 (Phase 9 complete: 2/2 plans, verified)*
+*Last updated: 2026-02-11 (Added future consideration: efficient storage for large-scale imputation datasets)*
