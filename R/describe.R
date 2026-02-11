@@ -377,7 +377,10 @@ print.describe_imputation <- function(x, ...) {
 
   # Missingness section
   cli::cli_h2("Missingness by Visit and Arm")
-  print(x$missingness, row.names = FALSE)
+  tbl_lines <- utils::capture.output(print(x$missingness, row.names = FALSE))
+  for (line in tbl_lines) {
+    cli::cli_verbatim(line)
+  }
 
   invisible(x)
 }
