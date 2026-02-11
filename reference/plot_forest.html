@@ -13,7 +13,7 @@ showing formatted estimates, and a p-value panel."><meta property="og:image" con
 
     <a class="navbar-brand me-2" href="../index.html">rbmiUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,9 @@ showing formatted estimates, and a p-value panel."><meta property="og:image" con
     <li><a class="dropdown-item" href="../articles/analyse2.html">Storing and Analyzing Imputed Data</a></li>
     <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation and Validation</a></li>
     <li><a class="dropdown-item" href="../articles/efficient-storage.html">Efficient Storage of Imputed Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Diagnostics</h6></li>
+    <li><a class="dropdown-item" href="../articles/diagnostics.html">MI Diagnostics and Describe Helpers</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -66,7 +69,10 @@ showing formatted estimates, and a p-value panel.</p>
 <span>  arm_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  text_size <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  point_size <span class="op">=</span> <span class="fl">3</span></span>
+<span>  point_size <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  show_pvalues <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  font_family <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  panel_widths <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -116,6 +122,27 @@ Default is 3.</p></dd>
 <dt id="arg-point-size">point_size<a class="anchor" aria-label="anchor" href="#arg-point-size"></a></dt>
 <dd><p>Numeric. Point size for the forest plot. Default is 3.</p></dd>
 
+
+<dt id="arg-show-pvalues">show_pvalues<a class="anchor" aria-label="anchor" href="#arg-show-pvalues"></a></dt>
+<dd><p>Logical. Whether to display the p-value panel on the
+right side of the plot. Default is <code>TRUE</code>. Set to <code>FALSE</code> for a cleaner
+two-panel layout without p-values.</p></dd>
+
+
+<dt id="arg-font-family">font_family<a class="anchor" aria-label="anchor" href="#arg-font-family"></a></dt>
+<dd><p>Optional character string specifying the font family for
+all text in the plot. When <code>NULL</code> (default), uses ggplot2's default font
+(typically sans-serif). Applied to all <code>geom_text</code> layers and the forest
+panel theme.</p></dd>
+
+
+<dt id="arg-panel-widths">panel_widths<a class="anchor" aria-label="anchor" href="#arg-panel-widths"></a></dt>
+<dd><p>Optional numeric vector controlling the relative widths
+of the plot panels. When <code>show_pvalues = TRUE</code>, must be length 3 (table,
+forest, p-value panels). When <code>show_pvalues = FALSE</code>, must be length 2
+(table, forest panels). When <code>NULL</code> (default), uses <code>c(3, 4, 1.5)</code> for
+3-panel and <code>c(3, 5)</code> for 2-panel layouts.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -157,19 +184,41 @@ applying theme changes to all panels. For example:
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">&amp;&amp;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"patchwork"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="co"># After running an rbmi analysis pipeline:</span></span></span>
-<span class="r-in"><span>  <span class="co"># pool_obj &lt;- rbmi::pool(analysis_obj)</span></span></span>
-<span class="r-in"><span>  <span class="co"># p &lt;- plot_forest(pool_obj)</span></span></span>
-<span class="r-in"><span>  <span class="co"># p  # renders the forest plot</span></span></span>
-<span class="r-in"><span>  <span class="co">#</span></span></span>
-<span class="r-in"><span>  <span class="co"># LSM display mode with custom arm labels:</span></span></span>
-<span class="r-in"><span>  <span class="co"># plot_forest(pool_obj,</span></span></span>
-<span class="r-in"><span>  <span class="co">#   display = "lsm",</span></span></span>
-<span class="r-in"><span>  <span class="co">#   arm_labels = c(ref = "Placebo", alt = "Drug A"),</span></span></span>
-<span class="r-in"><span>  <span class="co">#   title = "LS Mean Estimates by Visit"</span></span></span>
-<span class="r-in"><span>  <span class="co"># )</span></span></span>
+<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/rbmi/" class="external-link">rbmi</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ADMI"</span>, package <span class="op">=</span> <span class="st">"rbmiUtils"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">ADMI</span><span class="op">$</span><span class="va">TRT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">ADMI</span><span class="op">$</span><span class="va">TRT</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Placebo"</span>, <span class="st">"Drug A"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">ADMI</span><span class="op">$</span><span class="va">USUBJID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">ADMI</span><span class="op">$</span><span class="va">USUBJID</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">ADMI</span><span class="op">$</span><span class="va">AVISIT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">ADMI</span><span class="op">$</span><span class="va">AVISIT</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/set_vars.html" class="external-link">set_vars</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    subjid <span class="op">=</span> <span class="st">"USUBJID"</span>, visit <span class="op">=</span> <span class="st">"AVISIT"</span>, group <span class="op">=</span> <span class="st">"TRT"</span>,</span></span>
+<span class="r-in"><span>    outcome <span class="op">=</span> <span class="st">"CHG"</span>, covariates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BASE"</span>, <span class="st">"STRATA"</span>, <span class="st">"REGION"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">method</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/method.html" class="external-link">method_bayes</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    n_samples <span class="op">=</span> <span class="fl">20</span>,</span></span>
+<span class="r-in"><span>    control <span class="op">=</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/control.html" class="external-link">control_bayes</a></span><span class="op">(</span>warmup <span class="op">=</span> <span class="fl">20</span>, thin <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">ana_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="analyse_mi_data.html">analyse_mi_data</a></span><span class="op">(</span><span class="va">ADMI</span>, <span class="va">vars</span>, <span class="va">method</span>, fun <span class="op">=</span> <span class="va">ancova</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">pool_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/pool.html" class="external-link">pool</a></span><span class="op">(</span><span class="va">ana_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Treatment difference forest plot</span></span></span>
+<span class="r-in"><span>  <span class="fu">plot_forest</span><span class="op">(</span><span class="va">pool_obj</span>, arm_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>ref <span class="op">=</span> <span class="st">"Placebo"</span>, alt <span class="op">=</span> <span class="st">"Drug A"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># LSM display with custom panel widths</span></span></span>
+<span class="r-in"><span>  <span class="fu">plot_forest</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">pool_obj</span>,</span></span>
+<span class="r-in"><span>    display <span class="op">=</span> <span class="st">"lsm"</span>,</span></span>
+<span class="r-in"><span>    arm_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>ref <span class="op">=</span> <span class="st">"Placebo"</span>, alt <span class="op">=</span> <span class="st">"Drug A"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    title <span class="op">=</span> <span class="st">"LS Mean Estimates by Visit"</span>,</span></span>
+<span class="r-in"><span>    panel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Data contains 100 imputations but method expects 20. Using first 20</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> imputations.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot_forest(pool_obj, display = "lsm", arm_labels = c(ref = "Placebo",     alt = "Drug A"), title = "LS Mean Estimates by Visit", panel_widths = c(3,     5)):</span> `panel_widths` must be a numeric vector of length 3.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Got length 2.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Three widths needed: table panel, forest panel, p-value panel.</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

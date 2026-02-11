@@ -1,5 +1,38 @@
 # Changelog
 
+## rbmiUtils 0.3.0
+
+### New Features
+
+- [`describe_draws()`](https://openpharma.github.io/rbmiUtils/reference/describe_draws.md)
+  extracts structured metadata from rbmi draws objects, including method
+  type, formula, sample count, and (for Bayesian methods) MCMC
+  convergence diagnostics (ESS, Rhat).
+- [`describe_imputation()`](https://openpharma.github.io/rbmiUtils/reference/describe_imputation.md)
+  extracts imputation metadata including method, number of imputations
+  (M), reference arm mappings, and a missingness breakdown by visit and
+  treatment arm.
+- [`pool_to_ard()`](https://openpharma.github.io/rbmiUtils/reference/pool_to_ard.md)
+  gains an `analysis_obj` parameter that enriches the ARD with MI
+  diagnostic statistics (FMI, lambda, RIV, Barnard-Rubin adjusted df,
+  relative efficiency) when the pooling method is Rubin’s rules.
+
+### Improvements
+
+- [`efficacy_table()`](https://openpharma.github.io/rbmiUtils/reference/efficacy_table.md)
+  gains `font_family`, `font_size`, and `row_padding` parameters for
+  publication-ready table styling.
+- [`plot_forest()`](https://openpharma.github.io/rbmiUtils/reference/plot_forest.md)
+  gains `font_family` and `panel_widths` parameters for customizable
+  typography and panel layout.
+- [`plot_forest()`](https://openpharma.github.io/rbmiUtils/reference/plot_forest.md)
+  left panel now uses left-aligned text (hjust=0) for consistent
+  positioning regardless of label length.
+- Non-Rubin pooling methods now emit an informative
+  [`cli::cli_inform()`](https://cli.r-lib.org/reference/cli_abort.html)
+  message when MI diagnostics are not applicable, rather than returning
+  NA rows.
+
 ## rbmiUtils 0.2.0
 
 ### New Features

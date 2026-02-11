@@ -3,6 +3,7 @@
 <url><loc>https://openpharma.github.io/rbmiUtils/LICENSE.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/articles/analyse2.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/articles/data-preparation.html</loc></url>
+<url><loc>https://openpharma.github.io/rbmiUtils/articles/diagnostics.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/articles/efficient-storage.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/articles/index.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/articles/pipeline.html</loc></url>
@@ -16,6 +17,8 @@
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/as_simple_formula2.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/combine_results.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/create_impid.html</loc></url>
+<url><loc>https://openpharma.github.io/rbmiUtils/reference/describe_draws.html</loc></url>
+<url><loc>https://openpharma.github.io/rbmiUtils/reference/describe_imputation.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/efficacy_table.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/expand_imputed_data.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/extract_covariates2.html</loc></url>
@@ -34,6 +37,8 @@
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/pool_to_ard.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/prepare_data_ice.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/print.analysis.html</loc></url>
+<url><loc>https://openpharma.github.io/rbmiUtils/reference/print.describe_draws.html</loc></url>
+<url><loc>https://openpharma.github.io/rbmiUtils/reference/print.describe_imputation.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/print.pool.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/rbmiUtils-package.html</loc></url>
 <url><loc>https://openpharma.github.io/rbmiUtils/reference/reduce_imputed_data.html</loc></url>

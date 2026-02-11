@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rbmiUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,9 @@
     <li><a class="dropdown-item" href="../articles/analyse2.html">Storing and Analyzing Imputed Data</a></li>
     <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation and Validation</a></li>
     <li><a class="dropdown-item" href="../articles/efficient-storage.html">Efficient Storage of Imputed Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Diagnostics</h6></li>
+    <li><a class="dropdown-item" href="../articles/diagnostics.html">MI Diagnostics and Describe Helpers</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -162,6 +165,29 @@
         </dt>
         <dd>Create a Forest Plot from an rbmi Pool Object</dd>
       </dl></div><div class="section level2">
+      <h2 id="introspection">Introspection<a class="anchor" aria-label="anchor" href="#introspection"></a></h2>
+
+      <div class="section-desc"><p>Inspect draws, imputations, and MI diagnostics</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="describe_draws.html">describe_draws()</a></code>
+
+        </dt>
+        <dd>Describe an rbmi Draws Object</dd>
+
+        <dt>
+
+          <code><a href="describe_imputation.html">describe_imputation()</a></code>
+
+        </dt>
+        <dd>Describe an rbmi Imputation Object</dd>
+      </dl></div><div class="section level2">
       <h2 id="formatting">Formatting<a class="anchor" aria-label="anchor" href="#formatting"></a></h2>
 
       <div class="section-desc"><p>Format values for publication</p></div>
@@ -274,6 +300,20 @@
 
         </dt>
         <dd>Print Method for Analysis Objects</dd>
+
+        <dt>
+
+          <code><a href="print.describe_draws.html">print(<i>&lt;describe_draws&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print Method for describe_draws Objects</dd>
+
+        <dt>
+
+          <code><a href="print.describe_imputation.html">print(<i>&lt;describe_imputation&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print Method for describe_imputation Objects</dd>
 
         <dt>
 

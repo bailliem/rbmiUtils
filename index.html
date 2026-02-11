@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">rbmiUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,6 +52,9 @@
     <li><a class="dropdown-item" href="articles/analyse2.html">Storing and Analyzing Imputed Data</a></li>
     <li><a class="dropdown-item" href="articles/data-preparation.html">Data Preparation and Validation</a></li>
     <li><a class="dropdown-item" href="articles/efficient-storage.html">Efficient Storage of Imputed Data</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Diagnostics</h6></li>
+    <li><a class="dropdown-item" href="articles/diagnostics.html">MI Diagnostics and Describe Helpers</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -109,16 +112,56 @@
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
-<p>Starting from an <a href="https://insightsengineering.github.io/rbmi/" class="external-link">rbmi</a> pool object, <code>rbmiUtils</code> produces publication-ready outputs in a few lines:</p>
+<p><code>rbmiUtils</code> extends the <a href="https://insightsengineering.github.io/rbmi/" class="external-link">rbmi</a> pipeline from raw data to publication-ready outputs. Here is the complete workflow using the bundled <code>ADEFF</code> dataset:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/openpharma/rbmiUtils" class="external-link">rbmiUtils</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/rbmi/" class="external-link">rbmi</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Analyse across imputations and pool results</span></span>
-<span><span class="va">ana_obj</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/analyse_mi_data.html">analyse_mi_data</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ADMI</span>, vars <span class="op">=</span> <span class="va">vars</span>, method <span class="op">=</span> <span class="va">method</span><span class="op">)</span></span>
+<span><span class="co"># Load example efficacy dataset and prepare factors</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ADEFF"</span>, package <span class="op">=</span> <span class="st">"rbmiUtils"</span><span class="op">)</span></span>
+<span><span class="va">ADEFF</span> <span class="op">&lt;-</span> <span class="va">ADEFF</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    TRT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">TRT01P</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Placebo"</span>, <span class="st">"Drug A"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    USUBJID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>    AVISIT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">AVISIT</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Week 24"</span>, <span class="st">"Week 48"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Define analysis variables</span></span>
+<span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/set_vars.html" class="external-link">set_vars</a></span><span class="op">(</span></span>
+<span>  subjid <span class="op">=</span> <span class="st">"USUBJID"</span>,</span>
+<span>  visit <span class="op">=</span> <span class="st">"AVISIT"</span>,</span>
+<span>  group <span class="op">=</span> <span class="st">"TRT"</span>,</span>
+<span>  outcome <span class="op">=</span> <span class="st">"CHG"</span>,</span>
+<span>  covariates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BASE"</span>, <span class="st">"STRATA"</span>, <span class="st">"REGION"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Configure Bayesian imputation method</span></span>
+<span><span class="va">method</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/method.html" class="external-link">method_bayes</a></span><span class="op">(</span></span>
+<span>  n_samples <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/control.html" class="external-link">control_bayes</a></span><span class="op">(</span>warmup <span class="op">=</span> <span class="fl">200</span>, thin <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Step 1: Fit imputation model (draws)</span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">ADEFF</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">USUBJID</span>, <span class="va">STRATA</span>, <span class="va">REGION</span>, <span class="va">TRT</span>, <span class="va">BASE</span>, <span class="va">CHG</span>, <span class="va">AVISIT</span><span class="op">)</span></span>
+<span><span class="va">draws_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/draws.html" class="external-link">draws</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dat</span>, vars <span class="op">=</span> <span class="va">vars</span>, method <span class="op">=</span> <span class="va">method</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Step 2: Generate imputed datasets</span></span>
+<span><span class="va">impute_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/impute.html" class="external-link">impute</a></span><span class="op">(</span></span>
+<span>  <span class="va">draws_obj</span>,</span>
+<span>  references <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Placebo"</span> <span class="op">=</span> <span class="st">"Placebo"</span>, <span class="st">"Drug A"</span> <span class="op">=</span> <span class="st">"Placebo"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Step 3: Extract stacked imputed data</span></span>
+<span><span class="va">ADMI</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_imputed_data.html">get_imputed_data</a></span><span class="op">(</span><span class="va">impute_obj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Step 4: Analyse each imputed dataset</span></span>
+<span><span class="va">ana_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/analyse_mi_data.html">analyse_mi_data</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ADMI</span>, vars <span class="op">=</span> <span class="va">vars</span>, method <span class="op">=</span> <span class="va">method</span>, fun <span class="op">=</span> <span class="va">ancova</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Step 5: Pool results using Rubin's rules</span></span>
 <span><span class="va">pool_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/pool.html" class="external-link">pool</a></span><span class="op">(</span><span class="va">ana_obj</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Publication outputs</span></span>
+<span><span class="co"># Publication-ready outputs</span></span>
 <span><span class="fu"><a href="reference/efficacy_table.html">efficacy_table</a></span><span class="op">(</span><span class="va">pool_obj</span>, arm_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>ref <span class="op">=</span> <span class="st">"Placebo"</span>, alt <span class="op">=</span> <span class="st">"Drug A"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/plot_forest.html">plot_forest</a></span><span class="op">(</span><span class="va">pool_obj</span>, arm_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>ref <span class="op">=</span> <span class="st">"Placebo"</span>, alt <span class="op">=</span> <span class="st">"Drug A"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Forest Plot</strong></p>
@@ -144,9 +187,13 @@ Efficacy Table
 <li>
 <code><a href="reference/plot_forest.html">plot_forest()</a></code> – three-panel forest plots with estimates, CIs, and p-values</li>
 <li>
-<code><a href="reference/pool_to_ard.html">pool_to_ard()</a></code> – convert pool objects to pharmaverse ARD format</li>
+<code><a href="reference/pool_to_ard.html">pool_to_ard()</a></code> – convert pool objects to pharmaverse ARD format with optional MI diagnostic enrichment (FMI, lambda, RIV)</li>
 <li>
 <code><a href="reference/get_imputed_data.html">get_imputed_data()</a></code> – extract long-format imputed datasets</li>
+<li>
+<code><a href="reference/describe_draws.html">describe_draws()</a></code> – inspect draws objects (method, samples, convergence diagnostics)</li>
+<li>
+<code><a href="reference/describe_imputation.html">describe_imputation()</a></code> – inspect imputation objects (method, M, missingness breakdown)</li>
 <li>
 <code><a href="reference/format_pvalue.html">format_pvalue()</a></code> / <code><a href="reference/format_estimate.html">format_estimate()</a></code> – publication-ready formatting</li>
 </ul>
@@ -159,6 +206,8 @@ Efficacy Table
 <a href="https://openpharma.github.io/rbmiUtils/articles/pipeline.html">From rbmi Analysis to Regulatory Tables</a> – end-to-end walkthrough from raw data to regulatory outputs</li>
 <li>
 <a href="https://openpharma.github.io/rbmiUtils/articles/analyse2.html">Storing and Analyzing Imputed Data</a> – focused guide on analysis workflows</li>
+<li>
+<a href="https://openpharma.github.io/rbmiUtils/articles/diagnostics.html">MI Diagnostics and Describe Helpers</a> – inspecting draws, imputations, and MI diagnostic statistics</li>
 <li><a href="https://openpharma.github.io/rbmiUtils/">Package documentation</a></li>
 </ul>
 </div>

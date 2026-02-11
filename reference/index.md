@@ -44,6 +44,15 @@ Publication-ready tables and plots
 - [`plot_forest()`](https://openpharma.github.io/rbmiUtils/reference/plot_forest.md)
   : Create a Forest Plot from an rbmi Pool Object
 
+## Introspection
+
+Inspect draws, imputations, and MI diagnostics
+
+- [`describe_draws()`](https://openpharma.github.io/rbmiUtils/reference/describe_draws.md)
+  : Describe an rbmi Draws Object
+- [`describe_imputation()`](https://openpharma.github.io/rbmiUtils/reference/describe_imputation.md)
+  : Describe an rbmi Imputation Object
+
 ## Formatting
 
 Format values for publication
@@ -85,6 +94,10 @@ S3 methods for inspecting rbmiUtils objects
 
 - [`print(`*`<analysis>`*`)`](https://openpharma.github.io/rbmiUtils/reference/print.analysis.md)
   : Print Method for Analysis Objects
+- [`print(`*`<describe_draws>`*`)`](https://openpharma.github.io/rbmiUtils/reference/print.describe_draws.md)
+  : Print Method for describe_draws Objects
+- [`print(`*`<describe_imputation>`*`)`](https://openpharma.github.io/rbmiUtils/reference/print.describe_imputation.md)
+  : Print Method for describe_imputation Objects
 - [`print(`*`<pool>`*`)`](https://openpharma.github.io/rbmiUtils/reference/print.pool.md)
   : Print Method for Pool Objects
 - [`summary(`*`<analysis>`*`)`](https://openpharma.github.io/rbmiUtils/reference/summary.analysis.md)

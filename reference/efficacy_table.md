@@ -17,6 +17,9 @@ efficacy_table(
   arm_labels = NULL,
   pval_digits = 3,
   pval_threshold = 0.001,
+  font_family = NULL,
+  font_size = NULL,
+  row_padding = NULL,
   ...
 )
 ```
@@ -64,6 +67,24 @@ efficacy_table(
   Numeric. P-values below this threshold are displayed as "\<
   threshold". Default is 0.001.
 
+- font_family:
+
+  Optional character string specifying the font family for the table.
+  When `NULL` (default), uses gt's default font. Applied via
+  [`gt::opt_table_font()`](https://gt.rstudio.com/reference/opt_table_font.html).
+
+- font_size:
+
+  Optional numeric value specifying the table font size in pixels. When
+  `NULL` (default), uses gt's default size. Applied via
+  [`gt::tab_options()`](https://gt.rstudio.com/reference/tab_options.html).
+
+- row_padding:
+
+  Optional numeric value specifying the vertical padding for data rows
+  in pixels. When `NULL` (default), uses gt's default padding. Smaller
+  values (e.g., 2-3) create compact regulatory-style tables.
+
 - ...:
 
   Additional arguments passed to
@@ -110,18 +131,125 @@ using standard gt piping, e.g.,
 ``` r
 # \donttest{
 if (requireNamespace("gt", quietly = TRUE)) {
-  # After running an rbmi analysis pipeline:
-  # pool_obj <- rbmi::pool(analysis_obj)
-  # tbl <- efficacy_table(pool_obj)
-  # tbl  # renders in viewer
-  #
-  # With custom labels:
-  # efficacy_table(pool_obj,
-  #   title = "Table 14.2.1",
-  #   subtitle = "ANCOVA of Change from Baseline",
-  #   arm_labels = c(ref = "Placebo", alt = "Drug A")
-  # )
+  library(rbmi)
+  data("ADMI", package = "rbmiUtils")
+  ADMI$TRT <- factor(ADMI$TRT, levels = c("Placebo", "Drug A"))
+  ADMI$USUBJID <- factor(ADMI$USUBJID)
+  ADMI$AVISIT <- factor(ADMI$AVISIT)
+
+  vars <- set_vars(
+    subjid = "USUBJID", visit = "AVISIT", group = "TRT",
+    outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
+  )
+  method <- method_bayes(
+    n_samples = 20,
+    control = control_bayes(warmup = 20, thin = 1)
+  )
+
+  ana_obj <- analyse_mi_data(ADMI, vars, method, fun = ancova)
+  pool_obj <- pool(ana_obj)
+
+  # Basic table
+  tbl <- efficacy_table(pool_obj)
+
+  # Publication-styled table
+  efficacy_table(
+    pool_obj,
+    title = "Table 14.2.1: ANCOVA of Change from Baseline",
+    subtitle = "Mixed Model for Repeated Measures",
+    arm_labels = c(ref = "Placebo", alt = "Drug A"),
+    font_size = 12,
+    row_padding = 4
+  )
 }
-#> NULL
-# }
+#> Warning: Data contains 100 imputations but method expects 20. Using first 20
+#> imputations.
+
+
+  
+
+
+Table 14.2.1: ANCOVA of Change from Baseline
 ```
+
+Mixed Model for Repeated Measures
+
+Estimate
+
+Std. Error
+
+95% CI
+
+P-value
+
+Week 24
+
+LS Mean (Placebo)
+
+0.09
+
+0.13
+
+(-0.17, 0.34)
+
+0.514
+
+LS Mean (Drug A)
+
+−2.10
+
+0.13
+
+(-2.34, -1.85)
+
+\< 0.001
+
+Treatment Difference
+
+−2.18
+
+0.18
+
+(-2.54, -1.82)
+
+\< 0.001
+
+Week 48
+
+LS Mean (Placebo)
+
+0.04
+
+0.19
+
+(-0.33, 0.40)
+
+0.846
+
+LS Mean (Drug A)
+
+−3.76
+
+0.18
+
+(-4.11, -3.41)
+
+\< 0.001
+
+Treatment Difference
+
+−3.79
+
+0.26
+
+(-4.30, -3.29)
+
+\< 0.001
+
+Pooling method: rubin
+
+Number of imputations: 20
+
+Confidence level: 95%
+
+\# }
