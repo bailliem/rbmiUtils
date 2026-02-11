@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-10)
 ## Current Position
 
 Phase: 11 of 11 (Documentation Overhaul)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-11 -- Completed 11-01-PLAN.md (README, pkgdown, NEWS, version bump)
+Last activity: 2026-02-11 -- Completed 11-02-PLAN.md (function @examples upgrade)
 
-Progress: [#######################..] 23/25 plans (1 of 3 phase 11 plans complete)
+Progress: [########################.] 24/25 plans (2 of 3 phase 11 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23 (9 v1 + 7 v2 + 2 v3 + 2 v4 + 2 v5 + 1 v6)
+- Total plans completed: 24 (9 v1 + 7 v2 + 2 v3 + 2 v4 + 2 v5 + 2 v6)
 - Average duration: ~25 min (v1), ~7 min (v2), ~10 min (v3), ~7 min (v4), ~7 min (v5), ~2 min (v6)
-- Total execution time: ~4.5 hours (v1) + ~52 min (v2) + ~19 min (v3) + ~14 min (v4) + ~13 min (v5) + ~2 min (v6)
+- Total execution time: ~4.5 hours (v1) + ~52 min (v2) + ~19 min (v3) + ~14 min (v4) + ~13 min (v5) + ~4 min (v6)
 
 **By Phase:**
 
@@ -37,7 +37,7 @@ Progress: [#######################..] 23/25 plans (1 of 3 phase 11 plans complet
 | 8 | 2/2 | ~19 min | ~10 min |
 | 9 | 2/2 | ~14 min | ~7 min |
 | 10 | 2/2 | ~13 min | ~7 min |
-| 11 | 1/3 | ~2 min | ~2 min |
+| 11 | 2/3 | ~4 min | ~2 min |
 
 ## Accumulated Context
 
@@ -74,6 +74,9 @@ All v1/v2 decisions logged in PROJECT.md Key Decisions table.
 **v6 decisions:**
 - 11-01-D1: Quick Start shows complete ADEFF pipeline with all 5 steps, not just post-pool usage
 - 11-01-D2: Introspection section placed between Reporting and Formatting in pkgdown reference
+- 11-02-D1: ADMI examples use \donttest{} (executable but slow); ADEFF examples use \dontrun{} (require MCMC)
+- 11-02-D2: print.* examples use short references to parent function instead of repeating full pipeline
+- 11-02-D3: Example pattern: data() -> factor prep -> set_vars -> method -> analyse/draws -> pool/impute -> function
 
 ### Pending Todos
 
@@ -86,5 +89,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-11T19:45Z
-Stopped at: Completed 11-01-PLAN.md (README, pkgdown, NEWS, version bump)
+Stopped at: Completed 11-02-PLAN.md (function @examples upgrade)
 Resume file: None
