@@ -214,3 +214,170 @@ print.describe_draws <- function(x, ...) {
 
   invisible(x)
 }
+
+
+#' Describe an rbmi Imputation Object
+#'
+#' Extracts structured metadata from an rbmi imputation object, including
+#' method, number of imputations (M), reference arm mappings, subject count,
+#' and a missingness breakdown by visit and treatment arm. Returns an S3 object
+#' with an informative [print()] method.
+#'
+#' @param impute_obj An `imputation` object returned by [rbmi::impute()].
+#'
+#' @return An S3 object of class `c("describe_imputation", "list")` containing:
+#' \describe{
+#'   \item{method}{Human-readable method name (e.g., "Bayesian (MCMC via Stan)")}
+#'   \item{method_class}{Raw class name: "bayes", "approxbayes", or "condmean"}
+#'   \item{n_imputations}{Number of imputations (M)}
+#'   \item{references}{Named character vector of reference arm mappings, or NULL}
+#'   \item{n_subjects}{Total number of unique subjects}
+#'   \item{visits}{Character vector of visit names}
+#'   \item{missingness}{A data.frame with columns: visit, group, n_total,
+#'     n_miss, pct_miss}
+#' }
+#'
+#' @details
+#' The missingness table is built by cross-tabulating
+#' `impute_obj$data$is_missing` by visit and treatment group. Each row shows
+#' the total number of subjects in that group, how many had missing data at
+#' that visit, and the percentage missing.
+#'
+#' @seealso
+#' * [rbmi::impute()] to create imputation objects
+#' * [describe_draws()] for inspecting draws objects
+#'
+#' @examples
+#' \dontrun{
+#' library(rbmi)
+#' impute_obj <- impute(draws_obj, references)
+#' desc <- describe_imputation(impute_obj)
+#' print(desc)
+#'
+#' # Programmatic access
+#' desc$n_imputations
+#' desc$missingness
+#' desc$references
+#' }
+#'
+#' @export
+describe_imputation <- function(impute_obj) {
+  # Input validation
+  if (!inherits(impute_obj, "imputation")) {
+    cli::cli_abort(
+      "{.arg impute_obj} must be an {.cls imputation} object from {.fn rbmi::impute}.",
+      class = c("rbmiUtils_error_type", "rbmiUtils_error")
+    )
+  }
+
+  # Extract method info
+  method_class <- class(impute_obj$method)[2]
+
+  # Determine human-readable method name (same mapping as describe_draws)
+  method_name <- switch(
+    method_class,
+    "bayes" = "Bayesian (MCMC via Stan)",
+    "approxbayes" = "Approximate Bayesian",
+    "condmean" = {
+      condmean_type <- impute_obj$method$type %||% "unknown"
+      paste0("Conditional Mean (", condmean_type, ")")
+    },
+    "Unknown"
+  )
+
+  # Extract data from longdata R6 object
+  visits <- impute_obj$data$visits
+  ids <- impute_obj$data$ids
+  groups_list <- impute_obj$data$group
+  is_missing_list <- impute_obj$data$is_missing
+
+  # Build group vector
+  grp_vec <- vapply(ids, function(id) as.character(groups_list[[id]]), character(1))
+
+  # Build missingness matrix
+  miss_mat <- matrix(
+    unlist(is_missing_list[ids]),
+    ncol = length(visits),
+    byrow = TRUE
+  )
+  colnames(miss_mat) <- visits
+  rownames(miss_mat) <- ids
+
+  # Aggregate by visit x group
+  unique_groups <- unique(grp_vec)
+  missingness <- expand.grid(
+    visit = visits,
+    group = unique_groups,
+    stringsAsFactors = FALSE
+  )
+  missingness$n_total <- NA_integer_
+  missingness$n_miss <- NA_integer_
+  for (i in seq_len(nrow(missingness))) {
+    subjs <- names(grp_vec[grp_vec == missingness$group[i]])
+    missingness$n_total[i] <- length(subjs)
+    missingness$n_miss[i] <- sum(miss_mat[subjs, missingness$visit[i]])
+  }
+  missingness$pct_miss <- round(100 * missingness$n_miss / missingness$n_total, 1)
+
+  info <- list(
+    method = method_name,
+    method_class = method_class,
+    n_imputations = length(impute_obj$imputations),
+    references = impute_obj$references,
+    n_subjects = length(ids),
+    visits = visits,
+    missingness = missingness
+  )
+
+  structure(info, class = c("describe_imputation", "list"))
+}
+
+
+#' Print Method for describe_imputation Objects
+#'
+#' Displays a formatted summary of an imputation description using cli
+#' formatting, including method, number of imputations, reference arm
+#' mappings, and a missingness breakdown by visit and treatment arm.
+#'
+#' @param x A `describe_imputation` object from [describe_imputation()].
+#' @param ... Additional arguments (currently unused).
+#'
+#' @return Invisibly returns `x` (for pipe chaining).
+#'
+#' @examples
+#' \dontrun{
+#' desc <- describe_imputation(impute_obj)
+#' print(desc)
+#' }
+#'
+#' @export
+print.describe_imputation <- function(x, ...) {
+  cli::cli_h1("Imputation Summary")
+  cli::cli_text("{.field Method}: {x$method}")
+
+  m <- x$n_imputations
+  cli::cli_text("{.field Imputations (M)}: {m}")
+
+  n_subj <- x$n_subjects
+  cli::cli_text("{.field Subjects}: {n_subj}")
+
+  cli::cli_rule()
+
+  # References section
+  cli::cli_h2("References")
+  if (is.null(x$references) || length(x$references) == 0) {
+    cli::cli_text("No explicit references")
+  } else {
+    ref_arms <- names(x$references)
+    for (arm in ref_arms) {
+      ref <- x$references[[arm]]
+      cli::cli_text("{arm} -> {ref}")
+    }
+  }
+
+  # Missingness section
+  cli::cli_h2("Missingness by Visit and Arm")
+  print(x$missingness, row.names = FALSE)
+
+  invisible(x)
+}

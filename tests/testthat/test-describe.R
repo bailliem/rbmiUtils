@@ -419,7 +419,12 @@ make_mock_impute <- function(n_subjects = 6,
                              n_imputations = 10,
                              condmean_type = "jackknife") {
 
-  ids <- paste0("SUBJ", seq_len(n_subjects))
+  # Derive IDs from custom groups if provided, otherwise generate defaults
+  if (!is.null(groups)) {
+    ids <- names(groups)
+  } else {
+    ids <- paste0("SUBJ", seq_len(n_subjects))
+  }
 
   # Default groups: split evenly across two arms
   if (is.null(groups)) {
@@ -429,7 +434,6 @@ make_mock_impute <- function(n_subjects = 6,
   }
 
   # Default missing_pattern: no missing data
-
   if (is.null(missing_pattern)) {
     missing_pattern <- lapply(ids, function(id) {
       stats::setNames(rep(FALSE, length(visits)), visits)
