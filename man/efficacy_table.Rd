@@ -13,6 +13,9 @@ efficacy_table(
   arm_labels = NULL,
   pval_digits = 3,
   pval_threshold = 0.001,
+  font_family = NULL,
+  font_size = NULL,
+  row_padding = NULL,
   ...
 )
 }
@@ -40,6 +43,18 @@ is 3.}
 
 \item{pval_threshold}{Numeric. P-values below this threshold are displayed
 as "< threshold". Default is 0.001.}
+
+\item{font_family}{Optional character string specifying the font family for
+the table. When \code{NULL} (default), uses gt's default font. Applied via
+\code{\link[gt:opt_table_font]{gt::opt_table_font()}}.}
+
+\item{font_size}{Optional numeric value specifying the table font size in
+pixels. When \code{NULL} (default), uses gt's default size. Applied via
+\code{\link[gt:tab_options]{gt::tab_options()}}.}
+
+\item{row_padding}{Optional numeric value specifying the vertical padding
+for data rows in pixels. When \code{NULL} (default), uses gt's default padding.
+Smaller values (e.g., 2-3) create compact regulatory-style tables.}
 
 \item{...}{Additional arguments passed to \code{\link[gt:gt]{gt::gt()}}.}
 }

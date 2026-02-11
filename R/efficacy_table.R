@@ -21,6 +21,15 @@
 #'   is 3.
 #' @param pval_threshold Numeric. P-values below this threshold are displayed
 #'   as "< threshold". Default is 0.001.
+#' @param font_family Optional character string specifying the font family for
+#'   the table. When `NULL` (default), uses gt's default font. Applied via
+#'   [gt::opt_table_font()].
+#' @param font_size Optional numeric value specifying the table font size in
+#'   pixels. When `NULL` (default), uses gt's default size. Applied via
+#'   [gt::tab_options()].
+#' @param row_padding Optional numeric value specifying the vertical padding
+#'   for data rows in pixels. When `NULL` (default), uses gt's default padding.
+#'   Smaller values (e.g., 2-3) create compact regulatory-style tables.
 #' @param ... Additional arguments passed to [gt::gt()].
 #'
 #' @return A gt table object of class `gt_tbl`.
@@ -73,6 +82,9 @@ efficacy_table <- function(
     arm_labels = NULL,
     pval_digits = 3,
     pval_threshold = 0.001,
+    font_family = NULL,
+    font_size = NULL,
+    row_padding = NULL,
     ...
 ) {
 
@@ -224,6 +236,17 @@ efficacy_table <- function(
   tbl <- gt::tab_source_note(tbl, paste("Pooling method:", method))
   tbl <- gt::tab_source_note(tbl, paste("Number of imputations:", n_imputations))
   tbl <- gt::tab_source_note(tbl, paste0("Confidence level: ", ci_level * 100, "%"))
+
+  # --- Publication styling (optional) ---
+  if (!is.null(font_family)) {
+    tbl <- gt::opt_table_font(tbl, font = font_family)
+  }
+  if (!is.null(font_size)) {
+    tbl <- gt::tab_options(tbl, table.font.size = gt::px(font_size))
+  }
+  if (!is.null(row_padding)) {
+    tbl <- gt::tab_options(tbl, data_row.padding = gt::px(row_padding))
+  }
 
   tbl
 }
