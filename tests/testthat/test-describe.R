@@ -389,3 +389,382 @@ test_that("describe_draws captures same_cov correctly", {
   desc2 <- describe_draws(draws_obj2)
   expect_false(desc2$same_cov)
 })
+
+
+# ###########################################################################
+# ###########################################################################
+# describe_imputation() tests
+# ###########################################################################
+# ###########################################################################
+
+# ---------------------------------------------------------------------------
+# Mock imputation object helper
+# ---------------------------------------------------------------------------
+
+#' Create a mock imputation object for testing describe_imputation
+#' @param n_subjects Number of subjects
+#' @param visits Character vector of visit names
+#' @param groups Named list mapping subject IDs to group labels
+#' @param missing_pattern Named list mapping subject IDs to logical vectors (by visit)
+#' @param method_class Class name for the method ("bayes", "approxbayes", "condmean")
+#' @param references Named character vector of reference arm mappings (or NULL)
+#' @param n_imputations Number of imputations (M)
+#' @param condmean_type "jackknife" or "bootstrap" (only for condmean)
+make_mock_impute <- function(n_subjects = 6,
+                             visits = c("Visit 1", "Visit 2", "Visit 3"),
+                             groups = NULL,
+                             missing_pattern = NULL,
+                             method_class = "condmean",
+                             references = c("TRT" = "PBO", "PBO" = "PBO"),
+                             n_imputations = 10,
+                             condmean_type = "jackknife") {
+
+  ids <- paste0("SUBJ", seq_len(n_subjects))
+
+  # Default groups: split evenly across two arms
+  if (is.null(groups)) {
+    half <- n_subjects %/% 2
+    groups <- as.list(c(rep("TRT", half), rep("PBO", n_subjects - half)))
+    names(groups) <- ids
+  }
+
+  # Default missing_pattern: no missing data
+
+  if (is.null(missing_pattern)) {
+    missing_pattern <- lapply(ids, function(id) {
+      stats::setNames(rep(FALSE, length(visits)), visits)
+    })
+    names(missing_pattern) <- ids
+  }
+
+  # Build mock longdata as environment
+  mock_longdata <- new.env(parent = emptyenv())
+  mock_longdata$visits <- visits
+  mock_longdata$ids <- ids
+  mock_longdata$is_missing <- missing_pattern
+  mock_longdata$group <- groups
+
+  # Build method with correct class hierarchy
+  method <- switch(
+    method_class,
+    "condmean" = structure(
+      list(covariance = "us", same_cov = TRUE, type = condmean_type),
+      class = c("method", "condmean")
+    ),
+    "bayes" = structure(
+      list(covariance = "us", same_cov = FALSE),
+      class = c("method", "bayes")
+    ),
+    "approxbayes" = structure(
+      list(covariance = "us", same_cov = TRUE),
+      class = c("method", "approxbayes")
+    )
+  )
+
+  # Build imputations list (contents don't matter, just length)
+  imputations <- vector("list", n_imputations)
+
+  structure(
+    list(
+      data = mock_longdata,
+      method = method,
+      imputations = imputations,
+      references = references
+    ),
+    class = c("imputation", "list")
+  )
+}
+
+
+# ===========================================================================
+# Test: Input validation for describe_imputation
+# ===========================================================================
+
+test_that("describe_imputation rejects non-imputation objects", {
+  expect_error(
+    describe_imputation(list(a = 1)),
+    class = "rbmiUtils_error_type"
+  )
+
+  expect_error(
+    describe_imputation("not an imputation"),
+    class = "rbmiUtils_error_type"
+  )
+
+  expect_error(
+    describe_imputation(NULL),
+    class = "rbmiUtils_error_type"
+  )
+})
+
+
+# ===========================================================================
+# Test: S3 class of result
+# ===========================================================================
+
+test_that("describe_imputation returns S3 class c('describe_imputation', 'list')", {
+  imp_obj <- make_mock_impute()
+  desc <- describe_imputation(imp_obj)
+
+  expect_s3_class(desc, "describe_imputation")
+  expect_true(inherits(desc, "list"))
+  expect_equal(class(desc), c("describe_imputation", "list"))
+})
+
+
+# ===========================================================================
+# Test: Method name mapping
+# ===========================================================================
+
+test_that("describe_imputation maps method class to human-readable name", {
+  # condmean jackknife
+  imp1 <- make_mock_impute(method_class = "condmean", condmean_type = "jackknife")
+  desc1 <- describe_imputation(imp1)
+  expect_equal(desc1$method, "Conditional Mean (jackknife)")
+  expect_equal(desc1$method_class, "condmean")
+
+  # condmean bootstrap
+  imp2 <- make_mock_impute(method_class = "condmean", condmean_type = "bootstrap")
+  desc2 <- describe_imputation(imp2)
+  expect_equal(desc2$method, "Conditional Mean (bootstrap)")
+
+  # bayes
+  imp3 <- make_mock_impute(method_class = "bayes")
+  desc3 <- describe_imputation(imp3)
+  expect_equal(desc3$method, "Bayesian (MCMC via Stan)")
+  expect_equal(desc3$method_class, "bayes")
+
+  # approxbayes
+  imp4 <- make_mock_impute(method_class = "approxbayes")
+  desc4 <- describe_imputation(imp4)
+  expect_equal(desc4$method, "Approximate Bayesian")
+  expect_equal(desc4$method_class, "approxbayes")
+})
+
+
+# ===========================================================================
+# Test: n_imputations equals length of imputations list
+# ===========================================================================
+
+test_that("describe_imputation n_imputations equals length of imputations list", {
+  imp_obj <- make_mock_impute(n_imputations = 25)
+  desc <- describe_imputation(imp_obj)
+
+  expect_equal(desc$n_imputations, 25)
+})
+
+
+# ===========================================================================
+# Test: n_subjects is correct
+# ===========================================================================
+
+test_that("describe_imputation counts subjects correctly", {
+  imp_obj <- make_mock_impute(n_subjects = 8)
+  desc <- describe_imputation(imp_obj)
+
+  expect_equal(desc$n_subjects, 8)
+})
+
+
+# ===========================================================================
+# Test: visits extracted correctly
+# ===========================================================================
+
+test_that("describe_imputation extracts visits", {
+  visits <- c("Baseline", "Week 4", "Week 8", "Week 12")
+  imp_obj <- make_mock_impute(visits = visits)
+  desc <- describe_imputation(imp_obj)
+
+  expect_equal(desc$visits, visits)
+})
+
+
+# ===========================================================================
+# Test: references extracted from impute_obj
+# ===========================================================================
+
+test_that("describe_imputation extracts references", {
+  refs <- c("TRT" = "PBO", "PBO" = "PBO")
+  imp_obj <- make_mock_impute(references = refs)
+  desc <- describe_imputation(imp_obj)
+
+  expect_equal(desc$references, refs)
+})
+
+
+test_that("describe_imputation handles NULL references gracefully", {
+  imp_obj <- make_mock_impute(references = NULL)
+  desc <- describe_imputation(imp_obj)
+
+  expect_null(desc$references)
+})
+
+
+# ===========================================================================
+# Test: Missingness structure has required columns
+# ===========================================================================
+
+test_that("describe_imputation missingness has required columns", {
+  imp_obj <- make_mock_impute()
+  desc <- describe_imputation(imp_obj)
+
+  expect_s3_class(desc$missingness, "data.frame")
+  expect_true(all(c("visit", "group", "n_total", "n_miss", "pct_miss") %in%
+    names(desc$missingness)))
+})
+
+
+# ===========================================================================
+# Test: Missingness values are correct for known mock data
+# ===========================================================================
+
+test_that("describe_imputation computes missingness correctly", {
+  ids <- c("S1", "S2", "S3", "S4")
+  visits <- c("V1", "V2")
+  groups <- list(S1 = "TRT", S2 = "TRT", S3 = "PBO", S4 = "PBO")
+
+  # S1: V1 observed, V2 missing
+  # S2: V1 observed, V2 observed
+  # S3: V1 missing, V2 missing
+  # S4: V1 observed, V2 observed
+  missing_pattern <- list(
+    S1 = c(V1 = FALSE, V2 = TRUE),
+    S2 = c(V1 = FALSE, V2 = FALSE),
+    S3 = c(V1 = TRUE, V2 = TRUE),
+    S4 = c(V1 = FALSE, V2 = FALSE)
+  )
+
+  imp_obj <- make_mock_impute(
+    n_subjects = 4,
+    visits = visits,
+    groups = groups,
+    missing_pattern = missing_pattern
+  )
+  desc <- describe_imputation(imp_obj)
+
+  miss <- desc$missingness
+
+  # TRT group: S1, S2 (n_total = 2)
+  # V1: 0 missing, V2: 1 missing (S1)
+  trt_v1 <- miss[miss$visit == "V1" & miss$group == "TRT", ]
+  expect_equal(trt_v1$n_total, 2)
+  expect_equal(trt_v1$n_miss, 0)
+  expect_equal(trt_v1$pct_miss, 0.0)
+
+  trt_v2 <- miss[miss$visit == "V2" & miss$group == "TRT", ]
+  expect_equal(trt_v2$n_total, 2)
+  expect_equal(trt_v2$n_miss, 1)
+  expect_equal(trt_v2$pct_miss, 50.0)
+
+  # PBO group: S3, S4 (n_total = 2)
+  # V1: 1 missing (S3), V2: 1 missing (S3)
+  pbo_v1 <- miss[miss$visit == "V1" & miss$group == "PBO", ]
+  expect_equal(pbo_v1$n_total, 2)
+  expect_equal(pbo_v1$n_miss, 1)
+  expect_equal(pbo_v1$pct_miss, 50.0)
+
+  pbo_v2 <- miss[miss$visit == "V2" & miss$group == "PBO", ]
+  expect_equal(pbo_v2$n_total, 2)
+  expect_equal(pbo_v2$n_miss, 1)
+  expect_equal(pbo_v2$pct_miss, 50.0)
+})
+
+
+# ===========================================================================
+# Test: No missing data edge case
+# ===========================================================================
+
+test_that("describe_imputation handles no missing data", {
+  imp_obj <- make_mock_impute(n_subjects = 4)
+  desc <- describe_imputation(imp_obj)
+
+  expect_true(all(desc$missingness$n_miss == 0))
+  expect_true(all(desc$missingness$pct_miss == 0.0))
+})
+
+
+# ===========================================================================
+# Test: Single visit edge case
+# ===========================================================================
+
+test_that("describe_imputation handles single visit", {
+  imp_obj <- make_mock_impute(visits = c("Week 1"), n_subjects = 4)
+  desc <- describe_imputation(imp_obj)
+
+  # Should have one row per group
+  expect_equal(nrow(desc$missingness), 2)
+  expect_equal(unique(desc$missingness$visit), "Week 1")
+})
+
+
+# ===========================================================================
+# Test: Single group edge case
+# ===========================================================================
+
+test_that("describe_imputation handles single group", {
+  ids <- c("S1", "S2", "S3")
+  groups <- list(S1 = "TRT", S2 = "TRT", S3 = "TRT")
+  visits <- c("V1", "V2")
+  missing_pattern <- list(
+    S1 = c(V1 = FALSE, V2 = FALSE),
+    S2 = c(V1 = FALSE, V2 = TRUE),
+    S3 = c(V1 = FALSE, V2 = FALSE)
+  )
+
+  imp_obj <- make_mock_impute(
+    n_subjects = 3,
+    visits = visits,
+    groups = groups,
+    missing_pattern = missing_pattern
+  )
+  desc <- describe_imputation(imp_obj)
+
+  # Should have one row per visit (only 1 group)
+  expect_equal(nrow(desc$missingness), 2)
+  expect_equal(unique(desc$missingness$group), "TRT")
+})
+
+
+# ===========================================================================
+# Test: print method returns invisible(x) and produces output
+# ===========================================================================
+
+test_that("print.describe_imputation returns invisible(x) and produces output", {
+  imp_obj <- make_mock_impute()
+  desc <- describe_imputation(imp_obj)
+
+  out <- capture.output(result <- print(desc), type = "message")
+
+  expect_identical(result, desc)
+  expect_true(length(out) > 0)
+})
+
+
+# ===========================================================================
+# Test: print method shows key content
+# ===========================================================================
+
+test_that("print.describe_imputation shows method and references", {
+  refs <- c("TRT" = "PBO", "PBO" = "PBO")
+  imp_obj <- make_mock_impute(references = refs)
+  desc <- describe_imputation(imp_obj)
+
+  out <- paste(capture.output(print(desc), type = "message"), collapse = "\n")
+
+  expect_match(out, "Imputation Summary", ignore.case = TRUE)
+  expect_match(out, "Conditional Mean", ignore.case = TRUE)
+  expect_match(out, "TRT", ignore.case = FALSE)
+  expect_match(out, "PBO", ignore.case = FALSE)
+})
+
+
+test_that("print.describe_imputation handles NULL references", {
+  imp_obj <- make_mock_impute(references = NULL)
+  desc <- describe_imputation(imp_obj)
+
+  out <- paste(capture.output(print(desc), type = "message"), collapse = "\n")
+
+  # Should show "No explicit references" or similar
+
+  expect_match(out, "No explicit references|No references", ignore.case = TRUE)
+})
