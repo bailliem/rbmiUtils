@@ -93,11 +93,12 @@ Plans:
   3. Vignettes cover MI diagnostics from pool_to_ard() and the describe_draws()/describe_imputation() helpers with worked examples
   4. Pre-rendered images for README and help pages reflect the v3 styling improvements
   5. NEWS.md contains v0.3.0 entries documenting all v3 additions
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 11-01: TBD
-- [ ] 11-02: TBD
+- [ ] 11-01-PLAN.md -- README overhaul, _pkgdown.yml updates, NEWS.md v0.3.0, DESCRIPTION version bump
+- [ ] 11-02-PLAN.md -- Function @examples upgrade for pool_to_ard, efficacy_table, plot_forest, describe_*
+- [ ] 11-03-PLAN.md -- Diagnostics vignette, image regeneration, and final verification
 
 ## Progress
 
@@ -116,8 +117,8 @@ Phases 8-11 execute sequentially. Phases 8, 9, and 10 have no mutual dependencie
 | 8. MI Diagnostic Statistics | v3 | 2/2 | Complete | 2026-02-10 |
 | 9. Describe Helpers | v3 | 2/2 | Complete | 2026-02-11 |
 | 10. Publication Styling | v3 | 2/2 | Complete | 2026-02-11 |
-| 11. Documentation Overhaul | v3 | 0/TBD | Not started | - |
+| 11. Documentation Overhaul | v3 | 0/3 | Planned | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-11 (Phase 10 complete: publication styling for tables and forest plots)*
+*Last updated: 2026-02-11 (Phase 11 planned: 3 plans in 2 waves)*
