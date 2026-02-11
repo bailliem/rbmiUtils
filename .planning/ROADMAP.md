@@ -77,10 +77,11 @@ Plans:
   2. User can specify font_family parameter in plot_forest() and get consistent typography across all three panels
   3. User can control panel width ratios in plot_forest() via a panel_widths parameter to adjust relative sizes of table, forest, and p-value panels
   4. Visit labels and estimate text in the forest plot left panel align consistently regardless of label length or font choice
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 10-01: TBD
+- [ ] 10-01-PLAN.md -- Add font_family, font_size, row_padding parameters to efficacy_table()
+- [ ] 10-02-PLAN.md -- Add font_family, panel_widths to plot_forest() and fix left-panel alignment
 
 ### Phase 11: Documentation Overhaul
 **Goal**: All documentation reflects the finalized v3 features with realistic clinical trial examples, updated vignettes, regenerated images, and a versioned changelog
@@ -114,9 +115,9 @@ Phases 8-11 execute sequentially. Phases 8, 9, and 10 have no mutual dependencie
 | 7. Site Polish | v2 | 2/2 | Complete | 2026-02-08 |
 | 8. MI Diagnostic Statistics | v3 | 2/2 | Complete | 2026-02-10 |
 | 9. Describe Helpers | v3 | 2/2 | Complete | 2026-02-11 |
-| 10. Publication Styling | v3 | 0/TBD | Not started | - |
+| 10. Publication Styling | v3 | 0/2 | Not started | - |
 | 11. Documentation Overhaul | v3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-11 (Phase 9 complete: 2/2 plans, verified)*
+*Last updated: 2026-02-11 (Phase 10 planned: 2 plans in 1 wave)*
