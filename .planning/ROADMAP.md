@@ -32,7 +32,7 @@
 **Milestone Goal:** Enrich ARD output with MI-specific diagnostic metadata, add imputation diagnostic helpers, and polish tables, plots, and documentation to publication quality.
 
 - [x] **Phase 8: MI Diagnostic Statistics** -- Enriched ARD with FMI, lambda, variance decomposition, and Rubin's rules metadata -- completed 2026-02-10
-- [ ] **Phase 9: Describe Helpers** -- Standalone diagnostic summaries for draws and imputation objects
+- [x] **Phase 9: Describe Helpers** -- describe_draws() and describe_imputation() with cli-formatted print methods and 98 tests -- completed 2026-02-11
 - [ ] **Phase 10: Publication Styling** -- Font, spacing, and layout controls for tables and forest plots
 - [ ] **Phase 11: Documentation Overhaul** -- README, examples, vignettes, and images reflecting all v3 features
 
@@ -65,8 +65,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 09-01-PLAN.md -- TDD: describe_draws() with MCMC diagnostics and print method
-- [ ] 09-02-PLAN.md -- TDD: describe_imputation() with missingness breakdown and print method
+- [x] 09-01-PLAN.md -- TDD: describe_draws() with MCMC diagnostics and print method
+- [x] 09-02-PLAN.md -- TDD: describe_imputation() with missingness breakdown and print method
 
 ### Phase 10: Publication Styling
 **Goal**: Users can produce publication-quality tables and forest plots with controlled typography, spacing, and layout without post-hoc manual adjustments
@@ -113,10 +113,10 @@ Phases 8-11 execute sequentially. Phases 8, 9, and 10 have no mutual dependencie
 | 6. Documentation | v2 | 3/3 | Complete | 2026-02-08 |
 | 7. Site Polish | v2 | 2/2 | Complete | 2026-02-08 |
 | 8. MI Diagnostic Statistics | v3 | 2/2 | Complete | 2026-02-10 |
-| 9. Describe Helpers | v3 | 0/2 | Planned | - |
+| 9. Describe Helpers | v3 | 2/2 | Complete | 2026-02-11 |
 | 10. Publication Styling | v3 | 0/TBD | Not started | - |
 | 11. Documentation Overhaul | v3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-10 (Phase 8 complete: 2/2 plans, verified)*
+*Last updated: 2026-02-11 (Phase 9 complete: 2/2 plans, verified)*
