@@ -12,7 +12,10 @@ plot_forest(
   arm_labels = NULL,
   title = NULL,
   text_size = 3,
-  point_size = 3
+  point_size = 3,
+  show_pvalues = TRUE,
+  font_family = NULL,
+  panel_widths = NULL
 )
 }
 \arguments{
@@ -42,6 +45,21 @@ providing custom labels for the reference and treatment arms when
 Default is 3.}
 
 \item{point_size}{Numeric. Point size for the forest plot. Default is 3.}
+
+\item{show_pvalues}{Logical. Whether to display the p-value panel on the
+right side of the plot. Default is \code{TRUE}. Set to \code{FALSE} for a cleaner
+two-panel layout without p-values.}
+
+\item{font_family}{Optional character string specifying the font family for
+all text in the plot. When \code{NULL} (default), uses ggplot2's default font
+(typically sans-serif). Applied to all \code{geom_text} layers and the forest
+panel theme.}
+
+\item{panel_widths}{Optional numeric vector controlling the relative widths
+of the plot panels. When \code{show_pvalues = TRUE}, must be length 3 (table,
+forest, p-value panels). When \code{show_pvalues = FALSE}, must be length 2
+(table, forest panels). When \code{NULL} (default), uses \code{c(3, 4, 1.5)} for
+3-panel and \code{c(3, 5)} for 2-panel layouts.}
 }
 \value{
 A patchwork/ggplot object that can be further customized using

@@ -27,6 +27,15 @@
 #' @param show_pvalues Logical. Whether to display the p-value panel on the
 #'   right side of the plot. Default is `TRUE`. Set to `FALSE` for a cleaner
 #'   two-panel layout without p-values.
+#' @param font_family Optional character string specifying the font family for
+#'   all text in the plot. When `NULL` (default), uses ggplot2's default font
+#'   (typically sans-serif). Applied to all `geom_text` layers and the forest
+#'   panel theme.
+#' @param panel_widths Optional numeric vector controlling the relative widths
+#'   of the plot panels. When `show_pvalues = TRUE`, must be length 3 (table,
+#'   forest, p-value panels). When `show_pvalues = FALSE`, must be length 2
+#'   (table, forest panels). When `NULL` (default), uses `c(3, 4, 1.5)` for
+#'   3-panel and `c(3, 5)` for 2-panel layouts.
 #'
 #' @return A patchwork/ggplot object that can be further customized using
 #'   `& theme()` to modify all panels simultaneously.
@@ -94,7 +103,9 @@ plot_forest <- function(
     title = NULL,
     text_size = 3,
     point_size = 3,
-    show_pvalues = TRUE
+    show_pvalues = TRUE,
+    font_family = NULL,
+    panel_widths = NULL
 ) {
 
   # --- Dependency checks ---
@@ -127,6 +138,9 @@ plot_forest <- function(
   }
 
   display <- match.arg(display)
+
+  # Resolve font family for geom_text (empty string = ggplot2 default sans)
+  geom_family <- font_family %||% ""
 
   # --- Metadata extraction ---
   if (is.null(ci_level)) {
@@ -178,6 +192,24 @@ plot_forest <- function(
     format_pvalue(plot_data$pval)
   )
 
+  # --- Panel width validation ---
+  if (is.null(panel_widths)) {
+    panel_widths <- if (show_pvalues) c(3, 4, 1.5) else c(3, 5)
+  }
+  expected_n <- if (show_pvalues) 3L else 2L
+  if (!is.numeric(panel_widths) || length(panel_widths) != expected_n) {
+    cli::cli_abort(
+      c("{.arg panel_widths} must be a numeric vector of length {expected_n}.",
+        "i" = "Got length {length(panel_widths)}.",
+        "i" = if (show_pvalues) {
+          "Three widths needed: table panel, forest panel, p-value panel."
+        } else {
+          "Two widths needed: table panel, forest panel."
+        }),
+      class = c("rbmiUtils_error_validation", "rbmiUtils_error")
+    )
+  }
+
   # --- LSM arm labels ---
   if (display == "lsm") {
     ref_label <- if (!is.null(arm_labels) && "ref" %in% names(arm_labels)) {
@@ -213,13 +245,15 @@ plot_forest <- function(
     ) +
       ggplot2::geom_text(
         ggplot2::aes(x = 0, label = .data$visit_label),
-        hjust = 1, size = text_size, fontface = "bold"
+        hjust = 0, size = text_size, fontface = "bold",
+        family = geom_family
       ) +
       ggplot2::geom_text(
         ggplot2::aes(x = 1, label = .data$est_ci_label),
-        hjust = 1, size = text_size
+        hjust = 0, size = text_size,
+        family = geom_family
       ) +
-      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.3, 0.05))) +
+      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.05, 0.3))) +
       ggplot2::scale_y_discrete(limits = rev) +
       ggplot2::coord_cartesian(clip = "off") +
       ggplot2::theme_void() +
@@ -244,13 +278,15 @@ plot_forest <- function(
     ) +
       ggplot2::geom_text(
         ggplot2::aes(x = 0, label = .data$row_label),
-        hjust = 1, size = text_size
+        hjust = 0, size = text_size,
+        family = geom_family
       ) +
       ggplot2::geom_text(
         ggplot2::aes(x = 1, label = .data$est_ci_label),
-        hjust = 1, size = text_size
+        hjust = 0, size = text_size,
+        family = geom_family
       ) +
-      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.3, 0.05))) +
+      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.05, 0.3))) +
       ggplot2::scale_y_discrete(limits = rev) +
       ggplot2::coord_cartesian(clip = "off") +
       ggplot2::theme_void() +
@@ -288,7 +324,7 @@ plot_forest <- function(
 
     p_mid <- p_mid +
       ggplot2::labs(x = "Treatment Difference") +
-      theme_forest()
+      theme_forest(base_family = geom_family)
 
   } else {
     # LSM mode with position_dodge
@@ -321,7 +357,7 @@ plot_forest <- function(
 
     p_mid <- p_mid +
       ggplot2::labs(x = "LS Mean Estimate") +
-      theme_forest()
+      theme_forest(base_family = geom_family)
   }
 
   # --- Build right panel (p-values) ---
@@ -332,7 +368,8 @@ plot_forest <- function(
     ) +
       ggplot2::geom_text(
         ggplot2::aes(x = 0, label = .data$pval_label),
-        hjust = 0.5, size = text_size
+        hjust = 0.5, size = text_size,
+        family = geom_family
       ) +
       ggplot2::scale_y_discrete(limits = rev) +
       ggplot2::theme_void() +
@@ -344,7 +381,8 @@ plot_forest <- function(
     ) +
       ggplot2::geom_text(
         ggplot2::aes(x = 0, label = .data$pval_label),
-        hjust = 0.5, size = text_size
+        hjust = 0.5, size = text_size,
+        family = geom_family
       ) +
       ggplot2::scale_y_discrete(limits = rev) +
       ggplot2::theme_void() +
@@ -354,10 +392,10 @@ plot_forest <- function(
   # --- Combine with patchwork ---
   if (show_pvalues) {
     combined <- p_left + p_mid + p_right +
-      patchwork::plot_layout(widths = c(3, 4, 1.5))
+      patchwork::plot_layout(widths = panel_widths)
   } else {
     combined <- p_left + p_mid +
-      patchwork::plot_layout(widths = c(3, 5))
+      patchwork::plot_layout(widths = panel_widths)
   }
 
   if (!is.null(title)) {
@@ -401,12 +439,14 @@ is_patchwork_available <- function() {
 #' minimal gridlines, no y-axis text or title.
 #'
 #' @param base_size Numeric. Base font size. Default is 11.
+#' @param base_family Character. Base font family. Default is `""` (ggplot2
+#'   default sans-serif).
 #'
 #' @return A ggplot2 theme object.
 #' @keywords internal
 #' @noRd
-theme_forest <- function(base_size = 11) {
-  ggplot2::theme_minimal(base_size = base_size) +
+theme_forest <- function(base_size = 11, base_family = "") {
+  ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
       panel.grid.major.y = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
