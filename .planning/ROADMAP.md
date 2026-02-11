@@ -33,7 +33,7 @@
 
 - [x] **Phase 8: MI Diagnostic Statistics** -- Enriched ARD with FMI, lambda, variance decomposition, and Rubin's rules metadata -- completed 2026-02-10
 - [x] **Phase 9: Describe Helpers** -- describe_draws() and describe_imputation() with cli-formatted print methods and 98 tests -- completed 2026-02-11
-- [ ] **Phase 10: Publication Styling** -- Font, spacing, and layout controls for tables and forest plots
+- [x] **Phase 10: Publication Styling** -- Font, spacing, and layout controls for tables and forest plots -- completed 2026-02-11
 - [ ] **Phase 11: Documentation Overhaul** -- README, examples, vignettes, and images reflecting all v3 features
 
 ## Phase Details
@@ -80,8 +80,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 10-01-PLAN.md -- Add font_family, font_size, row_padding parameters to efficacy_table()
-- [ ] 10-02-PLAN.md -- Add font_family, panel_widths to plot_forest() and fix left-panel alignment
+- [x] 10-01-PLAN.md -- Add font_family, font_size, row_padding parameters to efficacy_table()
+- [x] 10-02-PLAN.md -- Add font_family, panel_widths to plot_forest() and fix left-panel alignment
 
 ### Phase 11: Documentation Overhaul
 **Goal**: All documentation reflects the finalized v3 features with realistic clinical trial examples, updated vignettes, regenerated images, and a versioned changelog
@@ -115,9 +115,9 @@ Phases 8-11 execute sequentially. Phases 8, 9, and 10 have no mutual dependencie
 | 7. Site Polish | v2 | 2/2 | Complete | 2026-02-08 |
 | 8. MI Diagnostic Statistics | v3 | 2/2 | Complete | 2026-02-10 |
 | 9. Describe Helpers | v3 | 2/2 | Complete | 2026-02-11 |
-| 10. Publication Styling | v3 | 0/2 | Not started | - |
+| 10. Publication Styling | v3 | 2/2 | Complete | 2026-02-11 |
 | 11. Documentation Overhaul | v3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-08*
-*Last updated: 2026-02-11 (Phase 10 planned: 2 plans in 1 wave)*
+*Last updated: 2026-02-11 (Phase 10 complete: publication styling for tables and forest plots)*
