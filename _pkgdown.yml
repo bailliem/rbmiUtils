@@ -35,6 +35,10 @@ navbar:
           href: articles/data-preparation.html
         - text: "Efficient Storage of Imputed Data"
           href: articles/efficient-storage.html
+        - text: "-------"
+        - text: "Diagnostics"
+        - text: "MI Diagnostics and Describe Helpers"
+          href: articles/diagnostics.html
 
 reference:
   - title: "Data Preparation"
@@ -61,6 +65,11 @@ reference:
     contents:
       - efficacy_table
       - plot_forest
+  - title: "Introspection"
+    desc: "Inspect draws, imputations, and MI diagnostics"
+    contents:
+      - describe_draws
+      - describe_imputation
   - title: "Formatting"
     desc: "Format values for publication"
     contents:
