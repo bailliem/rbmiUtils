@@ -62,19 +62,19 @@ dir.create("man/figures", recursive = TRUE, showWarnings = FALSE)
 
 # --- Forest plot images (via ggsave, no browser required) ---
 
-# 1. README forest plot (compact, no p-values, larger text)
+# 1. README forest plot (full 3-panel with p-values)
 p_forest <- plot_forest(
   pool_obj,
   title = "Treatment Effect: Change from Baseline",
   arm_labels = c(ref = "Placebo", alt = "Drug A"),
-  text_size = 4.5,
+  text_size = 3.5,
   point_size = 4,
-  show_pvalues = FALSE
+  panel_widths = c(5, 4, 1.5)
 )
 ggsave(
   "man/figures/README-forest-plot-1.png",
   plot = p_forest,
-  width = 9, height = 3, dpi = 150
+  width = 11, height = 3, dpi = 150
 )
 message("  man/figures/README-forest-plot-1.png [OK]")
 
@@ -82,7 +82,7 @@ message("  man/figures/README-forest-plot-1.png [OK]")
 ggsave(
   "man/figures/plot_forest-trt.png",
   plot = p_forest,
-  width = 9, height = 3, dpi = 150
+  width = 11, height = 3, dpi = 150
 )
 message("  man/figures/plot_forest-trt.png [OK]")
 
