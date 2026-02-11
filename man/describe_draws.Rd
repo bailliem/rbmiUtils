@@ -45,14 +45,35 @@ uses the Rhat < 1.1 threshold matching rbmi's own convention.
 \examples{
 \dontrun{
 library(rbmi)
-draws_obj <- draws(data, data_ice, vars, method_condmean(type = "jackknife"))
+library(dplyr)
+data("ADEFF", package = "rbmiUtils")
+
+# Prepare ADEFF data for rbmi pipeline
+ADEFF <- ADEFF |>
+  mutate(
+    TRT = factor(TRT01P, levels = c("Placebo", "Drug A")),
+    USUBJID = factor(USUBJID),
+    AVISIT = factor(AVISIT, levels = c("Week 24", "Week 48"))
+  )
+
+vars <- set_vars(
+  subjid = "USUBJID", visit = "AVISIT", group = "TRT",
+  outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
+)
+dat <- ADEFF |> select(USUBJID, STRATA, REGION, TRT, BASE, CHG, AVISIT)
+draws_obj <- draws(
+  data = dat, vars = vars,
+  method = method_bayes(n_samples = 100)
+)
+
+# Inspect the draws object
 desc <- describe_draws(draws_obj)
 print(desc)
 
-# Programmatic access
+# Programmatic access to metadata
 desc$method
 desc$n_samples
-desc$n_failures
+desc$formula
 }
 
 }

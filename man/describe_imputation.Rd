@@ -37,7 +37,31 @@ that visit, and the percentage missing.
 \examples{
 \dontrun{
 library(rbmi)
-impute_obj <- impute(draws_obj, references)
+library(dplyr)
+data("ADEFF", package = "rbmiUtils")
+
+ADEFF <- ADEFF |>
+  mutate(
+    TRT = factor(TRT01P, levels = c("Placebo", "Drug A")),
+    USUBJID = factor(USUBJID),
+    AVISIT = factor(AVISIT, levels = c("Week 24", "Week 48"))
+  )
+
+vars <- set_vars(
+  subjid = "USUBJID", visit = "AVISIT", group = "TRT",
+  outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
+)
+dat <- ADEFF |> select(USUBJID, STRATA, REGION, TRT, BASE, CHG, AVISIT)
+draws_obj <- draws(
+  data = dat, vars = vars,
+  method = method_bayes(n_samples = 100)
+)
+impute_obj <- impute(
+  draws_obj,
+  references = c("Placebo" = "Placebo", "Drug A" = "Placebo")
+)
+
+# Inspect the imputation
 desc <- describe_imputation(impute_obj)
 print(desc)
 

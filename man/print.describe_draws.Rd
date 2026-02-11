@@ -19,8 +19,9 @@ Displays a formatted summary of a draws description using cli formatting.
 }
 \examples{
 \dontrun{
+# After creating draws_obj via the rbmi pipeline (see describe_draws):
 desc <- describe_draws(draws_obj)
-print(desc)
+print(desc)  # Formatted cli output with method, formula, samples, convergence
 }
 
 }

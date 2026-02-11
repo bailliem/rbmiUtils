@@ -41,14 +41,35 @@
 #' @examples
 #' \dontrun{
 #' library(rbmi)
-#' draws_obj <- draws(data, data_ice, vars, method_condmean(type = "jackknife"))
+#' library(dplyr)
+#' data("ADEFF", package = "rbmiUtils")
+#'
+#' # Prepare ADEFF data for rbmi pipeline
+#' ADEFF <- ADEFF |>
+#'   mutate(
+#'     TRT = factor(TRT01P, levels = c("Placebo", "Drug A")),
+#'     USUBJID = factor(USUBJID),
+#'     AVISIT = factor(AVISIT, levels = c("Week 24", "Week 48"))
+#'   )
+#'
+#' vars <- set_vars(
+#'   subjid = "USUBJID", visit = "AVISIT", group = "TRT",
+#'   outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
+#' )
+#' dat <- ADEFF |> select(USUBJID, STRATA, REGION, TRT, BASE, CHG, AVISIT)
+#' draws_obj <- draws(
+#'   data = dat, vars = vars,
+#'   method = method_bayes(n_samples = 100)
+#' )
+#'
+#' # Inspect the draws object
 #' desc <- describe_draws(draws_obj)
 #' print(desc)
 #'
-#' # Programmatic access
+#' # Programmatic access to metadata
 #' desc$method
 #' desc$n_samples
-#' desc$n_failures
+#' desc$formula
 #' }
 #'
 #' @export
@@ -152,8 +173,9 @@ describe_draws <- function(draws_obj) {
 #'
 #' @examples
 #' \dontrun{
+#' # After creating draws_obj via the rbmi pipeline (see describe_draws):
 #' desc <- describe_draws(draws_obj)
-#' print(desc)
+#' print(desc)  # Formatted cli output with method, formula, samples, convergence
 #' }
 #'
 #' @export
@@ -250,7 +272,31 @@ print.describe_draws <- function(x, ...) {
 #' @examples
 #' \dontrun{
 #' library(rbmi)
-#' impute_obj <- impute(draws_obj, references)
+#' library(dplyr)
+#' data("ADEFF", package = "rbmiUtils")
+#'
+#' ADEFF <- ADEFF |>
+#'   mutate(
+#'     TRT = factor(TRT01P, levels = c("Placebo", "Drug A")),
+#'     USUBJID = factor(USUBJID),
+#'     AVISIT = factor(AVISIT, levels = c("Week 24", "Week 48"))
+#'   )
+#'
+#' vars <- set_vars(
+#'   subjid = "USUBJID", visit = "AVISIT", group = "TRT",
+#'   outcome = "CHG", covariates = c("BASE", "STRATA", "REGION")
+#' )
+#' dat <- ADEFF |> select(USUBJID, STRATA, REGION, TRT, BASE, CHG, AVISIT)
+#' draws_obj <- draws(
+#'   data = dat, vars = vars,
+#'   method = method_bayes(n_samples = 100)
+#' )
+#' impute_obj <- impute(
+#'   draws_obj,
+#'   references = c("Placebo" = "Placebo", "Drug A" = "Placebo")
+#' )
+#'
+#' # Inspect the imputation
 #' desc <- describe_imputation(impute_obj)
 #' print(desc)
 #'
@@ -346,8 +392,9 @@ describe_imputation <- function(impute_obj) {
 #'
 #' @examples
 #' \dontrun{
+#' # After creating impute_obj via the rbmi pipeline (see describe_imputation):
 #' desc <- describe_imputation(impute_obj)
-#' print(desc)
+#' print(desc)  # Formatted cli output with method, M, subjects, references, missingness
 #' }
 #'
 #' @export

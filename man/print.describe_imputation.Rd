@@ -21,8 +21,9 @@ mappings, and a missingness breakdown by visit and treatment arm.
 }
 \examples{
 \dontrun{
+# After creating impute_obj via the rbmi pipeline (see describe_imputation):
 desc <- describe_imputation(impute_obj)
-print(desc)
+print(desc)  # Formatted cli output with method, M, subjects, references, missingness
 }
 
 }
