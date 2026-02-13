@@ -211,8 +211,8 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> 
 #> SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000446 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.46 seconds.
+#> Chain 1: Gradient evaluation took 0.000453 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.53 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -229,9 +229,9 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 400 / 400 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.654 seconds (Warm-up)
-#> Chain 1:                0.54 seconds (Sampling)
-#> Chain 1:                1.194 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.653 seconds (Warm-up)
+#> Chain 1:                0.537 seconds (Sampling)
+#> Chain 1:                1.19 seconds (Total)
 #> Chain 1:
 ```
 
@@ -510,20 +510,6 @@ ana_obj_binary <- analyse_mi_data(
   fun = gcomp_responder_multi,
   reference_levels = "Placebo"
 )
-#> Warning: `extract_covariates2()` was deprecated in rbmiUtils 0.2.0.
-#> ℹ Internal helper will be removed in a future version.
-#> ℹ The deprecated feature was likely used in the rbmiUtils package.
-#>   Please report the issue at <https://github.com/openpharma/rbmiUtils/issues>.
-#> This warning is displayed once per session.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
-#> Warning: `as_simple_formula2()` was deprecated in rbmiUtils 0.2.0.
-#> ℹ Internal helper will be removed in a future version.
-#> ℹ The deprecated feature was likely used in the rbmiUtils package.
-#>   Please report the issue at <https://github.com/openpharma/rbmiUtils/issues>.
-#> This warning is displayed once per session.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 ```
 
 ``` r
