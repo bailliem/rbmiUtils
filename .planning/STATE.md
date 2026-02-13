@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 Phase: 11 of 11 (all phases complete)
 Plan: All plans complete
 Status: v3 milestone archived
-Last activity: 2026-02-11 -- Completed v3 milestone archival
+Last activity: 2026-02-13 - Completed quick task 1: Fix vignette warnings: suppress Stan compilation noise and resolve internal deprecation warnings
 
 Progress: [#########################] 25/25 plans (11 phases, 3 milestones complete)
 
@@ -52,6 +52,12 @@ None.
 ### Blockers/Concerns
 
 None.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 1 | Fix vignette warnings: suppress Stan compilation noise and resolve internal deprecation warnings | 2026-02-13 | 47b52d9 | [1-fix-vignette-warnings-suppress-stan-comp](./quick/1-fix-vignette-warnings-suppress-stan-comp/) |
 
 ## Session Continuity
 
