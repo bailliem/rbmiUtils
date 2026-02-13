@@ -176,13 +176,11 @@ if (requireNamespace("ggplot2", quietly = TRUE) &&
     display = "lsm",
     arm_labels = c(ref = "Placebo", alt = "Drug A"),
     title = "LS Mean Estimates by Visit",
-    panel_widths = c(3, 5)
+    panel_widths = c(3, 5, 1.5)
   )
 }
 #> Warning: Data contains 100 imputations but method expects 20. Using first 20
 #> imputations.
-#> Error in plot_forest(pool_obj, display = "lsm", arm_labels = c(ref = "Placebo",     alt = "Drug A"), title = "LS Mean Estimates by Visit", panel_widths = c(3,     5)): `panel_widths` must be a numeric vector of length 3.
-#> ℹ Got length 2.
-#> ℹ Three widths needed: table panel, forest panel, p-value panel.
+
 # }
 ```

@@ -13,7 +13,7 @@ showing formatted estimates, and a p-value panel."><meta property="og:image" con
 
     <a class="navbar-brand me-2" href="../index.html">rbmiUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -211,14 +211,12 @@ applying theme changes to all panels. For example:
 <span class="r-in"><span>    display <span class="op">=</span> <span class="st">"lsm"</span>,</span></span>
 <span class="r-in"><span>    arm_labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>ref <span class="op">=</span> <span class="st">"Placebo"</span>, alt <span class="op">=</span> <span class="st">"Drug A"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    title <span class="op">=</span> <span class="st">"LS Mean Estimates by Visit"</span>,</span></span>
-<span class="r-in"><span>    panel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    panel_widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span>, <span class="fl">1.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Data contains 100 imputations but method expects 20. Using first 20</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> imputations.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot_forest(pool_obj, display = "lsm", arm_labels = c(ref = "Placebo",     alt = "Drug A"), title = "LS Mean Estimates by Visit", panel_widths = c(3,     5)):</span> `panel_widths` must be a numeric vector of length 3.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Got length 2.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Three widths needed: table panel, forest panel, p-value panel.</span>
+<span class="r-plt img"><img src="plot_forest-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

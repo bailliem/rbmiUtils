@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rbmiUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -261,8 +261,8 @@ the dataset with only the columns needed for the model.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000495 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.95 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000446 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.46 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -279,9 +279,9 @@ the dataset with only the columns needed for the model.</p>
 <span><span class="co">#&gt; Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 400 / 400 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.62 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.511 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                1.131 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.654 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.54 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                1.194 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1:</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -337,10 +337,10 @@ confidence intervals, and p-values.</p>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;        parameter   visit   est   lci   uci    pval</span></span>
 <span><span class="co">#&gt;      trt_Week 24 Week 24 -2.18 -2.54 -1.82 &lt; 0.001</span></span>
-<span><span class="co">#&gt;  lsm_ref_Week 24 Week 24  0.08 -0.18  0.33   0.557</span></span>
+<span><span class="co">#&gt;  lsm_ref_Week 24 Week 24  0.08 -0.18  0.33   0.559</span></span>
 <span><span class="co">#&gt;  lsm_alt_Week 24 Week 24 -2.10 -2.35 -1.85 &lt; 0.001</span></span>
 <span><span class="co">#&gt;      trt_Week 48 Week 48 -3.81 -4.31 -3.30 &lt; 0.001</span></span>
-<span><span class="co">#&gt;  lsm_ref_Week 48 Week 48  0.04 -0.32  0.41   0.811</span></span>
+<span><span class="co">#&gt;  lsm_ref_Week 48 Week 48  0.04 -0.32  0.41   0.812</span></span>
 <span><span class="co">#&gt;  lsm_alt_Week 48 Week 48 -3.76 -4.11 -3.42 &lt; 0.001</span></span></code></pre></div>
 </div>
 </div>
@@ -358,10 +358,10 @@ with clearly labelled columns.</p>
 <span><span class="co">#&gt;   parameter       description visit parameter_type lsm_type     est    se    lci</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> trt_Week 24     Treatment … Week… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">2.18</span>   0.182 -<span style="color: #BB0000;">2.54</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> lsm_ref_Week 24 Least Squa… Week… lsm            ref       0.077<span style="text-decoration: underline;">0</span> 0.131 -<span style="color: #BB0000;">0.180</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> lsm_ref_Week 24 Least Squa… Week… lsm            ref       0.076<span style="text-decoration: underline;">5</span> 0.131 -<span style="color: #BB0000;">0.181</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> lsm_alt_Week 24 Least Squa… Week… lsm            alt      -<span style="color: #BB0000;">2.10</span>   0.126 -<span style="color: #BB0000;">2.35</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> trt_Week 48     Treatment … Week… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">3.81</span>   0.256 -<span style="color: #BB0000;">4.31</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> lsm_ref_Week 48 Least Squa… Week… lsm            ref       0.044<span style="text-decoration: underline;">4</span> 0.185 -<span style="color: #BB0000;">0.319</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> lsm_ref_Week 48 Least Squa… Week… lsm            ref       0.044<span style="text-decoration: underline;">0</span> 0.185 -<span style="color: #BB0000;">0.320</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> lsm_alt_Week 48 Least Squa… Week… lsm            alt      -<span style="color: #BB0000;">3.76</span>   0.175 -<span style="color: #BB0000;">4.11</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: uci &lt;dbl&gt;, pval &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>Each row represents one parameter at one visit. The key columns
@@ -863,7 +863,7 @@ visit.</p>
 <td headers="Week 24 stub_1_1 est" class="gt_row gt_center">0.08</td>
 <td headers="Week 24 stub_1_1 se" class="gt_row gt_center">0.13</td>
 <td headers="Week 24 stub_1_1 ci_text" class="gt_row gt_center">(-0.18, 0.33)</td>
-<td headers="Week 24 stub_1_1 pval_text" class="gt_row gt_center">0.557</td>
+<td headers="Week 24 stub_1_1 pval_text" class="gt_row gt_center">0.559</td>
 </tr>
 <tr>
 <th id="stub_1_2" scope="row" class="gt_row gt_center gt_stub">LS Mean (Treatment)</th>
@@ -887,7 +887,7 @@ visit.</p>
 <td headers="Week 48 stub_1_4 est" class="gt_row gt_center">0.04</td>
 <td headers="Week 48 stub_1_4 se" class="gt_row gt_center">0.18</td>
 <td headers="Week 48 stub_1_4 ci_text" class="gt_row gt_center">(-0.32, 0.41)</td>
-<td headers="Week 48 stub_1_4 pval_text" class="gt_row gt_center">0.811</td>
+<td headers="Week 48 stub_1_4 pval_text" class="gt_row gt_center">0.812</td>
 </tr>
 <tr>
 <th id="stub_1_5" scope="row" class="gt_row gt_center gt_stub">LS Mean (Treatment)</th>
@@ -1401,7 +1401,7 @@ labels that match your study protocol:</p>
 <td headers="Week 24 stub_1_1 est" class="gt_row gt_center">0.08</td>
 <td headers="Week 24 stub_1_1 se" class="gt_row gt_center">0.13</td>
 <td headers="Week 24 stub_1_1 ci_text" class="gt_row gt_center">(-0.18, 0.33)</td>
-<td headers="Week 24 stub_1_1 pval_text" class="gt_row gt_center">0.557</td>
+<td headers="Week 24 stub_1_1 pval_text" class="gt_row gt_center">0.559</td>
 </tr>
 <tr>
 <th id="stub_1_2" scope="row" class="gt_row gt_center gt_stub">LS Mean (Drug A)</th>
@@ -1425,7 +1425,7 @@ labels that match your study protocol:</p>
 <td headers="Week 48 stub_1_4 est" class="gt_row gt_center">0.04</td>
 <td headers="Week 48 stub_1_4 se" class="gt_row gt_center">0.18</td>
 <td headers="Week 48 stub_1_4 ci_text" class="gt_row gt_center">(-0.32, 0.41)</td>
-<td headers="Week 48 stub_1_4 pval_text" class="gt_row gt_center">0.811</td>
+<td headers="Week 48 stub_1_4 pval_text" class="gt_row gt_center">0.812</td>
 </tr>
 <tr>
 <th id="stub_1_5" scope="row" class="gt_row gt_center gt_stub">LS Mean (Drug A)</th>
