@@ -81,10 +81,10 @@ Plans:
   1. `R CMD check --as-cran` returns 0 errors, 0 warnings, 0 notes on the development machine
   2. All vignettes, tests, and examples execute successfully during check
   3. Package tarball builds cleanly with no unexpected files or oversized components
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 14-01: R CMD check clean pass
+- [ ] 14-01-PLAN.md -- Pre-check cleanup (.Rbuildignore, version bump) and R CMD check --as-cran clean pass
 
 ## Progress
 
@@ -99,4 +99,4 @@ Phases execute in numeric order: 12 -> 13 -> 14
 
 ---
 *Roadmap created: 2026-02-14*
-*Last updated: 2026-02-14 (Phase 13 complete)*
+*Last updated: 2026-02-14 (Phase 14 planned)*
