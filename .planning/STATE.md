@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-11)
+See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures
-**Current focus:** v3 milestone archived — planning next milestone
+**Current focus:** v4 CRAN Release Readiness
 
 ## Current Position
 
-Phase: 11 of 11 (all phases complete)
-Plan: All plans complete
-Status: v3 milestone archived
-Last activity: 2026-02-13 - Completed quick task 1: Fix vignette warnings: suppress Stan compilation noise and resolve internal deprecation warnings
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-14 — Milestone v4 started
 
-Progress: [#########################] 25/25 plans (11 phases, 3 milestones complete)
+Progress: [                         ] 0/0 plans (v4 milestone)
 
 ## Performance Metrics
 
@@ -61,6 +61,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-13
-Stopped at: Completed quick-1 (fix vignette warnings / suppress Stan compilation)
+Last session: 2026-02-14
+Stopped at: Milestone v4 initialization — defining requirements
 Resume file: None
