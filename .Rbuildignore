@@ -16,3 +16,5 @@
 ^CRAN-SUBMISSION$
 ^\.claude$
 ^pkgdown$
+^\.planning$
+Rplots\.pdf$

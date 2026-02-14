@@ -9,3 +9,4 @@ inst/doc
 /Meta/
 scratch.R
 .gitlab-ci.yml
+Rplots.pdf
