@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures
-**Current focus:** v4 CRAN Release Readiness
+**Current focus:** Phase 12 - Content & Visual Polish
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-14 — Milestone v4 started
+Phase: 12 (1 of 3 in v4 milestone)
+Plan: 0 of 2 in current phase
+Status: Ready to plan
+Last activity: 2026-02-14 -- Roadmap created for v4 CRAN Release Readiness
 
-Progress: [                         ] 0/0 plans (v4 milestone)
+Progress: [░░░░░░░░░░] 0/6 plans (v4 milestone)
 
 ## Performance Metrics
 
@@ -44,6 +44,10 @@ Progress: [                         ] 0/0 plans (v4 milestone)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+Recent decisions affecting current work:
+
+- v4 is pure CRAN readiness -- no new exported functions or features
+- Binary responder vignette promoted from pipeline.Rmd appendix to standalone article
 
 ### Pending Todos
 
@@ -51,7 +55,8 @@ None.
 
 ### Blockers/Concerns
 
-None.
+- Table pre-rendered images from v2 don't reflect v3 font_size/row_padding defaults (minor, functional)
+- Deprecated internal helpers still exported (may trigger CRAN notes)
 
 ### Quick Tasks Completed
 
@@ -62,5 +67,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-14
-Stopped at: Milestone v4 initialization — defining requirements
+Stopped at: Roadmap created, ready to plan Phase 12
 Resume file: None

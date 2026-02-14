@@ -63,19 +63,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DOC-01 | — | Pending |
-| DOC-02 | — | Pending |
-| VIZ-01 | — | Pending |
-| CRAN-01 | — | Pending |
-| CRAN-02 | — | Pending |
-| CRAN-03 | — | Pending |
-| CRAN-04 | — | Pending |
+| DOC-01 | Phase 12 | Pending |
+| DOC-02 | Phase 13 | Pending |
+| VIZ-01 | Phase 12 | Pending |
+| CRAN-01 | Phase 13 | Pending |
+| CRAN-02 | Phase 13 | Pending |
+| CRAN-03 | Phase 13 | Pending |
+| CRAN-04 | Phase 14 | Pending |
 
 **Coverage:**
 - v4 requirements: 7 total
-- Mapped to phases: 0
-- Unmapped: 7
+- Mapped to phases: 7
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-14*
-*Last updated: 2026-02-14 after initial definition*
+*Last updated: 2026-02-14 after roadmap creation*
