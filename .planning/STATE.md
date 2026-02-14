@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures
-**Current focus:** Phase 13 - CRAN Compliance
+**Current focus:** Phase 14 - Final Validation (COMPLETE)
 
 ## Current Position
 
-Phase: 13 (2 of 3 in v4 milestone)
-Plan: 2 of 2 in current phase (PHASE COMPLETE)
-Status: Phase 13 complete
-Last activity: 2026-02-14 -- Completed 13-02 (Vignette Warning Suppression & Test Timing Audit)
+Phase: 14 (3 of 3 in v4 milestone)
+Plan: 1 of 1 in current phase (PHASE COMPLETE)
+Status: Phase 14 complete -- v4 milestone complete
+Last activity: 2026-02-14 -- Completed 14-01 (R CMD check --as-cran final validation)
 
-Progress: [███████░░░] 4/6 plans (v4 milestone)
+Progress: [██████████] 5/5 plans (v4 milestone)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27 (9 v1 + 7 v2 + 9 v3 + 2 v4)
+- Total plans completed: 28 (9 v1 + 7 v2 + 9 v3 + 3 v4)
 - Average duration: ~25 min (v1), ~7 min (v2), ~6 min (v3)
 - Total execution time: ~4.5 hours (v1) + ~52 min (v2) + ~56 min (v3)
 
@@ -40,6 +40,7 @@ Progress: [███████░░░] 4/6 plans (v4 milestone)
 | 11 | 3 | ~10 min | ~3 min |
 | 12 | 2/2 | ~5 min | ~3 min |
 | 13 | 2/2 | ~3 min | ~2 min |
+| 14 | 1/1 | ~9 min | ~9 min |
 
 ## Accumulated Context
 
@@ -52,8 +53,9 @@ Recent decisions affecting current work:
 - Binary responder vignette promoted from pipeline.Rmd appendix to standalone article
 - Used CHG > 5 as clinical cutoff threshold in deriving-endpoints vignette to demonstrate imputed data reuse
 - CI whisker linewidth bumped 0.6->0.7 for print visibility; compact spacing via expansion(add=0.3) uniformly
-- Left version at 0.2.2 for now; bump deferred to Phase 14 final step
+- Version bumped to 0.3.0 with Date field for CRAN submission (Phase 14)
 - Left assertthat in Imports despite soft-deprecation (removing = feature change, out of v4 scope)
+- Two remaining R CMD check NOTEs (unable to verify current time, HTML5 tidy) are environment-specific, not seen on CRAN
 - Global opts_chunk$set preferred over per-chunk warning/message suppression in vignettes
 - No test timing changes needed -- all files well under CRAN limits
 
@@ -75,5 +77,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-14
-Stopped at: Completed 13-02-PLAN.md (Phase 13 complete)
+Stopped at: Completed 14-01-PLAN.md (Phase 14 complete, v4 milestone complete)
 Resume file: None
