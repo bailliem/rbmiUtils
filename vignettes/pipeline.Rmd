@@ -140,7 +140,7 @@ sampling. Here we use a small number of samples and a short warmup period to kee
 vignette build time manageable. In a real analysis, you would typically use more samples
 (e.g., `n_samples = 500` or more) for better precision. For details on the statistical
 methodology, see the
-[rbmi quickstart vignette](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html).
+[rbmi quickstart vignette](https://CRAN.R-project.org/package=rbmi/vignettes/quickstart.html).
 
 ```{r method}
 set.seed(1974)
