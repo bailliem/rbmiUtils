@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-14)
 ## Current Position
 
 Phase: 12 (1 of 3 in v4 milestone)
-Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-02-14 -- Roadmap created for v4 CRAN Release Readiness
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-02-14 -- Completed 12-01 (Deriving Endpoints Vignette)
 
-Progress: [░░░░░░░░░░] 0/6 plans (v4 milestone)
+Progress: [██░░░░░░░░] 1/6 plans (v4 milestone)
 
 ## Performance Metrics
 
@@ -38,6 +38,7 @@ Progress: [░░░░░░░░░░] 0/6 plans (v4 milestone)
 | 9 | 2 | ~14 min | ~7 min |
 | 10 | 2 | ~13 min | ~7 min |
 | 11 | 3 | ~10 min | ~3 min |
+| 12 | 1/2 | ~2 min | ~2 min |
 
 ## Accumulated Context
 
@@ -48,6 +49,7 @@ Recent decisions affecting current work:
 
 - v4 is pure CRAN readiness -- no new exported functions or features
 - Binary responder vignette promoted from pipeline.Rmd appendix to standalone article
+- Used CHG > 5 as clinical cutoff threshold in deriving-endpoints vignette to demonstrate imputed data reuse
 
 ### Pending Todos
 
@@ -67,5 +69,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-14
-Stopped at: Roadmap created, ready to plan Phase 12
+Stopped at: Completed 12-01-PLAN.md
 Resume file: None
