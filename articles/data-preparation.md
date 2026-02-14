@@ -132,11 +132,6 @@ tryCatch(
  validate_data(bad_dat, vars),
  error = function(e) cat(e$message)
 )
-#> Warning: 1 column is character instead of factor.
-#> ℹ Column: TRT.
-#> ℹ `rbmi::draws()` will auto-coerce, but explicit conversion gives you control
-#>   over level ordering.
-#> ℹ Example: `data$TRT <- factor(data$TRT)`
 #> Data validation failed.
 ```
 
@@ -218,7 +213,7 @@ The three pattern types are:
 
 When subjects discontinue treatment, you may want to apply
 reference-based imputation strategies (see the [`{rbmi}`
-documentation](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html)
+documentation](https://CRAN.R-project.org/package=rbmi/vignettes/quickstart.html)
 for details on intercurrent event handling). The
 [`prepare_data_ice()`](https://openpharma.github.io/rbmiUtils/reference/prepare_data_ice.md)
 function builds the required `data_ice` data.frame from a

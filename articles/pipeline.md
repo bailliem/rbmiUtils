@@ -172,7 +172,7 @@ the vignette build time manageable. In a real analysis, you would
 typically use more samples (e.g., `n_samples = 500` or more) for better
 precision. For details on the statistical methodology, see the [rbmi
 quickstart
-vignette](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html).
+vignette](https://CRAN.R-project.org/package=rbmi/vignettes/quickstart.html).
 
 ``` r
 set.seed(1974)
@@ -211,8 +211,8 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> 
 #> SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000425 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.25 seconds.
+#> Chain 1: Gradient evaluation took 0.000436 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.36 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -229,9 +229,9 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 400 / 400 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.646 seconds (Warm-up)
-#> Chain 1:                0.531 seconds (Sampling)
-#> Chain 1:                1.177 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.634 seconds (Warm-up)
+#> Chain 1:                0.524 seconds (Sampling)
+#> Chain 1:                1.158 seconds (Total)
 #> Chain 1:
 ```
 
@@ -289,13 +289,6 @@ of estimates, standard errors, confidence intervals, and p-values.
 ``` r
 pool_obj <- pool(ana_obj)
 print(pool_obj)
-#> 
-#> ── Pool Object ─────────────────────────────────────────────────────────────────
-#> 6 parameters across 2 visits
-#> Method: rubin
-#> N imputations: 100
-#> Confidence: 95%
-#> ────────────────────────────────────────────────────────────────────────────────
 #>        parameter   visit   est   lci   uci    pval
 #>      trt_Week 24 Week 24 -2.18 -2.54 -1.82 < 0.001
 #>  lsm_ref_Week 24 Week 24  0.08 -0.18  0.33   0.559
@@ -515,13 +508,6 @@ ana_obj_binary <- analyse_mi_data(
 ``` r
 pool_obj_binary <- pool(ana_obj_binary)
 print(pool_obj_binary)
-#> 
-#> ── Pool Object ─────────────────────────────────────────────────────────────────
-#> 6 parameters across 4 visits
-#> Method: rubin
-#> N imputations: 100
-#> Confidence: 95%
-#> ────────────────────────────────────────────────────────────────────────────────
 #>                   parameter                  visit   est   lci   uci    pval
 #>  trt_Drug A-Placebo_Week 24 Drug A-Placebo_Week 24 -0.03 -0.05 -0.01   0.007
 #>          lsm_Drug A_Week 24                Week 24  0.00  0.00  0.00   0.921

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rbmiUtils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@
     <li><a class="dropdown-item" href="../articles/analyse2.html">Storing and Analyzing Imputed Data</a></li>
     <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation and Validation</a></li>
     <li><a class="dropdown-item" href="../articles/efficient-storage.html">Efficient Storage of Imputed Data</a></li>
+    <li><a class="dropdown-item" href="../articles/deriving-endpoints.html">Deriving Endpoints from Imputed Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Diagnostics</h6></li>
     <li><a class="dropdown-item" href="../articles/diagnostics.html">MI Diagnostics and Describe Helpers</a></li>
@@ -72,7 +73,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>From rbmi Analysis to Regulatory Tables</h1>
             
-            <h4 data-toc-skip class="date">2026-02-13</h4>
+            <h4 data-toc-skip class="date">2026-02-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/rbmiUtils/blob/main/vignettes/pipeline.Rmd" class="external-link"><code>vignettes/pipeline.Rmd</code></a></small>
       <div class="d-none name"><code>pipeline.Rmd</code></div>
@@ -225,7 +226,7 @@ imputation using MCMC sampling. Here we use a small number of samples
 and a short warmup period to keep the vignette build time manageable. In
 a real analysis, you would typically use more samples (e.g.,
 <code>n_samples = 500</code> or more) for better precision. For details
-on the statistical methodology, see the <a href="https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html" class="external-link">rbmi
+on the statistical methodology, see the <a href="https://CRAN.R-project.org/package=rbmi/vignettes/quickstart.html" class="external-link">rbmi
 quickstart vignette</a>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1974</span><span class="op">)</span></span>
@@ -261,8 +262,8 @@ the dataset with only the columns needed for the model.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000425 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.25 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000436 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.36 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -279,9 +280,9 @@ the dataset with only the columns needed for the model.</p>
 <span><span class="co">#&gt; Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 400 / 400 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.646 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.531 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                1.177 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.634 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.524 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                1.158 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1:</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -328,13 +329,6 @@ confidence intervals, and p-values.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pool_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/pool.html" class="external-link">pool</a></span><span class="op">(</span><span class="va">ana_obj</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">pool_obj</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Pool Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; 6 parameters across 2 visits</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Method</span>: rubin</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">N imputations</span>: 100</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Confidence</span>: 95%</span></span>
-<span><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;        parameter   visit   est   lci   uci    pval</span></span>
 <span><span class="co">#&gt;      trt_Week 24 Week 24 -2.18 -2.54 -1.82 &lt; 0.001</span></span>
 <span><span class="co">#&gt;  lsm_ref_Week 24 Week 24  0.08 -0.18  0.33   0.559</span></span>
@@ -1555,13 +1549,6 @@ estimate covariate-adjusted marginal treatment effects.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pool_obj_binary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/pool.html" class="external-link">pool</a></span><span class="op">(</span><span class="va">ana_obj_binary</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">pool_obj_binary</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Pool Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; 6 parameters across 4 visits</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Method</span>: rubin</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">N imputations</span>: 100</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Confidence</span>: 95%</span></span>
-<span><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;                   parameter                  visit   est   lci   uci    pval</span></span>
 <span><span class="co">#&gt;  trt_Drug A-Placebo_Week 24 Drug A-Placebo_Week 24 -0.03 -0.05 -0.01   0.007</span></span>
 <span><span class="co">#&gt;          lsm_Drug A_Week 24                Week 24  0.00  0.00  0.00   0.921</span></span>

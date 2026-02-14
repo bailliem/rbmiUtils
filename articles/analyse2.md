@@ -29,7 +29,7 @@ analysis can be separated and revisited independently.
 
 This approach applies **Rubin’s Rules** for inference after multiple
 imputation (see the [rbmi quickstart
-vignette](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html)
+vignette](https://CRAN.R-project.org/package=rbmi/vignettes/quickstart.html)
 for background on the draws/impute/analyse/pool pipeline):
 
 > We fit a model to each imputed dataset, derive a response variable on
@@ -69,7 +69,7 @@ ADEFF <- ADEFF %>%
 ## Step 2: Define Imputation Model
 
 We use
-[`rbmi::set_vars()`](https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html)
+[`rbmi::set_vars()`](https://CRAN.R-project.org/package=rbmi/vignettes/quickstart.html)
 to specify the key variable roles:
 
 ``` r
@@ -94,7 +94,6 @@ dat <- ADEFF %>%
   select(USUBJID, STRATA, REGION, REGIONC, TRT, BASE, CHG, AVISIT)
 
 draws_obj <- draws(data = dat, vars = vars, method = method)
-#> Trying to compile a simple C file
 #> Running /opt/R/4.5.2/lib/R/bin/R CMD SHLIB foo.c
 #> using C compiler: ‘gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’
 #> gcc -std=gnu2x -I"/opt/R/4.5.2/lib/R/include" -DNDEBUG   -I"/home/runner/work/_temp/Library/Rcpp/include/"  -I"/home/runner/work/_temp/Library/RcppEigen/include/"  -I"/home/runner/work/_temp/Library/RcppEigen/include/unsupported"  -I"/home/runner/work/_temp/Library/BH/include" -I"/home/runner/work/_temp/Library/StanHeaders/include/src/"  -I"/home/runner/work/_temp/Library/StanHeaders/include/"  -I"/home/runner/work/_temp/Library/RcppParallel/include/"  -I"/home/runner/work/_temp/Library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DUSE_STANC3 -DSTRICT_R_HEADERS  -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION  -D_HAS_AUTO_PTR_ETC=0  -include '/home/runner/work/_temp/Library/StanHeaders/include/stan/math/prim/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/usr/local/include    -fpic  -g -O2  -c foo.c -o foo.o
@@ -128,9 +127,9 @@ draws_obj <- draws(data = dat, vars = vars, method = method)
 #> Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 400 / 400 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.645 seconds (Warm-up)
-#> Chain 1:                0.521 seconds (Sampling)
-#> Chain 1:                1.166 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.639 seconds (Warm-up)
+#> Chain 1:                0.525 seconds (Sampling)
+#> Chain 1:                1.164 seconds (Total)
 #> Chain 1:
 
 impute_obj <- impute(draws_obj, references = c("Placebo" = "Placebo", "Drug A" = "Placebo"))
@@ -163,13 +162,6 @@ ana_obj_ancova <- analyse_mi_data(
 ``` r
 pool_obj_ancova <- pool(ana_obj_ancova)
 print(pool_obj_ancova)
-#> 
-#> ── Pool Object ─────────────────────────────────────────────────────────────────
-#> 6 parameters across 2 visits
-#> Method: rubin
-#> N imputations: 100
-#> Confidence: 95%
-#> ────────────────────────────────────────────────────────────────────────────────
 #>        parameter   visit   est   lci   uci    pval
 #>      trt_Week 24 Week 24 -2.18 -2.54 -1.82 < 0.001
 #>  lsm_ref_Week 24 Week 24  0.08 -0.18  0.33   0.559
@@ -250,13 +242,6 @@ ana_obj_prop <- analyse_mi_data(
 ``` r
 pool_obj_prop <- pool(ana_obj_prop)
 print(pool_obj_prop)
-#> 
-#> ── Pool Object ─────────────────────────────────────────────────────────────────
-#> 1 parameter across 0 visits
-#> Method: rubin
-#> N imputations: 100
-#> Confidence: 95%
-#> ────────────────────────────────────────────────────────────────────────────────
 #>  parameter visit   est   lci   uci    pval
 #>        trt  <NA> -0.06 -0.09 -0.04 < 0.001
 ```
