@@ -8,18 +8,11 @@ An R package extending rbmi (reference-based multiple imputation) for clinical t
 
 Clinical trial results from rbmi flow seamlessly into publication-ready regulatory tables and figures — no manual wrangling between pooled results and final output.
 
-## Current Milestone: v4 CRAN Release Readiness
+## Current State
 
-**Goal:** Polish, harden, and prepare the package for initial CRAN submission — zero new features, pure quality and compliance.
-
-**Target areas:**
-- Binary responder standalone vignette (promote from pipeline.Rmd appendix, showcase imputed data storage workflow)
-- Forest plot visual polish (typography, spacing, styling refinements)
-- Stan/compilation warning suppression in vignettes
-- CRAN timing compliance (audit tests/examples for timeout risk)
-- DESCRIPTION audit for CRAN policy compliance
-- NEWS.md cleanup for older version entries
-- R CMD check clean (zero errors, warnings, notes)
+**Version:** 0.3.0 (CRAN-ready)
+**Status:** All 4 milestones shipped. Package passes R CMD check --as-cran.
+**Next step:** CRAN submission via `devtools::submit_cran()` or manual upload, or start v5 for new features.
 
 ## Requirements
 
@@ -69,16 +62,17 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 - ✓ MI diagnostics and pipeline inspection vignette — v3
 - ✓ Pre-rendered images reflecting v3 styling — v3
 - ✓ NEWS.md v0.3.0 entries — v3
+- ✓ Binary responder standalone vignette with imputed data storage workflow — v4
+- ✓ Forest plot visual polish (typography, spacing, styling) — v4
+- ✓ Stan/compilation warning suppression in all vignettes — v4
+- ✓ CRAN timing audit (tests/examples within time limits) — v4
+- ✓ DESCRIPTION CRAN policy compliance — v4
+- ✓ NEWS.md cleanup for older versions — v4
+- ✓ R CMD check clean (0 errors, 0 warnings) — v4
 
 ### Active
 
-- [ ] Binary responder standalone vignette with imputed data storage workflow
-- [ ] Forest plot visual polish (typography, spacing, styling)
-- [ ] Stan/compilation warning suppression in all vignettes
-- [ ] CRAN timing audit (tests/examples within time limits)
-- [ ] DESCRIPTION CRAN policy compliance
-- [ ] NEWS.md cleanup for older versions
-- [ ] R CMD check clean (0 errors, 0 warnings, 0 notes)
+(No active requirements — all milestones shipped)
 
 ### Deferred (v5+)
 
@@ -102,17 +96,17 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 - Re-implementing rbmi::pool() to store FMI — utility layer, not a fork
 - Automatic quality thresholds for MI diagnostics — context-dependent, let user interpret
 - MI diagnostics for non-Rubin methods — FMI/lambda/RIV are Rubin-specific
-- New features — v4 is pure CRAN readiness, no new functionality
+- Replace assertthat with rlang — soft-deprecated but functional, not worth churn for CRAN submission
 
 ## Context
 
-- **Shipped:** v1 Reporting & Robustness (2026-02-08), v2 Documentation & Hardening (2026-02-10), v3 ARD Enrichment & Polish (2026-02-11)
+- **Shipped:** v1 Reporting & Robustness (2026-02-08), v2 Documentation & Hardening (2026-02-10), v3 ARD Enrichment & Polish (2026-02-11), v4 CRAN Release Readiness (2026-02-14)
 - **Codebase:** 32 exported functions across 8 layers (data prep, analysis, utilities, tidying, formatting, storage, reporting, introspection)
 - **Source code:** 4,980 lines R, 6,668 lines tests
 - **Test coverage:** 14+ test files, 400+ new v3 expectations, comprehensive coverage of all functions
 - **Dependencies:** cli, lifecycle as Imports; cards, gt, ggplot2, patchwork as Suggests with dependency guards
 - **cards/cardx ecosystem:** pool_to_ard() produces valid ARD with MI diagnostics passing cards::check_ard_structure()
-- **Documentation:** 5 vignettes (pipeline, analysis, data prep, storage, MI diagnostics); visual README with ADEFF pipeline Quick Start; versioned NEWS.md (0.3.0/0.2.0/0.1.0)
+- **Documentation:** 6 vignettes (pipeline, analysis, data prep, storage, MI diagnostics, deriving endpoints); visual README with ADEFF pipeline Quick Start; versioned NEWS.md (0.3.0/0.2.0/0.1.0)
 - **Site:** pkgdown at openpharma.github.io/rbmiUtils with hex logo, 10-group reference index (including Introspection), navbar, open graph cards, pharmaverse footer
 - **Known gaps:** No validation of delta data subject-visit uniqueness; table images not regenerated (Chromium unavailable, existing images still valid)
 - **Tech debt:** Table pre-rendered images from v2 (minor; functional but don't reflect font_size/row_padding defaults); deprecated internal helpers still exported
@@ -146,14 +140,19 @@ Clinical trial results from rbmi flow seamlessly into publication-ready regulato
 | mice-convention stat naming (dot-separated lowercase) | Consistent with established MI ecosystem conventions | ✓ Good — familiar to users |
 | NULL defaults for styling params | Backward compatible; existing output unchanged unless user opts in | ✓ Good — non-breaking |
 | \donttest{} for ADMI, \dontrun{} for ADEFF examples | ADMI runs fast but slow; ADEFF requires MCMC unavailable in check | ✓ Good — pragmatic |
+| Global opts_chunk$set for vignette suppression | Cleaner than per-chunk; catches all chunks uniformly | ✓ Good — consistent |
+| Left assertthat in Imports | Removing = feature change, out of v4 scope; still functional on CRAN | ✓ Good — pragmatic |
+| Version 0.3.0 with Date field for CRAN | Standard CRAN submission practice | ✓ Good — compliant |
+| Two env-only NOTEs accepted | Unable to verify current time + HTML5 tidy are local-only; not seen on CRAN | ✓ Good — validated |
 
 ## Milestone History
 
 - **v1 Reporting & Robustness** (2026-02-08) — Phases 1-4: Foundation hardening, print/summary, ARD, efficacy tables, forest plots
 - **v2 Documentation & Hardening** (2026-02-10) — Phases 5-7: Data prep hardening, end-to-end vignette, pkgdown site polish
 - **v3 ARD Enrichment & Polish** (2026-02-11) — Phases 8-11: MI diagnostic metadata, describe helpers, publication styling, documentation overhaul
+- **v4 CRAN Release Readiness** (2026-02-14) — Phases 12-14: Binary responder vignette, forest plot visual polish, CRAN compliance, R CMD check clean pass
 
 See `.planning/MILESTONES.md` for full details.
 
 ---
-*Last updated: 2026-02-14 after v4 milestone start*
+*Last updated: 2026-02-14 after v4 milestone completion*

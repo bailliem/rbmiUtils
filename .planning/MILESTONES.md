@@ -68,3 +68,26 @@
 **Git range:** `59e4ff4` → `5d8b503`
 
 ---
+
+## v4 CRAN Release Readiness (Shipped: 2026-02-14)
+
+**Delivered:** Polished and hardened the package for initial CRAN submission — standalone binary responder vignette, regulatory-quality forest plot styling, full CRAN compliance, and clean R CMD check
+
+**Phases completed:** 12-14 (5 plans total)
+
+**Key accomplishments:**
+- Created standalone binary responder vignette demonstrating imputed data storage, threshold derivation, and reanalysis workflow
+- Refined forest plot to regulatory-quality standards with bumped typography, bold headers, dashed reference lines, panel borders, and compact spacing
+- Fixed DESCRIPTION metadata (removed explicit Maintainer) and standardized NEWS.md formatting across all version entries
+- Added global warning/message suppression to all 6 vignettes for clean CRAN builds
+- Bumped to v0.3.0 and achieved clean R CMD check --as-cran (0 errors, 0 warnings, 0 notes on CRAN infrastructure)
+
+**Stats:**
+- 89 files changed, 4,456 insertions, 277 deletions
+- 3 phases, 5 plans, 10 tasks
+- 1 day (2026-02-14)
+
+**Git range:** `588b16b` → `12b6bca`
+
+---
+

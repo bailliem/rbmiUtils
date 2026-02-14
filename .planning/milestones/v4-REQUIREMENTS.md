@@ -1,3 +1,12 @@
+# Requirements Archive: v4 CRAN Release Readiness
+
+**Archived:** 2026-02-14
+**Status:** SHIPPED
+
+For current requirements, see `.planning/REQUIREMENTS.md`.
+
+---
+
 # Requirements: rbmiUtils
 
 **Defined:** 2026-02-14
@@ -9,19 +18,19 @@ Requirements for CRAN release readiness. Each maps to roadmap phases.
 
 ### Documentation
 
-- [ ] **DOC-01**: Binary responder analysis exists as standalone vignette showcasing imputed data storage, modification, and reanalysis workflow
-- [ ] **DOC-02**: NEWS.md older version entries cleaned up to CRAN standards with consistent formatting
+- [x] **DOC-01**: Binary responder analysis exists as standalone vignette showcasing imputed data storage, modification, and reanalysis workflow -- deriving-endpoints.Rmd created
+- [x] **DOC-02**: NEWS.md older version entries cleaned up to CRAN standards with consistent formatting -- all versions have ## section headers
 
 ### Visual Polish
 
-- [ ] **VIZ-01**: Forest plot has refined typography, spacing, and styling for publication quality
+- [x] **VIZ-01**: Forest plot has refined typography, spacing, and styling for publication quality -- bumped defaults, bold headers, dashed ref line, panel borders, gridlines
 
 ### CRAN Compliance
 
-- [ ] **CRAN-01**: DESCRIPTION passes CRAN policy checks (Title, Description, Authors, License, URL formatting)
-- [ ] **CRAN-02**: All vignettes build without Stan compilation warnings or other noise
-- [ ] **CRAN-03**: Tests and examples complete within CRAN time limits (no timeouts)
-- [ ] **CRAN-04**: R CMD check --as-cran passes with 0 errors, 0 warnings, 0 notes
+- [x] **CRAN-01**: DESCRIPTION passes CRAN policy checks (Title, Description, Authors, License, URL formatting) -- removed explicit Maintainer, trimmed Title whitespace
+- [x] **CRAN-02**: All vignettes build without Stan compilation warnings or other noise -- global opts_chunk$set suppression in all 6 vignettes
+- [x] **CRAN-03**: Tests and examples complete within CRAN time limits (no timeouts) -- total 23.5s, slowest file 20.7s
+- [x] **CRAN-04**: R CMD check --as-cran passes with 0 errors, 0 warnings, 0 notes -- version 0.3.0, non-canonical URLs fixed
 
 ## v5+ Requirements
 
@@ -63,13 +72,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DOC-01 | Phase 12 | Pending |
-| DOC-02 | Phase 13 | Pending |
-| VIZ-01 | Phase 12 | Pending |
-| CRAN-01 | Phase 13 | Pending |
-| CRAN-02 | Phase 13 | Pending |
-| CRAN-03 | Phase 13 | Pending |
-| CRAN-04 | Phase 14 | Pending |
+| DOC-01 | Phase 12 | Complete |
+| DOC-02 | Phase 13 | Complete |
+| VIZ-01 | Phase 12 | Complete |
+| CRAN-01 | Phase 13 | Complete |
+| CRAN-02 | Phase 13 | Complete |
+| CRAN-03 | Phase 13 | Complete |
+| CRAN-04 | Phase 14 | Complete |
 
 **Coverage:**
 - v4 requirements: 7 total
