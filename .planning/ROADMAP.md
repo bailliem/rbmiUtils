@@ -67,11 +67,11 @@ Plans:
   2. All vignettes build without Stan compilation warnings or other extraneous console output
   3. All tests and examples complete within CRAN time limits (no single test file exceeds 60 seconds, total check under 10 minutes)
   4. NEWS.md has consistent formatting across all version entries (0.1.0, 0.2.0, 0.3.0, 0.4.0) suitable for CRAN
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 13-01: DESCRIPTION audit and NEWS cleanup
-- [ ] 13-02: Vignette warning suppression and timing audit
+- [ ] 13-01-PLAN.md -- DESCRIPTION CRAN policy audit and NEWS.md formatting cleanup
+- [ ] 13-02-PLAN.md -- Vignette warning suppression and test/example timing audit
 
 ### Phase 14: Final Validation
 **Goal**: R CMD check --as-cran passes with zero errors, zero warnings, and zero notes -- the package is ready for CRAN submission
@@ -94,7 +94,7 @@ Phases execute in numeric order: 12 -> 13 -> 14
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 12. Content & Visual Polish | v4 | 2/2 | ✓ Complete | 2026-02-14 |
-| 13. CRAN Compliance | v4 | 0/3 | Not started | - |
+| 13. CRAN Compliance | v4 | 0/2 | Planned | - |
 | 14. Final Validation | v4 | 0/1 | Not started | - |
 
 ---
