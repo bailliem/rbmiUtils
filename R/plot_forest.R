@@ -272,11 +272,11 @@ plot_forest <- function(
         family = geom_family
       ) +
       ggplot2::geom_text(
-        ggplot2::aes(x = 1, label = .data$est_ci_label),
+        ggplot2::aes(x = 0.45, label = .data$est_ci_label),
         hjust = 0, size = text_size,
         family = geom_family
       ) +
-      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.05, 0.3))) +
+      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.02, 0.6))) +
       ggplot2::scale_y_discrete(limits = rev, expand = ggplot2::expansion(add = 0.3)) +
       ggplot2::coord_cartesian(clip = "off") +
       ggplot2::theme_void() +
@@ -306,11 +306,11 @@ plot_forest <- function(
         family = geom_family
       ) +
       ggplot2::geom_text(
-        ggplot2::aes(x = 1, label = .data$est_ci_label),
+        ggplot2::aes(x = 0.45, label = .data$est_ci_label),
         hjust = 0, size = text_size,
         family = geom_family
       ) +
-      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.05, 0.3))) +
+      ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.02, 0.6))) +
       ggplot2::scale_y_discrete(limits = rev, expand = ggplot2::expansion(add = 0.3)) +
       ggplot2::coord_cartesian(clip = "off") +
       ggplot2::theme_void() +
