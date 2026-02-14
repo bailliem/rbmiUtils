@@ -5,7 +5,7 @@
 - [x] **v1 Reporting & Robustness** - Phases 1-4 (shipped 2026-02-08)
 - [x] **v2 Documentation & Hardening** - Phases 5-7 (shipped 2026-02-10)
 - [x] **v3 ARD Enrichment & Polish** - Phases 8-11 (shipped 2026-02-11)
-- [ ] **v4 CRAN Release Readiness** - Phases 12-14 (in progress)
+- [x] **v4 CRAN Release Readiness** - Phases 12-14 (shipped 2026-02-14)
 
 ## Phases
 
@@ -33,13 +33,13 @@ See .planning/MILESTONES.md for details.
 
 </details>
 
-### v4 CRAN Release Readiness (In Progress)
+### v4 CRAN Release Readiness (Complete)
 
 **Milestone Goal:** Polish, harden, and prepare the package for initial CRAN submission -- zero new features, pure quality and compliance.
 
 - [x] **Phase 12: Content & Visual Polish** - Binary responder vignette and forest plot refinements (completed 2026-02-14)
 - [x] **Phase 13: CRAN Compliance** - Policy fixes, warning suppression, timing audit, NEWS cleanup (completed 2026-02-14)
-- [ ] **Phase 14: Final Validation** - R CMD check --as-cran passes clean
+- [x] **Phase 14: Final Validation** - R CMD check --as-cran passes clean (completed 2026-02-14)
 
 ## Phase Details
 
@@ -84,7 +84,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 14-01-PLAN.md -- Pre-check cleanup (.Rbuildignore, version bump) and R CMD check --as-cran clean pass
+- [x] 14-01-PLAN.md -- Pre-check cleanup (.Rbuildignore, version bump) and R CMD check --as-cran clean pass
 
 ## Progress
 
@@ -95,8 +95,8 @@ Phases execute in numeric order: 12 -> 13 -> 14
 |-------|-----------|----------------|--------|-----------|
 | 12. Content & Visual Polish | v4 | 2/2 | ✓ Complete | 2026-02-14 |
 | 13. CRAN Compliance | v4 | 2/2 | ✓ Complete | 2026-02-14 |
-| 14. Final Validation | v4 | 0/1 | Not started | - |
+| 14. Final Validation | v4 | 1/1 | ✓ Complete | 2026-02-14 |
 
 ---
 *Roadmap created: 2026-02-14*
-*Last updated: 2026-02-14 (Phase 14 planned)*
+*Last updated: 2026-02-14 (Phase 14 complete — v4 milestone shipped)*
