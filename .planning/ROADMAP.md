@@ -52,11 +52,11 @@ See .planning/MILESTONES.md for details.
   2. The binary responder vignette builds without errors and appears in the pkgdown articles listing
   3. Forest plot output shows refined typography, spacing, and styling suitable for regulatory submissions
   4. Existing forest plot tests still pass after visual refinements
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 12-01: Binary responder standalone vignette
-- [ ] 12-02: Forest plot visual polish
+- [ ] 12-01-PLAN.md -- Standalone binary responder vignette (deriving-endpoints.Rmd) and pkgdown nav update
+- [ ] 12-02-PLAN.md -- Forest plot visual polish (typography, spacing, dashed ref line, panel border)
 
 ### Phase 13: CRAN Compliance
 **Goal**: All CRAN policy requirements are satisfied -- DESCRIPTION metadata, vignette build cleanliness, timing limits, and NEWS formatting
