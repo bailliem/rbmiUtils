@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/analyse2.html">Storing and Analyzing Imputed Data</a></li>
     <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation and Validation</a></li>
     <li><a class="dropdown-item" href="../articles/efficient-storage.html">Efficient Storage of Imputed Data</a></li>
+    <li><a class="dropdown-item" href="../articles/deriving-endpoints.html">Deriving Endpoints from Imputed Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Diagnostics</h6></li>
     <li><a class="dropdown-item" href="../articles/diagnostics.html">MI Diagnostics and Describe Helpers</a></li>
@@ -41,15 +42,14 @@
 </nav><div class="container template-news">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Changelog</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
       <small>Source: <a href="https://github.com/openpharma/rbmiUtils/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.4.0" id="rbmiutils-040">rbmiUtils 0.4.0<a class="anchor" aria-label="anchor" href="#rbmiutils-040"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.2" id="rbmiutils-022">rbmiUtils 0.2.2<a class="anchor" aria-label="anchor" href="#rbmiutils-022"></a></h2>
 <div class="section level3">
-<h3 id="new-features-0-4-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-4-0"></a></h3>
+<h3 id="new-features-0-2-2">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2"></a></h3>
 <ul><li>
 <code><a href="../reference/describe_draws.html">describe_draws()</a></code> extracts structured metadata from rbmi draws objects, including method type, formula, sample count, and (for Bayesian methods) MCMC convergence diagnostics (ESS, Rhat).</li>
 <li>
@@ -58,7 +58,7 @@
 <code><a href="../reference/pool_to_ard.html">pool_to_ard()</a></code> gains an <code>analysis_obj</code> parameter that enriches the ARD with MI diagnostic statistics (FMI, lambda, RIV, Barnard-Rubin adjusted df, relative efficiency) when the pooling method is Rubin’s rules.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-0-4-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-4-0"></a></h3>
+<h3 id="improvements-0-2-2">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-2"></a></h3>
 <ul><li>
 <code><a href="../reference/efficacy_table.html">efficacy_table()</a></code> gains <code>font_family</code>, <code>font_size</code>, and <code>row_padding</code> parameters for publication-ready table styling.</li>
 <li>
@@ -69,16 +69,16 @@
 </ul></div>
 </div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.0" id="rbmiutils-030">rbmiUtils 0.3.0<a class="anchor" aria-label="anchor" href="#rbmiutils-030"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.1" id="rbmiutils-021">rbmiUtils 0.2.1<a class="anchor" aria-label="anchor" href="#rbmiutils-021"></a></h2>
 <div class="section level3">
-<h3 id="new-features-0-3-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
+<h3 id="new-features-0-2-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-1"></a></h3>
 <ul><li>End-to-end pipeline vignette “From rbmi Analysis to Regulatory Tables” with continuous and binary analysis walkthroughs.</li>
 <li>README enhanced with rendered efficacy table and forest plot visual teasers.</li>
 <li>Rendered example output images in <code><a href="../reference/plot_forest.html">plot_forest()</a></code> and <code><a href="../reference/efficacy_table.html">efficacy_table()</a></code> help pages.</li>
 <li>Inline cross-references to rbmi and beeca documentation in all vignettes.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-0-3-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-3-0"></a></h3>
+<h3 id="improvements-0-2-1">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-1"></a></h3>
 <ul><li>
 <code><a href="../reference/validate_data.html">validate_data()</a></code> now uses cli-formatted error messages with clearer guidance for malformed interaction terms, empty data, and type mismatches.</li>
 <li>
@@ -127,8 +127,11 @@
 <li>Cross-references between related functions in documentation.</li>
 <li>Expanded test coverage and integration tests.</li>
 </ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.9" id="rbmiutils-019">rbmiUtils 0.1.9<a class="anchor" aria-label="anchor" href="#rbmiutils-019"></a></h2>
 <div class="section level3">
-<h3 id="previous-releases-0-2-0">Previous Releases<a class="anchor" aria-label="anchor" href="#previous-releases-0-2-0"></a></h3>
+<h3 id="new-features-0-1-9">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-9"></a></h3>
 <ul><li>
 <code><a href="../reference/reduce_imputed_data.html">reduce_imputed_data()</a></code> and <code><a href="../reference/expand_imputed_data.html">expand_imputed_data()</a></code> for efficient storage of imputed datasets.</li>
 <li>
@@ -141,31 +144,56 @@
 <code><a href="../reference/format_pvalue.html">format_pvalue()</a></code>, <code><a href="../reference/format_estimate.html">format_estimate()</a></code>, <code><a href="../reference/format_results_table.html">format_results_table()</a></code> formatting utilities.</li>
 <li>
 <code>ADEFF</code> and <code>ADMI</code> example datasets.</li>
-<li>Initial documentation via pkgdown.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="rbmiutils-0-2-0">rbmiUtils 0.1.8<a class="anchor" aria-label="anchor" href="#rbmiutils-0-2-0"></a></h3>
-<p>CRAN release: 2026-01-24</p>
+<h3 id="improvements-0-1-9">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-1-9"></a></h3>
+<ul><li>Initial documentation via pkgdown.</li>
+</ul></div>
 </div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.8" id="rbmiutils-018">rbmiUtils 0.1.8<a class="anchor" aria-label="anchor" href="#rbmiutils-018"></a></h2><p class="text-muted">CRAN release: 2026-01-24</p>
 <div class="section level3">
-<h3 id="rbmiutils-0-2-0-1">rbmiUtils 0.1.7<a class="anchor" aria-label="anchor" href="#rbmiutils-0-2-0-1"></a></h3>
+<h3 id="cran-release-0-1-8">CRAN Release<a class="anchor" aria-label="anchor" href="#cran-release-0-1-8"></a></h3>
+<ul><li>Released to CRAN on 2026-01-24.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.7" id="rbmiutils-017">rbmiUtils 0.1.7<a class="anchor" aria-label="anchor" href="#rbmiutils-017"></a></h2>
+<div class="section level3">
+<h3 id="improvements-0-1-7">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-1-7"></a></h3>
 <ul><li>Moved tidyr from Suggests to Imports (used in tidy_pool_obj()).</li>
 <li>Added examples to gcomp_responder() documentation.</li>
 <li>Standardized examples to use native pipe operator |&gt;.</li>
 </ul></div>
-<div class="section level3">
-<h3 id="rbmiutils-0-2-0-2">rbmiUtils 0.1.6<a class="anchor" aria-label="anchor" href="#rbmiutils-0-2-0-2"></a></h3>
-<p>CRAN release: 2025-09-13 Added additional tests for all utility functions.</p>
 </div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.6" id="rbmiutils-016">rbmiUtils 0.1.6<a class="anchor" aria-label="anchor" href="#rbmiutils-016"></a></h2><p class="text-muted">CRAN release: 2025-09-13</p>
 <div class="section level3">
-<h3 id="rbmiutils-0-2-0-3">rbmiUtils 0.1.4<a class="anchor" aria-label="anchor" href="#rbmiutils-0-2-0-3"></a></h3>
-<p>CRAN release: 2025-05-23</p>
+<h3 id="cran-release-0-1-6">CRAN Release<a class="anchor" aria-label="anchor" href="#cran-release-0-1-6"></a></h3>
+<ul><li>Released to CRAN on 2025-09-13.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="improvements-0-1-6">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-1-6"></a></h3>
+<ul><li>Added additional tests for all utility functions.</li>
+</ul></div>
 </div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.4" id="rbmiutils-014">rbmiUtils 0.1.4<a class="anchor" aria-label="anchor" href="#rbmiutils-014"></a></h2><p class="text-muted">CRAN release: 2025-05-23</p>
 <div class="section level3">
-<h3 id="first-release-0-2-0">First release<a class="anchor" aria-label="anchor" href="#first-release-0-2-0"></a></h3>
-<ul><li>Preparation for CRAN submission.</li>
-<li>Initial draft package.</li>
+<h3 id="cran-release-0-1-4">CRAN Release<a class="anchor" aria-label="anchor" href="#cran-release-0-1-4"></a></h3>
+<ul><li>Released to CRAN on 2025-05-23.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0" id="rbmiutils-010">rbmiUtils 0.1.0<a class="anchor" aria-label="anchor" href="#rbmiutils-010"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-1-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-0"></a></h3>
+<ul><li>Initial draft package.</li>
 <li>Added a NEWS.md file to track changes to the package.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="improvements-0-1-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-1-0"></a></h3>
+<ul><li>Preparation for CRAN submission.</li>
 <li>Added documentation via pkgdown.</li>
 </ul></div>
 </div>

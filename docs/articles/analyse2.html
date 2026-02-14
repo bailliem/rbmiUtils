@@ -47,6 +47,7 @@
     <li><a class="dropdown-item" href="../articles/analyse2.html">Storing and Analyzing Imputed Data</a></li>
     <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation and Validation</a></li>
     <li><a class="dropdown-item" href="../articles/efficient-storage.html">Efficient Storage of Imputed Data</a></li>
+    <li><a class="dropdown-item" href="../articles/deriving-endpoints.html">Deriving Endpoints from Imputed Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Diagnostics</h6></li>
     <li><a class="dropdown-item" href="../articles/diagnostics.html">MI Diagnostics and Describe Helpers</a></li>
@@ -71,10 +72,9 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Storing and Analyzing Imputed Data with rbmiUtils</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Storing and Analyzing Imputed Data with rbmiUtils</h1>
             
-            <h4 data-toc-skip class="date">2026-02-11</h4>
+            <h4 data-toc-skip class="date">2026-02-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/rbmiUtils/blob/HEAD/vignettes/analyse2.Rmd" class="external-link"><code>vignettes/analyse2.Rmd</code></a></small>
       <div class="d-none name"><code>analyse2.Rmd</code></div>
@@ -116,7 +116,7 @@ Data</a> - Reduce storage for large imputations</li>
 <h2 id="statistical-context">Statistical Context<a class="anchor" aria-label="anchor" href="#statistical-context"></a>
 </h2>
 <p>This approach applies <strong>Rubin’s Rules</strong> for inference
-after multiple imputation (see the <a href="https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html" class="external-link">rbmi
+after multiple imputation (see the <a href="https://CRAN.R-project.org/package=rbmi/vignettes/quickstart.html" class="external-link">rbmi
 quickstart vignette</a> for background on the draws/impute/analyse/pool
 pipeline):</p>
 <blockquote>
@@ -153,7 +153,7 @@ rules.</p>
 <div class="section level2">
 <h2 id="step-2-define-imputation-model">Step 2: Define Imputation Model<a class="anchor" aria-label="anchor" href="#step-2-define-imputation-model"></a>
 </h2>
-<p>We use <a href="https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html" class="external-link"><code>rbmi::set_vars()</code></a>
+<p>We use <a href="https://CRAN.R-project.org/package=rbmi/vignettes/quickstart.html" class="external-link"><code>rbmi::set_vars()</code></a>
 to specify the key variable roles:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/set_vars.html" class="external-link">set_vars</a></span><span class="op">(</span></span>
@@ -173,7 +173,6 @@ to specify the key variable roles:</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">USUBJID</span>, <span class="va">STRATA</span>, <span class="va">REGION</span>, <span class="va">REGIONC</span>, <span class="va">TRT</span>, <span class="va">BASE</span>, <span class="va">CHG</span>, <span class="va">AVISIT</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">draws_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/draws.html" class="external-link">draws</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dat</span>, vars <span class="op">=</span> <span class="va">vars</span>, method <span class="op">=</span> <span class="va">method</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Trying to compile a simple C file</span></span>
 <span><span class="co">#&gt; Running /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/bin/R \</span></span>
 <span><span class="co">#&gt;   CMD SHLIB foo.c</span></span>
 <span><span class="co">#&gt; using C compiler: ‘Apple clang version 17.0.0 (clang-1700.6.3.2)’</span></span>
@@ -191,8 +190,8 @@ to specify the key variable roles:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'rbmi_MMRM_us_default' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000228 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 2.28 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000181 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.81 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -209,12 +208,10 @@ to specify the key variable roles:</p>
 <span><span class="co">#&gt; Chain 1: Iteration: 360 / 400 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 400 / 400 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.323 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.248 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.571 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.228 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.177 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.405 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1:</span></span>
-<span><span class="co">#&gt; Warning: The Effective Sample Size is below 40% for 1 parameters. Please</span></span>
-<span><span class="co">#&gt; consider increasing burn-in and/or burn-between, or the number of samples</span></span>
 <span></span>
 <span><span class="va">impute_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/impute.html" class="external-link">impute</a></span><span class="op">(</span><span class="va">draws_obj</span>, references <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Placebo"</span> <span class="op">=</span> <span class="st">"Placebo"</span>, <span class="st">"Drug A"</span> <span class="op">=</span> <span class="st">"Placebo"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -244,13 +241,6 @@ to specify the key variable roles:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pool_obj_ancova</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/pool.html" class="external-link">pool</a></span><span class="op">(</span><span class="va">ana_obj_ancova</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">pool_obj_ancova</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Pool Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; 6 parameters across 2 visits</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Method</span>: rubin</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">N imputations</span>: 100</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Confidence</span>: 95%</span></span>
-<span><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;        parameter   visit   est   lci   uci    pval</span></span>
 <span><span class="co">#&gt;      trt_Week 24 Week 24 -2.18 -2.53 -1.82 &lt; 0.001</span></span>
 <span><span class="co">#&gt;  lsm_ref_Week 24 Week 24  0.08 -0.18  0.33   0.560</span></span>
@@ -324,13 +314,6 @@ logistic model:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pool_obj_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://openpharma.github.io/rbmi/latest-tag/reference/pool.html" class="external-link">pool</a></span><span class="op">(</span><span class="va">ana_obj_prop</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">pool_obj_prop</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Pool Object</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; 1 parameter across 0 visits</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Method</span>: rubin</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">N imputations</span>: 100</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Confidence</span>: 95%</span></span>
-<span><span class="co">#&gt; ────────────────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;  parameter visit   est   lci   uci    pval</span></span>
 <span><span class="co">#&gt;        trt  &lt;NA&gt; -0.06 -0.09 -0.04 &lt; 0.001</span></span></code></pre></div>
 </div>

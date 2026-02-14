@@ -47,6 +47,7 @@
     <li><a class="dropdown-item" href="../articles/analyse2.html">Storing and Analyzing Imputed Data</a></li>
     <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation and Validation</a></li>
     <li><a class="dropdown-item" href="../articles/efficient-storage.html">Efficient Storage of Imputed Data</a></li>
+    <li><a class="dropdown-item" href="../articles/deriving-endpoints.html">Deriving Endpoints from Imputed Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Diagnostics</h6></li>
     <li><a class="dropdown-item" href="../articles/diagnostics.html">MI Diagnostics and Describe Helpers</a></li>
@@ -71,10 +72,9 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>MI Diagnostics and Pipeline Inspection</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>MI Diagnostics and Pipeline Inspection</h1>
             
-            <h4 data-toc-skip class="date">2026-02-11</h4>
+            <h4 data-toc-skip class="date">2026-02-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/rbmiUtils/blob/HEAD/vignettes/diagnostics.Rmd" class="external-link"><code>vignettes/diagnostics.Rmd</code></a></small>
       <div class="d-none name"><code>diagnostics.Rmd</code></div>
@@ -277,7 +277,6 @@ diagnostic statistics. We can filter and display them:</p>
 <code class="sourceCode R"><span><span class="va">ard_enriched</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">stat_name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fmi"</span>, <span class="st">"lambda"</span>, <span class="st">"riv"</span>, <span class="st">"df.adjusted"</span>, <span class="st">"re"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">group1_level</span>, <span class="va">variable_level</span>, <span class="va">stat_name</span>, <span class="va">stat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">{cards} data frame: 30 x 4</span></span></span>
 <span><span class="co">#&gt;    group1_level variable_level   stat_name    stat</span></span>
 <span><span class="co">#&gt; 1       Week 24             NA         fmi   0.023</span></span>
 <span><span class="co">#&gt; 2       Week 24             NA      lambda   0.019</span></span>
@@ -288,9 +287,7 @@ diagnostic statistics. We can filter and display them:</p>
 <span><span class="co">#&gt; 7       Week 24             NA      lambda   0.017</span></span>
 <span><span class="co">#&gt; 8       Week 24             NA         riv   0.018</span></span>
 <span><span class="co">#&gt; 9       Week 24             NA df.adjusted 481.809</span></span>
-<span><span class="co">#&gt; 10      Week 24             NA          re       1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> <span style="color: #555555;">20 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> <span style="color: #555555;">Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; 10      Week 24             NA          re       1</span></span></code></pre></div>
 <p>Each diagnostic statistic has a specific interpretation:</p>
 <ul>
 <li>
