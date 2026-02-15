@@ -19,7 +19,7 @@ Progress: [██████████] 4/4 milestones shipped (14 phases, 34
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 34 (9 v1 + 7 v2 + 9 v3 + 5 v4 + 4 quick)
+- Total plans completed: 35 (9 v1 + 7 v2 + 9 v3 + 5 v4 + 5 quick)
 - Average duration: ~25 min (v1), ~7 min (v2), ~6 min (v3)
 - Total execution time: ~4.5 hours (v1) + ~52 min (v2) + ~56 min (v3)
 
@@ -63,9 +63,10 @@ None.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 1 | Fix vignette warnings: suppress Stan compilation noise and resolve internal deprecation warnings | 2026-02-13 | 47b52d9 | [1-fix-vignette-warnings-suppress-stan-comp](./quick/1-fix-vignette-warnings-suppress-stan-comp/) |
+| 2 | Fix VignetteIndexEntry title mismatch and update spelling wordlist | 2026-02-15 | 5d2b4ee | [2-fix-warnings-and-errors-in-package-vigne](./quick/2-fix-warnings-and-errors-in-package-vigne/) |
 
 ## Session Continuity
 
-Last session: 2026-02-14
-Stopped at: Archived v4 milestone — all milestones complete
+Last session: 2026-02-15
+Stopped at: Completed quick-2 (fix vignette warnings and spelling wordlist)
 Resume file: None
