@@ -7,7 +7,7 @@ output:
     toc_depth: 2
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{Storing and Analyzing with rbmiUtils}
+  %\VignetteIndexEntry{Storing and Analyzing Imputed Data with rbmiUtils}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
