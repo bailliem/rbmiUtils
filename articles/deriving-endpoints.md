@@ -102,6 +102,14 @@ The `ADMI` dataset already contains the `CRIT1FLN` column, which flags
 subjects as responders (`1`) if their change from baseline exceeds 3,
 and non-responders (`0`) otherwise. We can verify this:
 
+> **Interpreting the results:** In this simulated dataset, positive CHG
+> values represent worsening (an increase in symptom score). Therefore
+> CHG \> 3 defines “worsening responders” – subjects whose symptoms
+> deteriorated by more than 3 points. A lower responder rate for Drug A
+> compared to Placebo indicates that fewer patients on the active
+> treatment experienced clinically meaningful worsening, which is
+> evidence of drug efficacy.
+
 ``` r
 # The responder criterion is pre-derived
 ADMI |>
@@ -154,10 +162,10 @@ tidy_pool_obj(pool_obj)
 #> # A tibble: 6 × 10
 #>   parameter  description visit parameter_type lsm_type      est      se      lci
 #>   <chr>      <chr>       <chr> <chr>          <chr>       <dbl>   <dbl>    <dbl>
-#> 1 trt_Drug … Treatment … Drug… trt            NA       -3.08e-2 1.15e-2 -0.0534 
+#> 1 trt_Drug … Treatment … Week… trt            NA       -3.08e-2 1.15e-2 -0.0534 
 #> 2 lsm_Drug … Least Squa… Week… lsm            Drug A    7.79e-5 7.85e-4 -0.00146
 #> 3 lsm_Place… Least Squa… Week… lsm            Placebo   3.09e-2 1.15e-2  0.00843
-#> 4 trt_Drug … Treatment … Drug… trt            NA       -9.57e-2 2.10e-2 -0.137  
+#> 4 trt_Drug … Treatment … Week… trt            NA       -9.57e-2 2.10e-2 -0.137  
 #> 5 lsm_Drug … Least Squa… Week… lsm            Drug A    7.27e-3 5.04e-3 -0.00262
 #> 6 lsm_Place… Least Squa… Week… lsm            Placebo   1.03e-1 2.06e-2  0.0627 
 #> # ℹ 2 more variables: uci <dbl>, pval <dbl>
@@ -178,16 +186,14 @@ efficacy_table(
 |-------------------------------------------------|----------|------------|----------------|----------|
 | G-computation with Marginal Effects (Ge et al.) |          |            |                |          |
 |                                                 | Estimate | Std. Error | 95% CI         | P-value  |
-| Drug a-Placebo Week 24                          |          |            |                |          |
-| Treatment Difference                            | −0.03    | 0.01       | (-0.05, -0.01) | 0.007    |
 | Week 24                                         |          |            |                |          |
-| lsm_Drug A_Week 24                              | 0.00     | 0.00       | (-0.00, 0.00)  | 0.921    |
-| lsm_Placebo_Week 24                             | 0.03     | 0.01       | (0.01, 0.05)   | 0.007    |
-| Drug a-Placebo Week 48                          |          |            |                |          |
-| Treatment Difference                            | −0.10    | 0.02       | (-0.14, -0.05) | \< 0.001 |
+| LS Mean (Drug A)                                | 0.00     | 0.00       | (-0.00, 0.00)  | 0.921    |
+| LS Mean (Placebo)                               | 0.03     | 0.01       | (0.01, 0.05)   | 0.007    |
+| Treatment Difference                            | −0.03    | 0.01       | (-0.05, -0.01) | 0.007    |
 | Week 48                                         |          |            |                |          |
-| lsm_Drug A_Week 48                              | 0.01     | 0.01       | (-0.00, 0.02)  | 0.150    |
-| lsm_Placebo_Week 48                             | 0.10     | 0.02       | (0.06, 0.14)   | \< 0.001 |
+| LS Mean (Drug A)                                | 0.01     | 0.01       | (-0.00, 0.02)  | 0.150    |
+| LS Mean (Placebo)                               | 0.10     | 0.02       | (0.06, 0.14)   | \< 0.001 |
+| Treatment Difference                            | −0.10    | 0.02       | (-0.14, -0.05) | \< 0.001 |
 | Pooling method: rubin                           |          |            |                |          |
 | Number of imputations: 100                      |          |            |                |          |
 | Confidence level: 95%                           |          |            |                |          |
@@ -265,10 +271,10 @@ tidy_pool_obj(pool_obj_cutoff)
 #> # A tibble: 6 × 10
 #>   parameter         description visit parameter_type lsm_type       est       se
 #>   <chr>             <chr>       <chr> <chr>          <chr>        <dbl>    <dbl>
-#> 1 trt_Drug A-Place… Treatment … Drug… trt            NA       -4.39e- 3 4.28e- 3
+#> 1 trt_Drug A-Place… Treatment … Week… trt            NA       -4.39e- 3 4.28e- 3
 #> 2 lsm_Drug A_Week … Least Squa… Week… lsm            Drug A    1.58e-11 9.51e-12
 #> 3 lsm_Placebo_Week… Least Squa… Week… lsm            Placebo   4.39e- 3 4.28e- 3
-#> 4 trt_Drug A-Place… Treatment … Drug… trt            NA       -4.30e- 2 1.39e- 2
+#> 4 trt_Drug A-Place… Treatment … Week… trt            NA       -4.30e- 2 1.39e- 2
 #> 5 lsm_Drug A_Week … Least Squa… Week… lsm            Drug A    4.35e-10 3.45e-11
 #> 6 lsm_Placebo_Week… Least Squa… Week… lsm            Placebo   4.30e- 2 1.39e- 2
 #> # ℹ 3 more variables: lci <dbl>, uci <dbl>, pval <dbl>
@@ -287,16 +293,14 @@ efficacy_table(
 |-------------------------------------------------|----------|------------|----------------|----------|
 | G-computation with Marginal Effects (Ge et al.) |          |            |                |          |
 |                                                 | Estimate | Std. Error | 95% CI         | P-value  |
-| Drug a-Placebo Week 24                          |          |            |                |          |
-| Treatment Difference                            | 0.00     | 0.00       | (-0.01, 0.00)  | 0.304    |
 | Week 24                                         |          |            |                |          |
-| lsm_Drug A_Week 24                              | 0.00     | 0.00       | (-0.00, 0.00)  | 0.098    |
-| lsm_Placebo_Week 24                             | 0.00     | 0.00       | (-0.00, 0.01)  | 0.304    |
-| Drug a-Placebo Week 48                          |          |            |                |          |
-| Treatment Difference                            | −0.04    | 0.01       | (-0.07, -0.02) | 0.002    |
+| LS Mean (Drug A)                                | 0.00     | 0.00       | (-0.00, 0.00)  | 0.098    |
+| LS Mean (Placebo)                               | 0.00     | 0.00       | (-0.00, 0.01)  | 0.304    |
+| Treatment Difference                            | 0.00     | 0.00       | (-0.01, 0.00)  | 0.304    |
 | Week 48                                         |          |            |                |          |
-| lsm_Drug A_Week 48                              | 0.00     | 0.00       | (0.00, 0.00)   | \< 0.001 |
-| lsm_Placebo_Week 48                             | 0.04     | 0.01       | (0.02, 0.07)   | 0.002    |
+| LS Mean (Drug A)                                | 0.00     | 0.00       | (0.00, 0.00)   | \< 0.001 |
+| LS Mean (Placebo)                               | 0.04     | 0.01       | (0.02, 0.07)   | 0.002    |
+| Treatment Difference                            | −0.04    | 0.01       | (-0.07, -0.02) | 0.002    |
 | Pooling method: rubin                           |          |            |                |          |
 | Number of imputations: 100                      |          |            |                |          |
 | Confidence level: 95%                           |          |            |                |          |
@@ -313,12 +317,12 @@ function converts a pool object into this format:
 ard <- pool_to_ard(pool_obj)
 print(ard)
 #>    group1 group1_level         group2 group2_level   group3 group3_level
-#> 1   visit    Drug A-P… parameter_type          trt lsm_type           NA
-#> 2   visit    Drug A-P… parameter_type          trt lsm_type           NA
-#> 3   visit    Drug A-P… parameter_type          trt lsm_type           NA
-#> 4   visit    Drug A-P… parameter_type          trt lsm_type           NA
-#> 5   visit    Drug A-P… parameter_type          trt lsm_type           NA
-#> 6   visit    Drug A-P… parameter_type          trt lsm_type           NA
+#> 1   visit      Week 24 parameter_type          trt lsm_type           NA
+#> 2   visit      Week 24 parameter_type          trt lsm_type           NA
+#> 3   visit      Week 24 parameter_type          trt lsm_type           NA
+#> 4   visit      Week 24 parameter_type          trt lsm_type           NA
+#> 5   visit      Week 24 parameter_type          trt lsm_type           NA
+#> 6   visit      Week 24 parameter_type          trt lsm_type           NA
 #> 7   visit      Week 24 parameter_type          lsm lsm_type       Drug A
 #> 8   visit      Week 24 parameter_type          lsm lsm_type       Drug A
 #> 9   visit      Week 24 parameter_type          lsm lsm_type       Drug A

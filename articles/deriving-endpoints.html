@@ -73,7 +73,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Deriving Endpoints from Imputed Data</h1>
             
-            <h4 data-toc-skip class="date">2026-02-14</h4>
+            <h4 data-toc-skip class="date">2026-02-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/rbmiUtils/blob/main/vignettes/deriving-endpoints.Rmd" class="external-link"><code>vignettes/deriving-endpoints.Rmd</code></a></small>
       <div class="d-none name"><code>deriving-endpoints.Rmd</code></div>
@@ -168,6 +168,15 @@ MI with 100 samples.</p>
 <code>CRIT1FLN</code> column, which flags subjects as responders
 (<code>1</code>) if their change from baseline exceeds 3, and
 non-responders (<code>0</code>) otherwise. We can verify this:</p>
+<blockquote>
+<p><strong>Interpreting the results:</strong> In this simulated dataset,
+positive CHG values represent worsening (an increase in symptom score).
+Therefore CHG &gt; 3 defines “worsening responders” – subjects whose
+symptoms deteriorated by more than 3 points. A lower responder rate for
+Drug A compared to Placebo indicates that fewer patients on the active
+treatment experienced clinically meaningful worsening, which is evidence
+of drug efficacy.</p>
+</blockquote>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The responder criterion is pre-derived</span></span>
 <span><span class="va">ADMI</span> <span class="op">|&gt;</span></span>
@@ -211,10 +220,10 @@ errors, confidence intervals, and p-values.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
 <span><span class="co">#&gt;   parameter  description visit parameter_type lsm_type      est      se      lci</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> trt_Drug … Treatment … Drug… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">3.08</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 1.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> -<span style="color: #BB0000;">0.053</span><span style="color: #BB0000; text-decoration: underline;">4</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> trt_Drug … Treatment … Week… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">3.08</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 1.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> -<span style="color: #BB0000;">0.053</span><span style="color: #BB0000; text-decoration: underline;">4</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> lsm_Drug … Least Squa… Week… lsm            Drug A    7.79<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span> 7.85<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> -<span style="color: #BB0000;">0.001</span><span style="color: #BB0000; text-decoration: underline;">46</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> lsm_Place… Least Squa… Week… lsm            Placebo   3.09<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 1.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span>  0.008<span style="text-decoration: underline;">43</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> trt_Drug … Treatment … Drug… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">9.57</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 2.10<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> -<span style="color: #BB0000;">0.137</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> trt_Drug … Treatment … Week… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">9.57</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 2.10<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> -<span style="color: #BB0000;">0.137</span>  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> lsm_Drug … Least Squa… Week… lsm            Drug A    7.27<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span> 5.04<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span> -<span style="color: #BB0000;">0.002</span><span style="color: #BB0000; text-decoration: underline;">62</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> lsm_Place… Least Squa… Week… lsm            Placebo   1.03<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 2.06<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span>  0.062<span style="text-decoration: underline;">7</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: uci &lt;dbl&gt;, pval &lt;dbl&gt;</span></span></span></code></pre></div>
@@ -694,57 +703,51 @@ format:</p>
 </thead>
 <tbody class="gt_table_body">
 <tr class="gt_group_heading_row">
-<th colspan="5" class="gt_group_heading" scope="colgroup" id="Drug a-Placebo Week 24">Drug a-Placebo Week 24</th>
-    </tr>
-<tr class="gt_row_group_first">
-<th id="stub_1_1" scope="row" class="gt_row gt_center gt_stub">Treatment Difference</th>
-<td headers="Drug a-Placebo Week 24 stub_1_1 est" class="gt_row gt_center">−0.03</td>
-<td headers="Drug a-Placebo Week 24 stub_1_1 se" class="gt_row gt_center">0.01</td>
-<td headers="Drug a-Placebo Week 24 stub_1_1 ci_text" class="gt_row gt_center">(-0.05, -0.01)</td>
-<td headers="Drug a-Placebo Week 24 stub_1_1 pval_text" class="gt_row gt_center">0.007</td>
-</tr>
-<tr class="gt_group_heading_row">
 <th colspan="5" class="gt_group_heading" scope="colgroup" id="Week 24">Week 24</th>
     </tr>
 <tr class="gt_row_group_first">
-<th id="stub_1_2" scope="row" class="gt_row gt_center gt_stub">lsm_Drug A_Week 24</th>
-<td headers="Week 24 stub_1_2 est" class="gt_row gt_center">0.00</td>
-<td headers="Week 24 stub_1_2 se" class="gt_row gt_center">0.00</td>
-<td headers="Week 24 stub_1_2 ci_text" class="gt_row gt_center">(-0.00, 0.00)</td>
-<td headers="Week 24 stub_1_2 pval_text" class="gt_row gt_center">0.921</td>
+<th id="stub_1_1" scope="row" class="gt_row gt_center gt_stub">LS Mean (Drug A)</th>
+<td headers="Week 24 stub_1_1 est" class="gt_row gt_center">0.00</td>
+<td headers="Week 24 stub_1_1 se" class="gt_row gt_center">0.00</td>
+<td headers="Week 24 stub_1_1 ci_text" class="gt_row gt_center">(-0.00, 0.00)</td>
+<td headers="Week 24 stub_1_1 pval_text" class="gt_row gt_center">0.921</td>
 </tr>
 <tr>
-<th id="stub_1_3" scope="row" class="gt_row gt_center gt_stub">lsm_Placebo_Week 24</th>
-<td headers="Week 24 stub_1_3 est" class="gt_row gt_center">0.03</td>
-<td headers="Week 24 stub_1_3 se" class="gt_row gt_center">0.01</td>
-<td headers="Week 24 stub_1_3 ci_text" class="gt_row gt_center">(0.01, 0.05)</td>
-<td headers="Week 24 stub_1_3 pval_text" class="gt_row gt_center">0.007</td>
+<th id="stub_1_2" scope="row" class="gt_row gt_center gt_stub">LS Mean (Placebo)</th>
+<td headers="Week 24 stub_1_2 est" class="gt_row gt_center">0.03</td>
+<td headers="Week 24 stub_1_2 se" class="gt_row gt_center">0.01</td>
+<td headers="Week 24 stub_1_2 ci_text" class="gt_row gt_center">(0.01, 0.05)</td>
+<td headers="Week 24 stub_1_2 pval_text" class="gt_row gt_center">0.007</td>
 </tr>
-<tr class="gt_group_heading_row">
-<th colspan="5" class="gt_group_heading" scope="colgroup" id="Drug a-Placebo Week 48">Drug a-Placebo Week 48</th>
-    </tr>
-<tr class="gt_row_group_first">
-<th id="stub_1_4" scope="row" class="gt_row gt_center gt_stub">Treatment Difference</th>
-<td headers="Drug a-Placebo Week 48 stub_1_4 est" class="gt_row gt_center">−0.10</td>
-<td headers="Drug a-Placebo Week 48 stub_1_4 se" class="gt_row gt_center">0.02</td>
-<td headers="Drug a-Placebo Week 48 stub_1_4 ci_text" class="gt_row gt_center">(-0.14, -0.05)</td>
-<td headers="Drug a-Placebo Week 48 stub_1_4 pval_text" class="gt_row gt_center">&lt; 0.001</td>
+<tr>
+<th id="stub_1_3" scope="row" class="gt_row gt_center gt_stub">Treatment Difference</th>
+<td headers="Week 24 stub_1_3 est" class="gt_row gt_center">−0.03</td>
+<td headers="Week 24 stub_1_3 se" class="gt_row gt_center">0.01</td>
+<td headers="Week 24 stub_1_3 ci_text" class="gt_row gt_center">(-0.05, -0.01)</td>
+<td headers="Week 24 stub_1_3 pval_text" class="gt_row gt_center">0.007</td>
 </tr>
 <tr class="gt_group_heading_row">
 <th colspan="5" class="gt_group_heading" scope="colgroup" id="Week 48">Week 48</th>
     </tr>
 <tr class="gt_row_group_first">
-<th id="stub_1_5" scope="row" class="gt_row gt_center gt_stub">lsm_Drug A_Week 48</th>
-<td headers="Week 48 stub_1_5 est" class="gt_row gt_center">0.01</td>
-<td headers="Week 48 stub_1_5 se" class="gt_row gt_center">0.01</td>
-<td headers="Week 48 stub_1_5 ci_text" class="gt_row gt_center">(-0.00, 0.02)</td>
-<td headers="Week 48 stub_1_5 pval_text" class="gt_row gt_center">0.150</td>
+<th id="stub_1_4" scope="row" class="gt_row gt_center gt_stub">LS Mean (Drug A)</th>
+<td headers="Week 48 stub_1_4 est" class="gt_row gt_center">0.01</td>
+<td headers="Week 48 stub_1_4 se" class="gt_row gt_center">0.01</td>
+<td headers="Week 48 stub_1_4 ci_text" class="gt_row gt_center">(-0.00, 0.02)</td>
+<td headers="Week 48 stub_1_4 pval_text" class="gt_row gt_center">0.150</td>
 </tr>
 <tr>
-<th id="stub_1_6" scope="row" class="gt_row gt_center gt_stub">lsm_Placebo_Week 48</th>
-<td headers="Week 48 stub_1_6 est" class="gt_row gt_center">0.10</td>
+<th id="stub_1_5" scope="row" class="gt_row gt_center gt_stub">LS Mean (Placebo)</th>
+<td headers="Week 48 stub_1_5 est" class="gt_row gt_center">0.10</td>
+<td headers="Week 48 stub_1_5 se" class="gt_row gt_center">0.02</td>
+<td headers="Week 48 stub_1_5 ci_text" class="gt_row gt_center">(0.06, 0.14)</td>
+<td headers="Week 48 stub_1_5 pval_text" class="gt_row gt_center">&lt; 0.001</td>
+</tr>
+<tr>
+<th id="stub_1_6" scope="row" class="gt_row gt_center gt_stub">Treatment Difference</th>
+<td headers="Week 48 stub_1_6 est" class="gt_row gt_center">−0.10</td>
 <td headers="Week 48 stub_1_6 se" class="gt_row gt_center">0.02</td>
-<td headers="Week 48 stub_1_6 ci_text" class="gt_row gt_center">(0.06, 0.14)</td>
+<td headers="Week 48 stub_1_6 ci_text" class="gt_row gt_center">(-0.14, -0.05)</td>
 <td headers="Week 48 stub_1_6 pval_text" class="gt_row gt_center">&lt; 0.001</td>
 </tr>
 </tbody>
@@ -828,10 +831,10 @@ outcome and repeat the analysis:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
 <span><span class="co">#&gt;   parameter         description visit parameter_type lsm_type       est       se</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> trt_Drug A-Place… Treatment … Drug… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">4.39</span><span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span> 4.28<span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> trt_Drug A-Place… Treatment … Week… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">4.39</span><span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span> 4.28<span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> lsm_Drug A_Week … Least Squa… Week… lsm            Drug A    1.58<span style="color: #949494;">e</span><span style="color: #BB0000;">-11</span> 9.51<span style="color: #949494;">e</span><span style="color: #BB0000;">-12</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> lsm_Placebo_Week… Least Squa… Week… lsm            Placebo   4.39<span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span> 4.28<span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> trt_Drug A-Place… Treatment … Drug… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">4.30</span><span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 1.39<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> trt_Drug A-Place… Treatment … Week… trt            <span style="color: #BB0000;">NA</span>       -<span style="color: #BB0000;">4.30</span><span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 1.39<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> lsm_Drug A_Week … Least Squa… Week… lsm            Drug A    4.35<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span> 3.45<span style="color: #949494;">e</span><span style="color: #BB0000;">-11</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> lsm_Placebo_Week… Least Squa… Week… lsm            Placebo   4.30<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 1.39<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: lci &lt;dbl&gt;, uci &lt;dbl&gt;, pval &lt;dbl&gt;</span></span></span></code></pre></div>
@@ -1309,57 +1312,51 @@ outcome and repeat the analysis:</p>
 </thead>
 <tbody class="gt_table_body">
 <tr class="gt_group_heading_row">
-<th colspan="5" class="gt_group_heading" scope="colgroup" id="Drug a-Placebo Week 24">Drug a-Placebo Week 24</th>
-    </tr>
-<tr class="gt_row_group_first">
-<th id="stub_1_1" scope="row" class="gt_row gt_center gt_stub">Treatment Difference</th>
-<td headers="Drug a-Placebo Week 24 stub_1_1 est" class="gt_row gt_center">0.00</td>
-<td headers="Drug a-Placebo Week 24 stub_1_1 se" class="gt_row gt_center">0.00</td>
-<td headers="Drug a-Placebo Week 24 stub_1_1 ci_text" class="gt_row gt_center">(-0.01, 0.00)</td>
-<td headers="Drug a-Placebo Week 24 stub_1_1 pval_text" class="gt_row gt_center">0.304</td>
-</tr>
-<tr class="gt_group_heading_row">
 <th colspan="5" class="gt_group_heading" scope="colgroup" id="Week 24">Week 24</th>
     </tr>
 <tr class="gt_row_group_first">
-<th id="stub_1_2" scope="row" class="gt_row gt_center gt_stub">lsm_Drug A_Week 24</th>
-<td headers="Week 24 stub_1_2 est" class="gt_row gt_center">0.00</td>
-<td headers="Week 24 stub_1_2 se" class="gt_row gt_center">0.00</td>
-<td headers="Week 24 stub_1_2 ci_text" class="gt_row gt_center">(-0.00, 0.00)</td>
-<td headers="Week 24 stub_1_2 pval_text" class="gt_row gt_center">0.098</td>
+<th id="stub_1_1" scope="row" class="gt_row gt_center gt_stub">LS Mean (Drug A)</th>
+<td headers="Week 24 stub_1_1 est" class="gt_row gt_center">0.00</td>
+<td headers="Week 24 stub_1_1 se" class="gt_row gt_center">0.00</td>
+<td headers="Week 24 stub_1_1 ci_text" class="gt_row gt_center">(-0.00, 0.00)</td>
+<td headers="Week 24 stub_1_1 pval_text" class="gt_row gt_center">0.098</td>
 </tr>
 <tr>
-<th id="stub_1_3" scope="row" class="gt_row gt_center gt_stub">lsm_Placebo_Week 24</th>
+<th id="stub_1_2" scope="row" class="gt_row gt_center gt_stub">LS Mean (Placebo)</th>
+<td headers="Week 24 stub_1_2 est" class="gt_row gt_center">0.00</td>
+<td headers="Week 24 stub_1_2 se" class="gt_row gt_center">0.00</td>
+<td headers="Week 24 stub_1_2 ci_text" class="gt_row gt_center">(-0.00, 0.01)</td>
+<td headers="Week 24 stub_1_2 pval_text" class="gt_row gt_center">0.304</td>
+</tr>
+<tr>
+<th id="stub_1_3" scope="row" class="gt_row gt_center gt_stub">Treatment Difference</th>
 <td headers="Week 24 stub_1_3 est" class="gt_row gt_center">0.00</td>
 <td headers="Week 24 stub_1_3 se" class="gt_row gt_center">0.00</td>
-<td headers="Week 24 stub_1_3 ci_text" class="gt_row gt_center">(-0.00, 0.01)</td>
+<td headers="Week 24 stub_1_3 ci_text" class="gt_row gt_center">(-0.01, 0.00)</td>
 <td headers="Week 24 stub_1_3 pval_text" class="gt_row gt_center">0.304</td>
-</tr>
-<tr class="gt_group_heading_row">
-<th colspan="5" class="gt_group_heading" scope="colgroup" id="Drug a-Placebo Week 48">Drug a-Placebo Week 48</th>
-    </tr>
-<tr class="gt_row_group_first">
-<th id="stub_1_4" scope="row" class="gt_row gt_center gt_stub">Treatment Difference</th>
-<td headers="Drug a-Placebo Week 48 stub_1_4 est" class="gt_row gt_center">−0.04</td>
-<td headers="Drug a-Placebo Week 48 stub_1_4 se" class="gt_row gt_center">0.01</td>
-<td headers="Drug a-Placebo Week 48 stub_1_4 ci_text" class="gt_row gt_center">(-0.07, -0.02)</td>
-<td headers="Drug a-Placebo Week 48 stub_1_4 pval_text" class="gt_row gt_center">0.002</td>
 </tr>
 <tr class="gt_group_heading_row">
 <th colspan="5" class="gt_group_heading" scope="colgroup" id="Week 48">Week 48</th>
     </tr>
 <tr class="gt_row_group_first">
-<th id="stub_1_5" scope="row" class="gt_row gt_center gt_stub">lsm_Drug A_Week 48</th>
-<td headers="Week 48 stub_1_5 est" class="gt_row gt_center">0.00</td>
-<td headers="Week 48 stub_1_5 se" class="gt_row gt_center">0.00</td>
-<td headers="Week 48 stub_1_5 ci_text" class="gt_row gt_center">(0.00, 0.00)</td>
-<td headers="Week 48 stub_1_5 pval_text" class="gt_row gt_center">&lt; 0.001</td>
+<th id="stub_1_4" scope="row" class="gt_row gt_center gt_stub">LS Mean (Drug A)</th>
+<td headers="Week 48 stub_1_4 est" class="gt_row gt_center">0.00</td>
+<td headers="Week 48 stub_1_4 se" class="gt_row gt_center">0.00</td>
+<td headers="Week 48 stub_1_4 ci_text" class="gt_row gt_center">(0.00, 0.00)</td>
+<td headers="Week 48 stub_1_4 pval_text" class="gt_row gt_center">&lt; 0.001</td>
 </tr>
 <tr>
-<th id="stub_1_6" scope="row" class="gt_row gt_center gt_stub">lsm_Placebo_Week 48</th>
-<td headers="Week 48 stub_1_6 est" class="gt_row gt_center">0.04</td>
+<th id="stub_1_5" scope="row" class="gt_row gt_center gt_stub">LS Mean (Placebo)</th>
+<td headers="Week 48 stub_1_5 est" class="gt_row gt_center">0.04</td>
+<td headers="Week 48 stub_1_5 se" class="gt_row gt_center">0.01</td>
+<td headers="Week 48 stub_1_5 ci_text" class="gt_row gt_center">(0.02, 0.07)</td>
+<td headers="Week 48 stub_1_5 pval_text" class="gt_row gt_center">0.002</td>
+</tr>
+<tr>
+<th id="stub_1_6" scope="row" class="gt_row gt_center gt_stub">Treatment Difference</th>
+<td headers="Week 48 stub_1_6 est" class="gt_row gt_center">−0.04</td>
 <td headers="Week 48 stub_1_6 se" class="gt_row gt_center">0.01</td>
-<td headers="Week 48 stub_1_6 ci_text" class="gt_row gt_center">(0.02, 0.07)</td>
+<td headers="Week 48 stub_1_6 ci_text" class="gt_row gt_center">(-0.07, -0.02)</td>
 <td headers="Week 48 stub_1_6 pval_text" class="gt_row gt_center">0.002</td>
 </tr>
 </tbody>
@@ -1389,12 +1386,12 @@ function converts a pool object into this format:</p>
 <code class="sourceCode R"><span><span class="va">ard</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pool_to_ard.html">pool_to_ard</a></span><span class="op">(</span><span class="va">pool_obj</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ard</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    group1 group1_level         group2 group2_level   group3 group3_level</span></span>
-<span><span class="co">#&gt; 1   visit    Drug A-P… parameter_type          trt lsm_type           NA</span></span>
-<span><span class="co">#&gt; 2   visit    Drug A-P… parameter_type          trt lsm_type           NA</span></span>
-<span><span class="co">#&gt; 3   visit    Drug A-P… parameter_type          trt lsm_type           NA</span></span>
-<span><span class="co">#&gt; 4   visit    Drug A-P… parameter_type          trt lsm_type           NA</span></span>
-<span><span class="co">#&gt; 5   visit    Drug A-P… parameter_type          trt lsm_type           NA</span></span>
-<span><span class="co">#&gt; 6   visit    Drug A-P… parameter_type          trt lsm_type           NA</span></span>
+<span><span class="co">#&gt; 1   visit      Week 24 parameter_type          trt lsm_type           NA</span></span>
+<span><span class="co">#&gt; 2   visit      Week 24 parameter_type          trt lsm_type           NA</span></span>
+<span><span class="co">#&gt; 3   visit      Week 24 parameter_type          trt lsm_type           NA</span></span>
+<span><span class="co">#&gt; 4   visit      Week 24 parameter_type          trt lsm_type           NA</span></span>
+<span><span class="co">#&gt; 5   visit      Week 24 parameter_type          trt lsm_type           NA</span></span>
+<span><span class="co">#&gt; 6   visit      Week 24 parameter_type          trt lsm_type           NA</span></span>
 <span><span class="co">#&gt; 7   visit      Week 24 parameter_type          lsm lsm_type       Drug A</span></span>
 <span><span class="co">#&gt; 8   visit      Week 24 parameter_type          lsm lsm_type       Drug A</span></span>
 <span><span class="co">#&gt; 9   visit      Week 24 parameter_type          lsm lsm_type       Drug A</span></span>
