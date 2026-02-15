@@ -190,7 +190,7 @@ plot_forest <- function(
   # Clean visit labels (same pattern as efficacy_table)
   visit_clean <- gsub("_", " ", plot_data$visit)
   visit_clean <- gsub("([a-zA-Z])(\\d)", "\\1 \\2", visit_clean)
-  plot_data$visit_label <- tools::toTitleCase(visit_clean)
+  plot_data$visit_label <- visit_clean
 
   # Preserve first-appearance order (not alphabetical)
   visit_levels <- unique(plot_data$visit_label)
@@ -252,8 +252,8 @@ plot_forest <- function(
       ifelse(plot_data$lsm_type == "alt", alt_label, plot_data$lsm_type)
     )
 
-    # Factor to control legend order
-    arm_levels <- c(ref_label, alt_label)
+    # Factor to control legend order (include g-comp arm names that aren't ref/alt)
+    arm_levels <- unique(c(ref_label, alt_label, plot_data$arm))
     plot_data$arm <- factor(plot_data$arm, levels = arm_levels)
   }
 

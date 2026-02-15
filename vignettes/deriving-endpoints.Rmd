@@ -110,6 +110,13 @@ The `ADMI` dataset already contains the `CRIT1FLN` column, which flags
 subjects as responders (`1`) if their change from baseline exceeds 3, and
 non-responders (`0`) otherwise. We can verify this:
 
+> **Interpreting the results:** In this simulated dataset, positive CHG values
+> represent worsening (an increase in symptom score). Therefore CHG > 3 defines
+> "worsening responders" -- subjects whose symptoms deteriorated by more than 3
+> points. A lower responder rate for Drug A compared to Placebo indicates that
+> fewer patients on the active treatment experienced clinically meaningful
+> worsening, which is evidence of drug efficacy.
+
 ```{r verify-crit1fln}
 # The responder criterion is pre-derived
 ADMI |>
