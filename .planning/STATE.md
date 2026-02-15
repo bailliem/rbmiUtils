@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-14)
 Phase: None (between milestones)
 Plan: N/A
 Status: v4 milestone archived — package at v0.3.0, CRAN-ready
-Last activity: 2026-02-14 -- Archived v4 CRAN Release Readiness milestone
+Last activity: 2026-02-15 - Completed quick task 2: Fix warnings and errors in package vignettes
 
 Progress: [██████████] 4/4 milestones shipped (14 phases, 34 plans)
 
