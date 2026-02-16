@@ -196,6 +196,7 @@ diagnostic statistics. We can filter and display them:
 ard_enriched |>
   dplyr::filter(stat_name %in% c("fmi", "lambda", "riv", "df.adjusted", "re")) |>
   dplyr::select(group1_level, variable_level, stat_name, stat)
+#> {cards} data frame: 30 x 4
 #>    group1_level variable_level   stat_name    stat
 #> 1       Week 24             NA         fmi   0.023
 #> 2       Week 24             NA      lambda   0.019
@@ -207,6 +208,8 @@ ard_enriched |>
 #> 8       Week 24             NA         riv   0.018
 #> 9       Week 24             NA df.adjusted 481.809
 #> 10      Week 24             NA          re       1
+#> ℹ 20 more rows
+#> ℹ Use `print(n = ...)` to see more rows
 ```
 
 Each diagnostic statistic has a specific interpretation:
