@@ -48,7 +48,7 @@
 #'
 #' **Example output:**
 #'
-#' \if{html}{\figure{efficacy_table-example.png}{options: width=80\%}}
+#' \if{html}{\figure{efficacy_table-example.png}{options: width=700}}
 #'
 #' @seealso
 #' * [tidy_pool_obj()] for the underlying data transformation

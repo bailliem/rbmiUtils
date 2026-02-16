@@ -1,15 +1,16 @@
 Package: rbmiUtils
 Title: Utility Functions to Support and Extend the 'rbmi' Package
-Version: 0.3.0
+Version: 0.3.0.9000
 Date: 2026-02-14
-Authors@R: c( 
+Authors@R: c(
     person("Mark", "Baillie", email = "bailliem@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-5618-0667")),
-    person("Tobias", "Mütze", email = "tobias.muetze@novartis.com", role = c("aut"),
+    person("Tobias", "Muetze", email = "tobias.muetze@novartis.com", role = c("aut"),
            comment = c(ORCID = "0000-0002-4111-1941")),
     person("Jack", "Talboys", email = "jack.talboys@novartis.com", role = c("aut")),
     person("Lukas A.", "Widmer", role = "ctb", comment = c(ORCID = "0000-0003-1471-3493"))
-    )
+  )
+Maintainer: Mark Baillie <bailliem@gmail.com>
 Description: Provides utility functions that extend the capabilities of the 
     reference-based multiple imputation package 'rbmi'. It supports clinical 
     trial analysis workflows with functions for managing imputed datasets, 

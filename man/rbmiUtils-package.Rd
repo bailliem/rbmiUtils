@@ -23,7 +23,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Tobias Mütze \email{tobias.muetze@novartis.com} (\href{https://orcid.org/0000-0002-4111-1941}{ORCID})
+  \item Tobias Muetze \email{tobias.muetze@novartis.com} (\href{https://orcid.org/0000-0002-4111-1941}{ORCID})
   \item Jack Talboys \email{jack.talboys@novartis.com}
 }
 

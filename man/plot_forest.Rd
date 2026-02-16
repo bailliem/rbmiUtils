@@ -102,7 +102,7 @@ works well at 10 x 5 inches.
 
 \strong{Example output (treatment difference mode):}
 
-\if{html}{\figure{plot_forest-trt.png}{options: width=80\%}}
+\if{html}{\figure{plot_forest-trt.png}{options: width=700}}
 }
 \examples{
 \donttest{
