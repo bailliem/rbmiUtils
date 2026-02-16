@@ -1,3 +1,7 @@
+# rbmiUtils 0.3.0
+
+## CRAN Release
+
 # rbmiUtils 0.2.2
 
 ## New Features
