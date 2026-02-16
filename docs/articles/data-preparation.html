@@ -47,6 +47,7 @@
     <li><a class="dropdown-item" href="../articles/analyse2.html">Storing and Analyzing Imputed Data</a></li>
     <li><a class="dropdown-item" href="../articles/data-preparation.html">Data Preparation and Validation</a></li>
     <li><a class="dropdown-item" href="../articles/efficient-storage.html">Efficient Storage of Imputed Data</a></li>
+    <li><a class="dropdown-item" href="../articles/deriving-endpoints.html">Deriving Endpoints from Imputed Data</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Diagnostics</h6></li>
     <li><a class="dropdown-item" href="../articles/diagnostics.html">MI Diagnostics and Describe Helpers</a></li>
@@ -71,10 +72,9 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Data Preparation and Validation</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Data Preparation and Validation</h1>
             
-            <h4 data-toc-skip class="date">2026-02-11</h4>
+            <h4 data-toc-skip class="date">2026-02-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/rbmiUtils/blob/HEAD/vignettes/data-preparation.Rmd" class="external-link"><code>vignettes/data-preparation.Rmd</code></a></small>
       <div class="d-none name"><code>data-preparation.Rmd</code></div>
@@ -305,7 +305,7 @@ both before and after</li>
 <h2 id="preparing-ice-data">Preparing ICE Data<a class="anchor" aria-label="anchor" href="#preparing-ice-data"></a>
 </h2>
 <p>When subjects discontinue treatment, you may want to apply
-reference-based imputation strategies (see the <a href="https://cran.r-project.org/web/packages/rbmi/vignettes/quickstart.html" class="external-link"><code>{rbmi}</code>
+reference-based imputation strategies (see the <a href="https://openpharma.github.io/rbmi/latest-tag/articles/quickstart.html" class="external-link"><code>{rbmi}</code>
 documentation</a> for details on intercurrent event handling). The
 <code><a href="../reference/prepare_data_ice.html">prepare_data_ice()</a></code> function builds the required
 <code>data_ice</code> data.frame from a discontinuation flag:</p>
