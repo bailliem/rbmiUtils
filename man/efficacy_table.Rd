@@ -81,7 +81,7 @@ standard gt piping, e.g., \code{efficacy_table(pool_obj) |> gt::tab_options(...)
 
 \strong{Example output:}
 
-\if{html}{\figure{efficacy_table-example.png}{options: width=80\%}}
+\if{html}{\figure{efficacy_table-example.png}{options: width=700}}
 }
 \examples{
 \donttest{

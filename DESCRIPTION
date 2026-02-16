@@ -10,7 +10,6 @@ Authors@R: c(
     person("Jack", "Talboys", email = "jack.talboys@novartis.com", role = c("aut")),
     person("Lukas A.", "Widmer", role = "ctb", comment = c(ORCID = "0000-0003-1471-3493"))
   )
-Author: Mark Baillie [aut, cre, cph], Tobias Muetze [aut], Jack Talboys [aut], Lukas A. Widmer [ctb]
 Maintainer: Mark Baillie <bailliem@gmail.com>
 Description: Provides utility functions that extend the capabilities of the 
     reference-based multiple imputation package 'rbmi'. It supports clinical 
